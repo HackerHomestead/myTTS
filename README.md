@@ -31,13 +31,19 @@ pip install -e .
 
 ```bash
 # Install Piper (low-latency TTS)
+# Option 1: Download binary
 curl -sL https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz | tar xz
 sudo cp piper /usr/local/bin/
+
+# Option 2: Use piper-onnx Python package (recommended, works on more platforms)
+pip install piper-onnx
 
 # Download English voice model
 mkdir -p ~/.local/share/piper/voices
 curl -sL -o ~/.local/share/piper/voices/en_US-lessac-medium.onnx \
-  https://github.com/rhasspy/piper/releases/download/2023.11.14-2/en_US-lessac-medium.onnx
+  https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx
+curl -sL -o ~/.local/share/piper/voices/en_US-lessac-medium.onnx.json \
+  https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json
 
 # Install myTTS server
 pip install -e .
@@ -106,11 +112,5 @@ chat.interactive()
 
 ## Available Voices
 
-Coqui TTS models (run on server):
-- `en_US-lessac-medium` (default)
-- `en_US-lessac-medium` 
-
-Piper voices (run on server):
-- `en_US-lessac-medium` (low latency)
-
-Download more Piper voices: https://github.com/rhasspy/piper/tree/master/src/python_run#voices
+Piper voices (download from HuggingFace):
+- https://huggingface.co/rhasspy/piper-voices/tree/main/en
