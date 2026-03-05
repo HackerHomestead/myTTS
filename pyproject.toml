@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,6 +8,7 @@ version = "0.1.0"
 description = "Self-hosted text-to-speech toolchain"
 readme = "README.md"
 requires-python = ">=3.10"
+packages = ["mytts", "mytts.engine"]
 dependencies = [
     "TTS>=0.21.0",
     "numpy>=1.24.0",
@@ -23,5 +24,5 @@ dependencies = [
 [project.scripts]
 mytts = "mytts.cli:main"
 
-[tool.ruff]
-line-length = 100
+[tool.setuptools]
+package-dir = {"" = "."}
