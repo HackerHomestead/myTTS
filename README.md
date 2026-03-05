@@ -7,31 +7,41 @@ Self-hosted text-to-speech with client/server architecture for GPU offloading.
 ### Step 1: Server (Linux with GPU)
 
 ```bash
-# 1. Install dependencies
+# 1. Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# 2. Install
 pip install -e .
+
+# 3. Install piper-onnx
 pip install piper-onnx
 
-# 2. Download a voice model
+# 4. Download a voice model
 mkdir -p ~/.local/share/piper/voices
 curl -sL -o ~/.local/share/piper/voices/en_US-lessac-medium.onnx \
   https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx
 curl -sL -o ~/.local/share/piper/voices/en_US-lessac-medium.onnx.json \
   https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json
 
-# 3. Start the TTS server
+# 5. Start the TTS server
 mytts serve --host 0.0.0.0 --port 8000
 ```
 
 ### Step 2: Client (Your Mac)
 
 ```bash
-# Install
+# 1. Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# 2. Install
 pip install -e .
 
-# Read a file (replace IP with your server's IP)
+# 3. Read a file (replace IP with your server's IP)
 mytts read paper.txt --server --server-url http://192.168.1.100:8000
 
-# Chat with Ollama + TTS (Ollama must also be running on server)
+# 4. Chat with Ollama + TTS
 mytts ollama --tts-url http://192.168.1.100:8000 --ollama-url http://192.168.1.100:11434
 ```
 
@@ -42,6 +52,9 @@ mytts ollama --tts-url http://192.168.1.100:8000 --ollama-url http://192.168.1.1
 ### Install
 
 ```bash
+python3 -m venv venv
+source venv/bin/activate
+
 pip install -e .
 ```
 
@@ -77,6 +90,9 @@ mytts serve --host 0.0.0.0 --port 8000 --voice en_US-lessac-medium
 ### Install
 
 ```bash
+python3 -m venv venv
+source venv/bin/activate
+
 pip install -e .
 ```
 
