@@ -1,97 +1,130 @@
 # myTTS
 
-Self-hosted text-to-speech toolchain with client/server architecture.
+Self-hosted text-to-speech with client/server architecture for GPU offloading.
 
-**Use cases:**
-- Reading long-form text (white papers, articles)
-- Conversational LLM interaction with Ollama
+## Quick Start
 
-## Architecture
-
-```
-┌─────────────────┐          ┌─────────────────┐
-│   Your Mac      │          │  GPU Server     │
-│   (Client)      │─────────>│  (TTS Server)  │
-│                 │  network  │                 │
-│ mytts cli/ollama│          │  Coqui TTS     │
-└─────────────────┘          │  Piper         │
-                              └─────────────────┘
-```
-
-## Installation
-
-### Client (macOS)
+### Step 1: Server (Linux with GPU)
 
 ```bash
-# Clone and install
+# 1. Install dependencies
 pip install -e .
-```
-
-### Server (Linux with GPU)
-
-```bash
-# Install Piper (low-latency TTS)
-# Option 1: Download binary
-curl -sL https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz | tar xz
-sudo cp piper /usr/local/bin/
-
-# Option 2: Use piper-onnx Python package (recommended, works on more platforms)
 pip install piper-onnx
 
-# Download English voice model
+# 2. Download a voice model
 mkdir -p ~/.local/share/piper/voices
 curl -sL -o ~/.local/share/piper/voices/en_US-lessac-medium.onnx \
   https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx
 curl -sL -o ~/.local/share/piper/voices/en_US-lessac-medium.onnx.json \
   https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json
 
-# Install myTTS server
-pip install -e .
-```
-
-## Usage
-
-### On GPU Server
-
-```bash
-# Start TTS server (listens on all interfaces)
+# 3. Start the TTS server
 mytts serve --host 0.0.0.0 --port 8000
 ```
 
-### On Your Mac (Client)
+### Step 2: Client (Your Mac)
 
 ```bash
-# Read a file using remote TTS server
+# Install
+pip install -e .
+
+# Read a file (replace IP with your server's IP)
 mytts read paper.txt --server --server-url http://192.168.1.100:8000
 
-# Or save to file
-mytts read paper.txt -o output.wav --server --server-url http://192.168.1.100:8000
+# Chat with Ollama + TTS (Ollama must also be running on server)
+mytts ollama --tts-url http://192.168.1.100:8000 --ollama-url http://192.168.1.100:11434
+```
 
-# Chat with Ollama + TTS (both running on server)
-mytts ollama --model llama3.2 --ollama-url http://192.168.1.100:11434 --tts-url http://192.168.1.100:8000
+---
 
-# Or with environment variables
+## Server Setup (GPU Machine)
+
+### Install
+
+```bash
+pip install -e .
+```
+
+### Voice Models
+
+Download from https://huggingface.co/rhasspy/piper-voices/tree/main/en
+
+Quick download (English medium quality):
+```bash
+mkdir -p ~/.local/share/piper/voices
+
+curl -sL -o ~/.local/share/piper/voices/en_US-lessac-medium.onnx \
+  https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx
+
+curl -sL -o ~/.local/share/piper/voices/en_US-lessac-medium.onnx.json \
+  https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json
+```
+
+### Run Server
+
+```bash
+# Starts on port 8000, listens on all interfaces
+mytts serve --host 0.0.0.0 --port 8000
+
+# Or with custom voice
+mytts serve --host 0.0.0.0 --port 8000 --voice en_US-lessac-medium
+```
+
+---
+
+## Client Setup (Your Mac)
+
+### Install
+
+```bash
+pip install -e .
+```
+
+### Usage
+
+```bash
+# Read a file aloud
+mytts read document.txt --server --server-url http://SERVER_IP:8000
+
+# Save to file
+mytts read document.txt -o audio.wav --server --server-url http://SERVER_IP:8000
+
+# Speak text directly
+mytts speak "Hello world" --server --server-url http://SERVER_IP:8000
+
+# Chat with Ollama (requires Ollama running on server at port 11434)
+mytts ollama --model llama3.2 \
+  --tts-url http://SERVER_IP:8000 \
+  --ollama-url http://SERVER_IP:11434
+```
+
+### Environment Variables
+
+```bash
+# Set once, then omit --server-url flags
 export TTS_SERVER_URL=http://192.168.1.100:8000
 export OLLAMA_URL=http://192.168.1.100:11434
+
+mytts read document.txt --server
 mytts ollama --model llama3.2
 ```
 
-### Python API
+---
+
+## Python API
 
 ```python
 from mytts import TTSEngine, TTSMode, TTSBackend
 
-# Use remote TTS server
+# Remote TTS server
 engine = TTSEngine(
-    mode=TTSMode.CONVERSATIONAL,
     backend=TTSBackend.SERVER,
     server_url="http://192.168.1.100:8000"
 )
-engine.speak("Hello from Ollama!")
+engine.speak("Hello!")
 
-# Or use OllamaChat for LLM interaction
+# With Ollama
 from mytts.ollama import OllamaChat
-
 chat = OllamaChat(
     model="llama3.2",
     ollama_url="http://192.168.1.100:11434",
@@ -100,17 +133,20 @@ chat = OllamaChat(
 chat.interactive()
 ```
 
+---
+
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `mytts read <file>` | Read text file aloud |
+| `mytts read <file>` | Read text file (use `--server` for remote) |
 | `mytts speak <text>` | Speak text directly |
-| `mytts chat` | Interactive TTS chat |
-| `mytts serve` | Start TTS server |
-| `mytts ollama` | Chat with Ollama + TTS |
+| `mytts serve` | Start TTS server (run on GPU machine) |
+| `mytts ollama` | Chat with Ollama + speak responses |
 
-## Available Voices
+## Finding Your Server IP
 
-Piper voices (download from HuggingFace):
-- https://huggingface.co/rhasspy/piper-voices/tree/main/en
+On the server, run:
+```bash
+hostname -I | awk '{print $1}'
+```
