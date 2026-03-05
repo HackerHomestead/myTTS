@@ -11,3 +11,4 @@ venv/
 *.mp3
 .idea/
 .vscode/
+server/
