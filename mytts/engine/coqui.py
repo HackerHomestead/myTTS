@@ -24,7 +24,7 @@ class BaseEngine(ABC):
 
 class CoquiEngine(BaseEngine):
     def __init__(self, voice: Optional[str] = None, mode=None):
-        self.tts = TTS("tts_models/en/ljspeech/tacotron2-DDC", gpu=False)
+        self.tts = TTS("tts_models/en/ljspeech/tacotron2-DDC")
         self.voice = voice or "en_US-lessac-medium"
         self.mode = mode
 
