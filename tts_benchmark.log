@@ -1,0 +1,62 @@
+[14:27:01.904] ============================================================
+[14:27:01.904] TTS BENCHMARK START - Computer Learning to Talk
+[14:27:01.904] ============================================================
+[14:27:01.904] ----------------------------------------
+[14:27:01.904] ITERATION 1
+[14:27:01.904] Words: 1
+[14:27:01.904] Text: Hello....
+[14:27:05.817] Time: 3.91s (3913ms/word, 0.3 words/sec)
+[14:27:06.122] ----------------------------------------
+[14:27:06.123] ITERATION 2
+[14:27:06.123] Words: 5
+[14:27:06.124] Text: Hello, I am a computer....
+[14:27:12.143] Time: 6.02s (1204ms/word, 0.8 words/sec)
+[14:27:12.447] ----------------------------------------
+[14:27:12.448] ITERATION 3
+[14:27:12.448] Words: 10
+[14:27:12.448] Text: Hello, I am a computer that is learning to talk....
+[14:27:21.697] Time: 9.25s (925ms/word, 1.1 words/sec)
+[14:27:22.002] ----------------------------------------
+[14:27:22.003] ITERATION 4
+[14:27:22.003] Words: 15
+[14:27:22.003] Text: Hello, I am a computer that is learning to talk for the very first time....
+[14:27:34.293] Time: 12.29s (819ms/word, 1.2 words/sec)
+[14:27:34.598] ----------------------------------------
+[14:27:34.599] ITERATION 5
+[14:27:34.599] Words: 21
+[14:27:34.600] Text: Hello, I am a computer that is learning to talk for the very first time. My voice is new and experim...
+[14:27:52.954] Time: 18.35s (874ms/word, 1.1 words/sec)
+[14:27:53.261] ----------------------------------------
+[14:27:53.262] ITERATION 6
+[14:27:53.262] Words: 31
+[14:27:53.262] Text: Hello, I am a computer that is learning to talk for the very first time. My voice is new and experim...
+[14:28:47.734] Time: 54.47s (1757ms/word, 0.6 words/sec)
+[14:28:48.040] ----------------------------------------
+[14:28:48.041] ITERATION 7
+[14:28:48.041] Words: 48
+[14:28:48.041] Text: Hello, I am a computer that is learning to talk for the very first time. My voice is new and experim...
+[14:29:31.764] Time: 43.72s (911ms/word, 1.1 words/sec)
+[14:29:32.070] ----------------------------------------
+[14:29:32.071] ITERATION 8
+[14:29:32.071] Words: 63
+[14:29:32.072] Text: Hello, I am a computer that is learning to talk for the very first time. My voice is new and experim...
+[14:30:29.084] Time: 57.01s (905ms/word, 1.1 words/sec)
+[14:30:29.390] ----------------------------------------
+[14:30:29.391] ITERATION 9
+[14:30:29.391] Words: 82
+[14:30:29.391] Text: Hello, I am a computer that is learning to talk for the very first time. My voice is new and experim...
+[14:31:48.512] Time: 79.12s (965ms/word, 1.0 words/sec)
+[14:31:48.818] ----------------------------------------
+[14:31:48.818] ITERATION 10
+[14:31:48.819] Words: 105
+[14:31:48.819] Text: Hello, I am a computer that is learning to talk for the very first time. My voice is new and experim...
+[14:33:29.606] Time: 100.79s (960ms/word, 1.0 words/sec)
+[14:33:29.912] ----------------------------------------
+[14:33:29.913] ITERATION 11
+[14:33:29.913] Words: 123
+[14:33:29.913] Text: Hello, I am a computer that is learning to talk for the very first time. My voice is new and experim...
+[14:35:31.703] Time: 121.79s (990ms/word, 1.0 words/sec)
+[14:35:32.009] ----------------------------------------
+[14:35:32.010] ITERATION 12
+[14:35:32.010] Words: 140
+[14:35:32.010] Text: Hello, I am a computer that is learning to talk for the very first time. My voice is new and experim...

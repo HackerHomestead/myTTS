@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Optional, Union
 
 import numpy as np
-import sounddevice as sd
 import requests
 import io
 import wave
@@ -48,6 +47,7 @@ class RemoteEngine(BaseEngine):
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
         else:
+            import sounddevice as sd
             wav_data = io.BytesIO(response.content)
             with wave.open(wav_data, 'rb') as wf:
                 audio = wf.readframes(wf.getnframes())
