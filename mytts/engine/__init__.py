@@ -1,5 +1,13 @@
-from mytts.engine.coqui import CoquiEngine, BaseEngine
-from mytts.engine.piper import PiperEngine
-from mytts.engine.remote import RemoteEngine
+# Lazy imports to avoid loading server-only dependencies on client
 
-__all__ = ["CoquiEngine", "PiperEngine", "RemoteEngine", "BaseEngine"]
+def get_coqui():
+    from mytts.engine.coqui import CoquiEngine, BaseEngine
+    return CoquiEngine, BaseEngine
+
+def get_piper():
+    from mytts.engine.piper import PiperEngine
+    return PiperEngine
+
+def get_remote():
+    from mytts.engine.remote import RemoteEngine
+    return RemoteEngine

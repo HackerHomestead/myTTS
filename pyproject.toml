@@ -9,12 +9,16 @@ description = "Self-hosted text-to-speech toolchain"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "TTS>=0.21.0",
     "numpy>=1.24.0",
-    "sounddevice>=0.4.0",
     "click>=8.0.0",
     "requests>=2.31.0",
-    "httpx>=0.25.0",
+    "sounddevice>=0.4.0",
+]
+
+[project.optional-dependencies]
+server = [
+    "TTS>=0.21.0",
+    "sounddevice>=0.4.0",
     "scipy>=1.11.2",
     "fastapi>=0.104.0",
     "uvicorn>=0.24.0",
