@@ -24,7 +24,7 @@ class BaseEngine(ABC):
 
 class CoquiEngine(BaseEngine):
     def __init__(self, voice: Optional[str] = None, mode=None):
-        self.tts = TTS("tts_models/multilingual/multilingual-vits", gpu=True)
+        self.tts = TTS("tts_models/en/ljspeech/tacotron2-DDC", gpu=False)
         self.voice = voice or "en_US-lessac-medium"
         self.mode = mode
 
@@ -34,15 +34,13 @@ class CoquiEngine(BaseEngine):
         output: Optional[Union[str, Path]] = None,
         streaming: bool = False,
     ):
-        audio = self.tts.tts(text, voice=self.voice)
+        audio = self.tts.tts(text)
         
         if output:
             import scipy.io.wavfile as wav
-            wav.write(output, 24000, audio)
+            wav.write(output, 22050, audio)
             return None
         
-        sd.play(audio, samplerate=24000)
-        sd.wait()
         return audio
 
     def stream(self, text: str):

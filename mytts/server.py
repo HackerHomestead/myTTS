@@ -38,11 +38,17 @@ def generate_speech(req: TTSRequest):
         engine = get_engine(req.engine, req.voice)
         audio = engine.speak(req.text)
         
+        if audio is None:
+            raise ValueError("Engine returned no audio")
+        
+        if isinstance(audio, list):
+            audio = np.array(audio)
+        
         buffer = io.BytesIO()
         with wave.open(buffer, 'wb') as wf:
             wf.setnchannels(1)
             wf.setsampwidth(2)
-            wf.setframerate(24000)
+            wf.setframerate(22050)
             if isinstance(audio, np.ndarray):
                 audio = (audio * 32767).astype(np.int16)
             wf.writeframes(audio.tobytes())
@@ -54,7 +60,8 @@ def generate_speech(req: TTSRequest):
             headers={"Content-Disposition": "attachment; filename=speech.wav"}
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        raise HTTPException(status_code=500, detail=f"{str(e)}\n{traceback.format_exc()}")
 
 
 @app.get("/health")

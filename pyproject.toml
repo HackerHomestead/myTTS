@@ -8,7 +8,6 @@ version = "0.1.0"
 description = "Self-hosted text-to-speech toolchain"
 readme = "README.md"
 requires-python = ">=3.10"
-packages = ["mytts", "mytts.engine"]
 dependencies = [
     "TTS>=0.21.0",
     "numpy>=1.24.0",
@@ -16,7 +15,7 @@ dependencies = [
     "click>=8.0.0",
     "requests>=2.31.0",
     "httpx>=0.25.0",
-    "scipy>=1.11.0",
+    "scipy>=1.11.2",
     "fastapi>=0.104.0",
     "uvicorn>=0.24.0",
 ]
@@ -25,4 +24,4 @@ dependencies = [
 mytts = "mytts.cli:main"
 
 [tool.setuptools]
-package-dir = {"" = "."}
+packages = ["mytts", "mytts.engine"]

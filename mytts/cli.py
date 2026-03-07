@@ -23,7 +23,7 @@ def cli():
 @click.option(
     "--server",
     "use_server",
-    is_flag,
+    is_flag=True,
     help="Use remote TTS server",
 )
 @click.option(
@@ -55,7 +55,7 @@ def read(file_path, output, engine, voice, use_server, server_url):
 @click.option(
     "--server",
     "use_server",
-    is_flag,
+    is_flag=True,
     help="Use remote TTS server",
 )
 @click.option(
@@ -88,7 +88,7 @@ def chat(engine, voice, use_server, server_url):
 @click.option(
     "--server",
     "use_server",
-    is_flag,
+    is_flag=True,
     help="Use remote TTS server",
 )
 @click.option(

@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from pathlib import Path
 from typing import Optional, Union
+from mytts.engine import BaseEngine
 
 import numpy as np
 import sounddevice as sd
