@@ -9,17 +9,19 @@ All notable changes to myTTS will be documented in this file.
 #### Added
 - **Terminal Size Display**: Shows current terminal dimensions in header (upper right) as `[COLxROW]`
 - **HeaderDisplay Widget**: New widget showing file name and terminal size
-- **Optimized Layout**: TUI now optimized for 80x25 terminal with flexible sizing
-- **Compact Controls**: Reduced control bar footprint for better content visibility
+- **Dynamic Text Fitting**: Content now properly fits within terminal height, accounting for text wrapping
+- **Layout Tests**: New test suite for validating layout at different terminal sizes (80x24 to 150x40)
 
 #### Changed
-- **ChunkDisplay**: Renamed from SentenceDisplay, now shows multiple chunks with current highlighted
-- **CSS Optimization**: Reduced padding and margins for better space utilization
-- **ControlsDisplay**: More compact control labels for 80-column terminals
+- **Default Terminal Size**: Changed from 80x25 to **96x30** for better readability
+- **ChunkDisplay**: Now calculates actual line count for wrapped text
+- **ControlsDisplay**: More compact control labels using symbols (⏸, →, ⇤⇥, ✕)
+- **Scroll Behavior**: Improved scroll-to-current/selected to keep content visible
 
 #### Fixed
-- **Test Compatibility**: Updated test_tui.py to use correct widget names
-- **Reactive Types**: Fixed terminal_size reactive property type annotations
+- **Text Panel Windowing**: Fixed bug where text didn't fit within terminal size offset
+- **Line Counting**: Now correctly accounts for text wrapping when calculating visible chunks
+- **Property Naming**: Renamed `scroll_offset` to `chunk_scroll_offset` to avoid Widget conflict
 
 ---
 

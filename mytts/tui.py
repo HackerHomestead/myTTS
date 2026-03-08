@@ -94,45 +94,55 @@ class ChunkDisplay(Static):
     chunks: reactive[List[str]] = reactive(list)
     current_idx: reactive[int] = reactive(0)
     selected_idx: reactive[int] = reactive(0)
-    scroll_offset: reactive[int] = reactive(0)
+    chunk_scroll_offset: reactive[int] = reactive(0)
     total_sentences: reactive[int] = reactive(0)
-    visible_lines: reactive[int] = reactive(7)
+    max_width: reactive[int] = reactive(80)
     
     def on_mount(self):
-        """Calculate visible lines based on available space."""
-        self._update_visible_lines()
+        """Calculate max width based on terminal size."""
+        self._update_max_width()
     
     def on_resize(self, event):
         """Handle terminal resize events."""
-        self._update_visible_lines()
+        self._update_max_width()
     
-    def _update_visible_lines(self):
-        """Calculate how many lines can fit in the available space.
+    def _update_max_width(self):
+        """Calculate max text width based on available space.
         
-        Base terminal: 80x25 (25 lines total)
-        Optimized layout:
-        - Textual Header: 1 line
-        - Header container: 1 line
-        - Content container: 1fr (flexible)
-        - Progress container: 1 line
-        - Status container: 1 line
-        - Controls container: 1 line
-        - Textual Footer: 1 line
-        - Borders/padding: ~2 lines
-        Total overhead: ~8 lines
-        Available for chunks: 17 lines
-        With 1-line separator between chunks: ~8-9 chunks visible
+        Layout: ▶12345│text...
+        - Indicator: 1 char
+        - Word number: 5 chars
+        - Separator: 1 char
+        Total prefix: 7 chars
+        Available for text: terminal_width - 7 - 4 (padding/borders)
         """
         try:
             if hasattr(self, 'region'):
-                available_height = self.region.height
+                available_width = self.region.width
             else:
-                available_height = 17
+                available_width = 80
             
-            self.visible_lines = max(5, available_height)
-            self.visible_lines = min(self.visible_lines, 20)
+            self.max_width = max(40, available_width - 11)
         except Exception:
-            self.visible_lines = 5
+            self.max_width = 69
+    
+    def _count_lines_for_chunk(self, chunk: str) -> int:
+        """Count how many lines a chunk will take after wrapping."""
+        words = chunk.split()
+        if not words:
+            return 1
+        
+        line_count = 1
+        current_length = 0
+        
+        for word in words:
+            if current_length + len(word) + 1 > self.max_width and current_length > 0:
+                line_count += 1
+                current_length = len(word)
+            else:
+                current_length += len(word) + 1
+        
+        return line_count
     
     def _get_word_start_for_chunk(self, chunk_idx: int) -> int:
         """Get the starting word number for a chunk."""
@@ -140,7 +150,7 @@ class ChunkDisplay(Static):
         for i in range(chunk_idx):
             if i < len(self.chunks):
                 word_count += len(self.chunks[i].split())
-        return word_count + 1  # 1-indexed
+        return word_count + 1
     
     def render(self) -> Text:
         if not self.chunks:
@@ -148,10 +158,29 @@ class ChunkDisplay(Static):
         
         text = Text()
         
-        visible_start = self.scroll_offset
-        visible_end = min(visible_start + self.visible_lines, len(self.chunks))
+        try:
+            available_height = self.region.height if hasattr(self, 'region') else 20
+        except Exception:
+            available_height = 20
         
-        for i in range(visible_start, visible_end):
+        visible_start = self.chunk_scroll_offset
+        current_height = 0
+        visible_chunks = []
+        
+        for i in range(visible_start, len(self.chunks)):
+            chunk = self.chunks[i]
+            chunk_lines = self._count_lines_for_chunk(chunk)
+            
+            if current_height + chunk_lines > available_height:
+                break
+            
+            visible_chunks.append(i)
+            current_height += chunk_lines
+        
+        if not visible_chunks:
+            visible_chunks = [visible_start] if visible_start < len(self.chunks) else [0]
+        
+        for idx, i in enumerate(visible_chunks):
             chunk = self.chunks[i]
             word_start = self._get_word_start_for_chunk(i)
             
@@ -171,13 +200,12 @@ class ChunkDisplay(Static):
                 text.append(f"{word_start:5,}", style="white bold")
                 text.append("│", style="dim")
             
-            max_width = 65
             words = chunk.split()
             line_words = []
             current_length = 0
             
             for word in words:
-                if current_length + len(word) + 1 > max_width and line_words:
+                if current_length + len(word) + 1 > self.max_width and line_words:
                     line_text = " ".join(line_words)
                     if is_current:
                         text.append(f"{line_text}\n", style="yellow")
@@ -196,41 +224,75 @@ class ChunkDisplay(Static):
             if line_words:
                 line_text = " ".join(line_words)
                 if is_current:
-                    text.append(f"{line_text}\n", style="yellow")
+                    text.append(f"{line_text}", style="yellow")
                 elif is_selected:
-                    text.append(f"{line_text}\n", style="white")
+                    text.append(f"{line_text}", style="white")
                 else:
-                    text.append(f"{line_text}\n", style="white dim")
+                    text.append(f"{line_text}", style="white dim")
             
-            if i < visible_end - 1:
+            if idx < len(visible_chunks) - 1:
                 text.append("\n")
         
         return text
     
     def scroll_to_current(self):
-        """Scroll to keep current chunk centered in the window."""
-        # Calculate center position
-        center_offset = self.current_idx - self.visible_lines // 2
-        
-        # Clamp to valid range
-        max_offset = max(0, len(self.chunks) - self.visible_lines)
-        self.scroll_offset = max(0, min(center_offset, max_offset))
+        """Scroll to keep current chunk visible."""
+        if self.current_idx < self.chunk_scroll_offset:
+            self.chunk_scroll_offset = max(0, self.current_idx)
+        else:
+            try:
+                available_height = self.region.height if hasattr(self, 'region') else 20
+            except Exception:
+                available_height = 20
+            
+            current_height = 0
+            new_offset = self.chunk_scroll_offset
+            
+            for i in range(self.chunk_scroll_offset, self.current_idx + 1):
+                if i < len(self.chunks):
+                    chunk_lines = self._count_lines_for_chunk(self.chunks[i])
+                    
+                    while current_height + chunk_lines > available_height and new_offset < i:
+                        if new_offset < len(self.chunks):
+                            current_height -= self._count_lines_for_chunk(self.chunks[new_offset])
+                        new_offset += 1
+                    
+                    current_height += chunk_lines
+            
+            self.chunk_scroll_offset = new_offset
     
     def scroll_to_selected(self):
-        """Scroll to keep selected chunk centered in the window."""
-        # Calculate center position
-        center_offset = self.selected_idx - self.visible_lines // 2
-        
-        # Clamp to valid range
-        max_offset = max(0, len(self.chunks) - self.visible_lines)
-        self.scroll_offset = max(0, min(center_offset, max_offset))
+        """Scroll to keep selected chunk visible."""
+        if self.selected_idx < self.chunk_scroll_offset:
+            self.chunk_scroll_offset = max(0, self.selected_idx)
+        else:
+            try:
+                available_height = self.region.height if hasattr(self, 'region') else 20
+            except Exception:
+                available_height = 20
+            
+            current_height = 0
+            new_offset = self.chunk_scroll_offset
+            
+            for i in range(self.chunk_scroll_offset, self.selected_idx + 1):
+                if i < len(self.chunks):
+                    chunk_lines = self._count_lines_for_chunk(self.chunks[i])
+                    
+                    while current_height + chunk_lines > available_height and new_offset < i:
+                        if new_offset < len(self.chunks):
+                            current_height -= self._count_lines_for_chunk(self.chunks[new_offset])
+                        new_offset += 1
+                    
+                    current_height += chunk_lines
+            
+            self.chunk_scroll_offset = new_offset
 
 
 class HeaderDisplay(Static):
     """Widget to display header with file name and terminal size."""
     
     file_name = reactive("")
-    terminal_size: reactive[tuple[int, int]] = reactive((80, 25))
+    terminal_size: reactive[tuple[int, int]] = reactive((96, 30))
     
     def render(self):
         text = Text()
@@ -294,27 +356,26 @@ class ControlsDisplay(Static):
     
     def render(self):
         text = Text()
-        text.append("  ")
         
         controls = [
-            ("Space", "Pause"),
-            ("↑/↓", "Nav"),
-            ("Enter", "Jump"),
-            ("+/−", "Speed"),
-            ("0", "Reset"),
-            ("v", "Voice"),
-            ("r", "Repeat"),
-            ("m", "Bmark"),
-            ("[/]", "JmpBm"),
-            ("Home/End", "Beg/End"),
-            ("q", "Quit"),
+            ("Spc", "⏸"),
+            ("↑↓", "Nav"),
+            ("Ent", "→"),
+            ("+/-", "Spd"),
+            ("0", "Rst"),
+            ("v", "Vo"),
+            ("r", "Rep"),
+            ("m", "Bm"),
+            ("[]", "Jmp"),
+            ("H/E", "⇤⇥"),
+            ("q", "✕"),
         ]
         
         for i, (key, action) in enumerate(controls):
             if i > 0:
                 text.append(" ")
             text.append(f"[{key}]", style="cyan bold")
-            text.append(f"{action}", style="white")
+            text.append(action, style="white")
         
         return text
 
@@ -562,7 +623,7 @@ class TTSReaderApp(App):
         """Handle terminal resize events."""
         try:
             chunk_display = self.query_one(ChunkDisplay)
-            chunk_display._update_visible_lines()
+            chunk_display._update_max_width()
             chunk_display.refresh()
             
             header_display = self.query_one(HeaderDisplay)

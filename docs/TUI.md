@@ -4,12 +4,26 @@ The Text User Interface (TUI) mode provides a modern, interactive interface for 
 
 ## Terminal Requirements
 
-The TUI is optimized for an **80x25 (COLxROW)** terminal with some flexibility:
+The TUI is optimized for a **96x30 (COLxROW)** terminal with flexibility:
 - Minimum: 80 columns × 24 rows
-- Recommended: 80 columns × 25 rows
-- Works well up to: 120 columns × 40 rows
+- **Recommended: 96 columns × 30 rows** (default)
+- Works well up to: 150 columns × 40 rows
 
 The current terminal size is displayed in the header (upper right) as `[COLxROW]`.
+
+### Layout Breakdown (96x30)
+
+```
+Line 1:  Textual Header
+Line 2:  HeaderDisplay (file name + terminal size)
+Lines 3-26: ChunkDisplay (content area - 24 lines)
+Line 27: ProgressBar
+Line 28: StatusDisplay
+Line 29: ControlsDisplay
+Line 30: Textual Footer
+```
+
+The content area automatically adjusts to show as many chunks as fit within the available height, accounting for text wrapping.
 
 ## Starting TUI Mode
 
