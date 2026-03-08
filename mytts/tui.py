@@ -1,6 +1,8 @@
 """TUI (Text User Interface) for myTTS reader using Textual framework."""
 
 import threading
+import logging
+import traceback
 from pathlib import Path
 from typing import Optional, List
 
@@ -14,6 +16,15 @@ from rich.style import Style
 
 from mytts import TTSEngine, TTSMode, TTSBackend
 from mytts.client import ProgressiveTTSClient
+
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('tui_errors.log'),
+    ]
+)
+logger = logging.getLogger(__name__)
 
 
 class ChunkDisplay(Static):
@@ -272,42 +283,46 @@ class TTSReaderApp(App):
         yield Footer()
     
     def on_mount(self):
-        backend = TTSBackend.SERVER
-        self.engine = TTSEngine(
-            mode=TTSMode.READING,
-            backend=backend,
-            engine="piper",
-            voice=self.voice or "en_US-lessac-medium",
-            server_url=self.server_url,
-        )
-        
-        self.client = ProgressiveTTSClient(
-            self.engine,
-            num_workers=4,
-            buffer_size=2,
-            on_play=self._on_sentence_play
-        )
-        
-        self.client.speed = self.initial_speed
-        
-        text = self.file_path.read_text()
-        self.sentences = self.client.split_into_sentences(text)
-        self.total_words = sum(len(s.split()) for s in self.sentences)
-        
-        chunk_display = self.query_one(ChunkDisplay)
-        chunk_display.chunks = self.sentences
-        chunk_display.total_sentences = len(self.sentences)
-        chunk_display.current_idx = 0
-        chunk_display.selected_idx = 0
-        
-        status_display = self.query_one(StatusDisplay)
-        status_display.total_words = self.total_words
-        status_display.speed = self.initial_speed
-        
-        if self.start_word > 0:
-            self._seek_to_word(self.start_word)
-        
-        self._start_reading()
+        try:
+            backend = TTSBackend.SERVER
+            self.engine = TTSEngine(
+                mode=TTSMode.READING,
+                backend=backend,
+                engine="piper",
+                voice=self.voice or "en_US-lessac-medium",
+                server_url=self.server_url,
+            )
+            
+            self.client = ProgressiveTTSClient(
+                self.engine,
+                num_workers=4,
+                buffer_size=2,
+                on_play=self._on_sentence_play
+            )
+            
+            self.client.speed = self.initial_speed
+            
+            text = self.file_path.read_text()
+            self.sentences = self.client.split_into_sentences(text)
+            self.total_words = sum(len(s.split()) for s in self.sentences)
+            
+            chunk_display = self.query_one(ChunkDisplay)
+            chunk_display.chunks = self.sentences
+            chunk_display.total_sentences = len(self.sentences)
+            chunk_display.current_idx = 0
+            chunk_display.selected_idx = 0
+            
+            status_display = self.query_one(StatusDisplay)
+            status_display.total_words = self.total_words
+            status_display.speed = self.initial_speed
+            
+            if self.start_word > 0:
+                self._seek_to_word(self.start_word)
+            
+            self._start_reading()
+        except Exception as e:
+            logger.error(f"Error during TUI initialization: {e}\n{traceback.format_exc()}")
+            self._show_error(f"Initialization failed: {e}")
     
     def on_unmount(self):
         self.should_stop = True
@@ -350,6 +365,7 @@ class TTSReaderApp(App):
                     text = " ".join(self.sentences[self.current_sentence_idx:])
                     self.client.speak(text)
             except Exception as e:
+                logger.error(f"Error in read thread: {e}\n{traceback.format_exc()}")
                 self.call_from_thread(self._show_error, str(e))
             finally:
                 self.is_reading = False
@@ -368,6 +384,7 @@ class TTSReaderApp(App):
             words_counted += sentence_words
     
     def _show_error(self, message: str):
+        logger.error(f"Displaying error to user: {message}")
         self.query_one(ChunkDisplay).chunks = [f"Error: {message}"]
     
     def action_toggle_pause(self):
@@ -442,25 +459,29 @@ class TTSReaderApp(App):
             self._jump_to_sentence(target)
     
     def _jump_to_sentence(self, idx: int):
-        if self.client:
-            self.should_stop = True
-            self.client.stop()
-            
-            if self.read_thread and self.read_thread.is_alive():
-                self.read_thread.join(timeout=2.0)
-            
-            self.client.reset()
-            
-            self.current_sentence_idx = idx
-            self.words_spoken = sum(len(s.split()) for s in self.sentences[:idx])
-            
-            chunk_display = self.query_one(ChunkDisplay)
-            chunk_display.current_idx = idx
-            chunk_display.selected_idx = idx
-            chunk_display.scroll_to_current()
-            
-            self.should_stop = False
-            self._start_reading()
+        try:
+            if self.client:
+                self.should_stop = True
+                self.client.stop()
+                
+                if self.read_thread and self.read_thread.is_alive():
+                    self.read_thread.join(timeout=2.0)
+                
+                self.client.reset()
+                
+                self.current_sentence_idx = idx
+                self.words_spoken = sum(len(s.split()) for s in self.sentences[:idx])
+                
+                chunk_display = self.query_one(ChunkDisplay)
+                chunk_display.current_idx = idx
+                chunk_display.selected_idx = idx
+                chunk_display.scroll_to_current()
+                
+                self.should_stop = False
+                self._start_reading()
+        except Exception as e:
+            logger.error(f"Error jumping to sentence {idx}: {e}\n{traceback.format_exc()}")
+            self._show_error(f"Jump failed: {e}")
     
     def action_goto_beginning(self):
         self._jump_to_sentence(0)
