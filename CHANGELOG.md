@@ -2,6 +2,28 @@
 
 All notable changes to myTTS will be documented in this file.
 
+## [v1.2.0-tui] - 2026-03-08
+
+### 🎯 TUI Navigation Improvements
+
+#### Added
+- **Jump Dialog**: New modal dialog (press `j`) for jumping to any word position
+  - Text input for entering word number
+  - Bookmark list for quick selection
+  - Audio pauses while dialog is open
+  - Use ↑/↓ to navigate bookmarks
+  - Click or Enter to select
+
+#### Changed
+- **Removed `n`/`p` bindings**: Next/previous sentence removed (use ↑/↓ + Enter instead)
+- **Controls updated**: Compact controls now show `j` for jump dialog
+- **Simplified navigation**: Arrow keys + Enter for chunk navigation
+
+#### Fixed
+- **Test updates**: Updated test_tui.py for new action bindings
+
+---
+
 ## [v1.1.0-tui] - 2026-03-08
 
 ### 🖥️ TUI Improvements

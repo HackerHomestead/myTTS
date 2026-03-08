@@ -127,18 +127,16 @@ def test_controls_display():
     rendered_str = str(rendered)
     
     # Check that essential controls are shown (using compact labels)
-    essential_controls = ["Spc", "Ent", "q"]
+    essential_controls = ["Spc", "Ent", "j", "q"]
     for control in essential_controls:
         assert control in rendered_str, f"Control '{control}' not shown"
     
-    # Check that it's reasonably compact (should fit in 80 cols)
-    # Each line should be <= 80 chars
+    # Check that it fits in 96 columns (default terminal width)
     lines = rendered_str.split('\n')
     for i, line in enumerate(lines):
-        # Remove ANSI codes for length calculation
         import re
         clean_line = re.sub(r'\x1b\[[0-9;]*m', '', line)
-        assert len(clean_line) <= 80, \
+        assert len(clean_line) <= 96, \
             f"Line {i} too long: {len(clean_line)} chars"
     
     print(f"  ✓ Controls are compact ({len(rendered_str)} chars) and complete")

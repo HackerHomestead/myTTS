@@ -52,20 +52,29 @@ mytts read document.txt --server --tui -w 1250
 | Key | Action |
 |-----|--------|
 | `Space` | Pause/Resume |
-| `n` | Next sentence |
-| `p` | Previous sentence |
+| `↑` / `↓` | Navigate chunks |
+| `Enter` | Jump to selected chunk |
+| `j` | Open jump dialog |
 | `+` / `=` | Increase speed |
 | `-` / `_` | Decrease speed |
-| `0` | Reset speed to 1.0x |
-| `r` | Repeat current sentence |
-| `g` | Go to specific sentence |
+| `0` | Reset speed to 0.95x |
+| `v` | Cycle voice |
+| `r` | Repeat current chunk |
 | `m` | Set bookmark at current position |
 | `[` | Jump to previous bookmark |
 | `]` | Jump to next bookmark |
 | `Home` / `b` | Jump to beginning |
 | `End` / `e` | Jump to end |
-| `?` / `i` | Show info |
 | `q` | Quit |
+
+### Jump Dialog
+
+Press `j` to open the jump dialog, which allows you to:
+
+1. **Jump to word number**: Enter a word position (1 to total words)
+2. **Select bookmark**: Click or use ↑/↓ to select a saved bookmark
+
+The dialog pauses audio while open and resumes after jumping.
 
 ### Bookmarks
 

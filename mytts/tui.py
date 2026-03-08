@@ -9,10 +9,12 @@ from queue import Queue, Empty
 from time import sleep
 
 from textual.app import App, ComposeResult
-from textual.containers import Container, ScrollableContainer
-from textual.widgets import Header, Footer, Static, ProgressBar
+from textual.containers import Container, ScrollableContainer, Vertical, Horizontal
+from textual.widgets import Header, Footer, Static, ProgressBar, Input, Button, Label
+from textual.screen import ModalScreen
 from textual.reactive import reactive
 from textual.binding import Binding
+from textual.events import Key
 from rich.text import Text
 from rich.style import Style
 
@@ -361,12 +363,13 @@ class ControlsDisplay(Static):
             ("Spc", "⏸"),
             ("↑↓", "Nav"),
             ("Ent", "→"),
+            ("j", "Jmp"),
             ("+/-", "Spd"),
             ("0", "Rst"),
             ("v", "Vo"),
             ("r", "Rep"),
             ("m", "Bm"),
-            ("[]", "Jmp"),
+            ("[]", "BmNav"),
             ("H/E", "⇤⇥"),
             ("q", "✕"),
         ]
@@ -378,6 +381,187 @@ class ControlsDisplay(Static):
             text.append(action, style="white")
         
         return text
+
+
+class JumpDialog(ModalScreen):
+    """Modal dialog for jumping to a location or bookmark."""
+    
+    CSS = """
+    JumpDialog {
+        align: center middle;
+    }
+    
+    #dialog-container {
+        width: 60;
+        height: auto;
+        background: $surface;
+        border: thick $primary;
+        padding: 1 2;
+    }
+    
+    #dialog-title {
+        text-style: bold;
+        color: $text-primary;
+        margin-bottom: 1;
+    }
+    
+    #input-container {
+        margin-bottom: 1;
+    }
+    
+    #input-label {
+        color: $text-secondary;
+        margin-bottom: 0;
+    }
+    
+    #location-input {
+        width: 100%;
+        margin-top: 0;
+    }
+    
+    #bookmarks-container {
+        margin-top: 1;
+        margin-bottom: 1;
+    }
+    
+    #bookmarks-label {
+        color: $text-secondary;
+        margin-bottom: 0;
+    }
+    
+    #bookmarks-list {
+        height: auto;
+        max-height: 8;
+        overflow-y: auto;
+        background: $panel;
+        border: solid $primary-darken-2;
+        padding: 0;
+    }
+    
+    .bookmark-btn {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .bookmark-btn.selected {
+        background: $primary;
+        color: $text-on-primary;
+    }
+    
+    #buttons-container {
+        align: center middle;
+        margin-top: 1;
+    }
+    
+    #cancel-btn {
+        margin-right: 2;
+    }
+    
+    Button {
+        min-width: 10;
+    }
+    """
+    
+    BINDINGS = [
+        Binding("escape", "cancel", "Cancel"),
+        Binding("enter", "jump", "Jump"),
+    ]
+    
+    def __init__(self, total_words: int, bookmarks: List[int], current_word: int):
+        super().__init__()
+        self.total_words = total_words
+        self.bookmarks = bookmarks
+        self.current_word = current_word
+        self.selected_bookmark_idx = -1
+    
+    def compose(self) -> ComposeResult:
+        with Container(id="dialog-container"):
+            yield Label("Jump to Location", id="dialog-title")
+            
+            with Container(id="input-container"):
+                yield Label(f"Word (1-{self.total_words:,}):", id="input-label")
+                yield Input(
+                    value=str(self.current_word),
+                    placeholder="Enter word number...",
+                    id="location-input",
+                )
+            
+            if self.bookmarks:
+                with Container(id="bookmarks-container"):
+                    yield Label("Bookmarks:", id="bookmarks-label")
+                    with ScrollableContainer(id="bookmarks-list"):
+                        for i, word_num in enumerate(self.bookmarks):
+                            yield Button(
+                                f"Bookmark {i+1}: Word {word_num:,}",
+                                id=f"bookmark-{i}",
+                                classes="bookmark-btn",
+                            )
+            
+            with Horizontal(id="buttons-container"):
+                yield Button("Cancel", id="cancel-btn", variant="default")
+                yield Button("Jump", id="jump-btn", variant="primary")
+    
+    def on_mount(self):
+        """Focus the input field on mount."""
+        self.query_one(Input).focus()
+    
+    def on_key(self, event: Key):
+        """Handle key events."""
+        if event.key == "up":
+            if self.bookmarks:
+                self.selected_bookmark_idx = max(-1, self.selected_bookmark_idx - 1)
+                self._update_bookmark_selection()
+            event.stop()
+        elif event.key == "down":
+            if self.bookmarks and self.selected_bookmark_idx < len(self.bookmarks) - 1:
+                self.selected_bookmark_idx += 1
+                self._update_bookmark_selection()
+            event.stop()
+    
+    def _update_bookmark_selection(self):
+        """Update the visual selection of bookmarks."""
+        bookmark_btns = self.query(".bookmark-btn")
+        for i, btn in enumerate(bookmark_btns):
+            if i == self.selected_bookmark_idx:
+                btn.add_class("selected")
+                word_num = self.bookmarks[i]
+                self.query_one(Input).value = str(word_num)
+            else:
+                btn.remove_class("selected")
+    
+    def on_input_submitted(self, event: Input.Submitted):
+        """Handle input submission."""
+        self.action_jump()
+    
+    def on_button_pressed(self, event: Button.Pressed):
+        """Handle button presses."""
+        if event.button.id == "cancel-btn":
+            self.action_cancel()
+        elif event.button.id == "jump-btn":
+            self.action_jump()
+        elif event.button.id and event.button.id.startswith("bookmark-"):
+            idx = int(event.button.id.split("-")[1])
+            self.selected_bookmark_idx = idx
+            self._update_bookmark_selection()
+    
+    def action_cancel(self):
+        """Cancel and close dialog."""
+        self.dismiss(None)
+    
+    def action_jump(self):
+        """Jump to the entered location."""
+        try:
+            value = self.query_one(Input).value.strip()
+            if value:
+                word_num = int(value)
+                if 1 <= word_num <= self.total_words:
+                    self.dismiss(word_num)
+                else:
+                    self.query_one(Input).value = str(self.current_word)
+            else:
+                self.dismiss(None)
+        except ValueError:
+            self.query_one(Input).value = str(self.current_word)
 
 
 class TTSReaderApp(App):
@@ -458,8 +642,7 @@ class TTSReaderApp(App):
         Binding("up", "select_prev", "Prev Chunk"),
         Binding("down", "select_next", "Next Chunk"),
         Binding("enter", "jump_to_selected", "Jump"),
-        Binding("n", "next_sentence", "Next"),
-        Binding("p", "prev_sentence", "Previous"),
+        Binding("j", "show_jump_dialog", "Jump to..."),
         Binding("plus,equals", "increase_speed", "Faster"),
         Binding("minus,underscore", "decrease_speed", "Slower"),
         Binding("0", "reset_speed", "Reset Speed"),
@@ -801,18 +984,67 @@ class TTSReaderApp(App):
         
         self.action_queue.enqueue(jump_action, f"jump_to_{idx}")
     
-    def action_next_sentence(self):
-        """Skip to next sentence."""
-        if self.client and self.current_sentence_idx < len(self.sentences) - 1:
-            self.client.skip_forward()
-            self.current_sentence_idx = min(self.current_sentence_idx + 1, len(self.sentences) - 1)
+    def action_show_jump_dialog(self):
+        """Show jump dialog to jump to a word location or bookmark."""
+        # Pause audio
+        was_paused = self.client.is_paused if self.client else False
+        if self.client and not was_paused:
+            self.client.toggle_pause()
+        
+        # Calculate current word
+        current_word = sum(len(s.split()) for s in self.sentences[:self.current_sentence_idx])
+        
+        # Get bookmark word positions
+        bookmark_words = []
+        for bm_idx in self.bookmarks:
+            word_num = sum(len(s.split()) for s in self.sentences[:bm_idx])
+            bookmark_words.append(word_num)
+        
+        def on_dialog_result(word_num):
+            # Resume audio
+            if self.client and not was_paused:
+                self.client.toggle_pause()
+            
+            if word_num is not None:
+                # Jump to the word position
+                self._jump_to_word(word_num)
+        
+        self.push_screen(
+            JumpDialog(
+                total_words=self.total_words,
+                bookmarks=bookmark_words,
+                current_word=current_word,
+            ),
+            on_dialog_result
+        )
     
-    def action_prev_sentence(self):
-        """Go to previous sentence."""
-        if self.client and self.current_sentence_idx > 0:
-            self.client.skip_backward()
-            self.current_sentence_idx = max(self.current_sentence_idx - 1, 0)
-            self.words_spoken = sum(len(s.split()) for s in self.sentences[:self.current_sentence_idx])
+    def _jump_to_word(self, word_num: int):
+        """Jump to a specific word position."""
+        words_counted = 0
+        target_idx = 0
+        
+        for i, sentence in enumerate(self.sentences):
+            sentence_words = len(sentence.split())
+            if words_counted + sentence_words > word_num:
+                target_idx = i
+                self.words_spoken = words_counted
+                break
+            words_counted += sentence_words
+        else:
+            target_idx = len(self.sentences) - 1
+            self.words_spoken = sum(len(s.split()) for s in self.sentences[:-1])
+        
+        # Show loading
+        status_display = self.query_one(StatusDisplay)
+        status_display.is_loading = True
+        status_display.loading_message = f"Jumping to word {word_num:,}..."
+        
+        def jump_action():
+            self._safe_stop_playback()
+            sleep(0.15)
+            self._safe_start_playback(target_idx)
+        
+        self.action_queue.enqueue(jump_action, f"jump_to_word_{word_num}")
     
     def action_increase_speed(self):
         """Increase playback speed."""
