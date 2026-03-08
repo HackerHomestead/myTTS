@@ -219,6 +219,7 @@ class TTSReaderApp(App):
         self.is_reading = False
         self.should_stop = False
         self.read_thread: Optional[threading.Thread] = None
+        self._reading_start_idx = 0  # Track starting index for current reading session
     
     def compose(self) -> ComposeResult:
         """Create the UI layout."""
@@ -296,7 +297,7 @@ class TTSReaderApp(App):
     def _on_sentence_play(self, sentence: str, index: int):
         """Callback when a sentence is played."""
         self.words_spoken += len(sentence.split())
-        self.current_sentence_idx = index
+        self.current_sentence_idx = self._reading_start_idx + index
         
         # Update UI (thread-safe)
         self.call_from_thread(self._update_display, sentence)
@@ -315,6 +316,9 @@ class TTSReaderApp(App):
         # Update progress bar
         progress = self.query_one(ProgressBar)
         progress.update(progress=int(100 * self.words_spoken / self.total_words))
+        
+        # Force refresh
+        sentence_display.refresh()
     
     def _start_reading(self):
         """Start the reading thread."""
@@ -323,6 +327,7 @@ class TTSReaderApp(App):
         
         self.is_reading = True
         self.should_stop = False
+        self._reading_start_idx = self.current_sentence_idx
         
         def read_thread():
             try:
