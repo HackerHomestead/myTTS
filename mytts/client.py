@@ -48,12 +48,33 @@ class ProgressiveTTSClient:
         self._current_audio: Optional[np.ndarray] = None
         self._current_sample_rate = 22050
         
+        self._speed = 1.0
+        self._speed_lock = threading.Lock()
+        
         self._stats = {
             "chunks_generated": 0,
             "chunks_played": 0,
             "total_generation_time": 0.0,
             "total_playback_time": 0.0,
         }
+    
+    @property
+    def speed(self) -> float:
+        with self._speed_lock:
+            return self._speed
+    
+    @speed.setter
+    def speed(self, value: float):
+        with self._speed_lock:
+            self._speed = max(0.25, min(4.0, value))
+    
+    def increase_speed(self, delta: float = 0.25):
+        with self._speed_lock:
+            self._speed = min(4.0, self._speed + delta)
+    
+    def decrease_speed(self, delta: float = 0.25):
+        with self._speed_lock:
+            self._speed = max(0.25, self._speed - delta)
     
     def stop(self):
         self._stop_event.set()
@@ -103,8 +124,15 @@ class ProgressiveTTSClient:
         self._current_audio = chunk.audio
         self._current_sample_rate = chunk.sample_rate
         
+        # Apply speed adjustment
+        with self._speed_lock:
+            speed = self._speed
+        
+        # Adjust sample rate for speed (higher rate = faster playback)
+        adjusted_rate = int(chunk.sample_rate * speed)
+        
         start = time.perf_counter()
-        sd.play(chunk.audio, samplerate=chunk.sample_rate)
+        sd.play(chunk.audio, samplerate=adjusted_rate)
         sd.wait()
         self._stats["total_playback_time"] += time.perf_counter() - start
         self._stats["chunks_played"] += 1

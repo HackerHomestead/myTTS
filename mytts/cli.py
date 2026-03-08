@@ -1,5 +1,7 @@
 import click
 import signal
+import sys
+import threading
 from pathlib import Path
 
 from mytts import TTSEngine, TTSMode, TTSBackend
@@ -7,12 +9,40 @@ from mytts import TTSEngine, TTSMode, TTSBackend
 
 _interrupted = False
 _client = None
+_speed_changed = False
 
 def _signal_handler(signum, frame):
     global _interrupted, _client
     _interrupted = True
     if _client:
         _client.stop()
+
+
+def _keyboard_listener():
+    """Listen for keyboard input in a separate thread."""
+    global _client, _speed_changed, _interrupted
+    
+    try:
+        while not _interrupted and _client:
+            try:
+                char = sys.stdin.read(1)
+                if char == '+' or char == '=':
+                    if _client:
+                        _client.increase_speed()
+                        _speed_changed = True
+                elif char == '-' or char == '_':
+                    if _client:
+                        _client.decrease_speed()
+                        _speed_changed = True
+                elif char == 'q' or char == 'Q':
+                    _interrupted = True
+                    if _client:
+                        _client.stop()
+                    break
+            except:
+                break
+    except:
+        pass
 
 
 @click.group()
@@ -60,11 +90,25 @@ def cli():
     default=0,
     help="Start reading from word number (0-indexed)",
 )
-def read(file_path, output, engine, voice, use_server, server_url, workers, buffer_size, start_word):
-    """Read a text file aloud"""
-    global _interrupted, _client
+@click.option(
+    "-s", "--speed",
+    type=float,
+    default=1.0,
+    help="Initial speech speed (0.25-4.0, default: 1.0)",
+)
+def read(file_path, output, engine, voice, use_server, server_url, workers, buffer_size, start_word, speed):
+    """Read a text file aloud
+    
+    Controls:
+      + / = : Increase speed
+      - / _ : Decrease speed
+      q / Q : Stop reading
+      Ctrl+C: Stop reading
+    """
+    global _interrupted, _client, _speed_changed
     _interrupted = False
     _client = None
+    _speed_changed = False
     
     signal.signal(signal.SIGINT, _signal_handler)
     
@@ -100,13 +144,18 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             bar = "█" * progress + "░" * (40 - progress)
             pct = int(100 * words_spoken / total_words) if total_words > 0 else 0
             
+            # Get current speed
+            current_speed = client.speed
+            speed_indicator = f"{current_speed:.2f}x"
+            
             # Clear, accessible output
             click.echo("")
             click.echo(click.style("─" * 60, dim=True))
             click.echo("")
             click.echo(f"  {click.style('▶', fg='green', bold=True)}  {sentence_text}")
             click.echo("")
-            click.echo(f"     {click.style('└─', dim=True)} {click.style(f'{words_spoken:,}', fg='cyan', bold=True)} of {total_words:,} words  {click.style(bar, dim=True)} {pct}%")
+            speed_color = 'yellow' if current_speed != 1.0 else 'white'
+            click.echo(f"     {click.style('└─', dim=True)} {click.style(f'{words_spoken:,}', fg='cyan', bold=True)} of {total_words:,} words  {click.style(bar, dim=True)} {pct}%  {click.style(speed_indicator, fg=speed_color, bold=True)}")
         
         client = ProgressiveTTSClient(
             engine_obj,
@@ -115,7 +164,14 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             on_play=on_play
         )
         
+        # Set initial speed
+        client.speed = max(0.25, min(4.0, speed))
+        
         _client = client
+        
+        # Start keyboard listener
+        keyboard_thread = threading.Thread(target=_keyboard_listener, daemon=True)
+        keyboard_thread.start()
         
         try:
             # Header
@@ -123,7 +179,10 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             click.echo(click.style("═" * 60, fg='cyan'))
             click.echo(click.style(f"  📖  Reading: {Path(file_path).name}", fg='cyan', bold=True))
             click.echo(click.style(f"     {total_words:,} words total", fg='cyan', dim=True))
+            click.echo(click.style(f"     Speed: {client.speed:.2f}x", fg='cyan', dim=True))
             click.echo(click.style("═" * 60, fg='cyan'))
+            click.echo("")
+            click.echo(click.style("  Controls: [+] faster [-] slower [q] quit", fg='white', dim=True))
             
             if start_word > 0:
                 click.echo("")
@@ -151,6 +210,7 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             
             if _interrupted:
                 # Clear, accessible summary
+                final_speed = client.speed
                 click.echo("")
                 click.echo(click.style("═" * 60, fg='yellow'))
                 click.echo(click.style("  ⏹  STOPPED", fg='yellow', bold=True))
@@ -160,11 +220,13 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
                 click.echo(click.style("  " + "─" * 40, dim=True))
                 click.echo(f"     Words:     {click.style(f'{words_spoken:,}', fg='cyan', bold=True)} of {total_words:,}")
                 click.echo(f"     Sentences: {sentences_played}")
+                click.echo(f"     Speed:     {click.style(f'{final_speed:.2f}x', fg='yellow', bold=True)}")
                 click.echo("")
                 click.echo(f"  {click.style('▶️', fg='green')}  Resume Command")
                 click.echo(click.style("  " + "─" * 40, dim=True))
                 click.echo("")
-                resume_cmd = f"mytts read {file_path} --server -w {words_spoken}"
+                speed_flag = f"-s {final_speed}" if final_speed != 1.0 else ""
+                resume_cmd = f"mytts read {file_path} --server -w {words_spoken} {speed_flag}".strip()
                 click.echo(f"     {click.style(resume_cmd, fg='green', bold=True)}")
                 click.echo("")
                 click.echo(click.style("═" * 60, fg='yellow'))
