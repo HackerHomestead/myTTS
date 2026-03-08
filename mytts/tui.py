@@ -194,7 +194,12 @@ class StatusDisplay(Static):
         text.append(f"Words: {self.words_spoken:,}/{self.total_words:,}  ", 
                    style="cyan")
         
-        voice_name = self.current_voice.split('-')[-1].replace('-medium', '').title()
+        # Extract voice name properly: en_US-lessac-medium -> Lessac
+        parts = self.current_voice.split('-')
+        if len(parts) >= 3:
+            voice_name = parts[2].title()
+        else:
+            voice_name = parts[-1].title()
         text.append(f"🎤 {voice_name}  ", style="magenta bold")
         
         if self.current_bookmark is not None:
@@ -334,7 +339,7 @@ class TTSReaderApp(App):
         server_url: str = "http://localhost:8000",
         voice: Optional[str] = None,
         start_word: int = 0,
-        initial_speed: float = 1.0,
+        initial_speed: float = 0.95,
     ):
         super().__init__()
         self.file_path = Path(file_path)

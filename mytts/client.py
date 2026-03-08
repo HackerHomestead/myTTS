@@ -55,7 +55,7 @@ class ProgressiveTTSClient:
         self._playback_lock = threading.Lock()
         self._stream_active = False
         
-        self._speed = 1.0
+        self._speed = 0.95
         self._speed_lock = threading.Lock()
         
         self._skip_forward = threading.Event()
@@ -91,7 +91,7 @@ class ProgressiveTTSClient:
     
     def reset_speed(self):
         with self._speed_lock:
-            self._speed = 1.0
+            self._speed = 0.95
     
     @property
     def is_paused(self) -> bool:

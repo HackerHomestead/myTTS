@@ -106,8 +106,8 @@ def cli():
 @click.option(
     "-s", "--speed",
     type=float,
-    default=1.0,
-    help="Initial speech speed (0.25-4.0, default: 1.0)",
+    default=0.95,
+    help="Initial speech speed (0.25-4.0, default: 0.95)",
 )
 @click.option(
     "--tui",
@@ -120,7 +120,7 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
     Controls (CLI mode):
       + / = : Increase speed
       - / _ : Decrease speed
-      0     : Reset to default speed (1.0x)
+      0     : Reset to default speed (0.95x)
       n / N : Skip to next sentence
       p / P : Go back to previous sentence
       Space : Pause/Resume

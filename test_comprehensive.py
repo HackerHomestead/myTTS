@@ -162,28 +162,28 @@ def test_progressive_client():
         
         result.add_pass("Client creation")
         
-        if client.speed == 1.0:
+        if client.speed == 0.95:
             result.add_pass("Default speed")
         else:
-            result.add_fail("Default speed", f"Expected 1.0, got {client.speed}")
+            result.add_fail("Default speed", f"Expected 0.95, got {client.speed}")
         
         client.increase_speed()
-        if client.speed == 1.05:
+        if client.speed == 1.0:
             result.add_pass("Increase speed")
         else:
-            result.add_fail("Increase speed", f"Expected 1.05, got {client.speed}")
+            result.add_fail("Increase speed", f"Expected 1.0, got {client.speed}")
         
         client.decrease_speed()
-        if client.speed == 1.0:
+        if client.speed == 0.95:
             result.add_pass("Decrease speed")
         else:
-            result.add_fail("Decrease speed", f"Expected 1.0, got {client.speed}")
+            result.add_fail("Decrease speed", f"Expected 0.95, got {client.speed}")
         
         client.reset_speed()
-        if client.speed == 1.0:
+        if client.speed == 0.95:
             result.add_pass("Reset speed")
         else:
-            result.add_fail("Reset speed", f"Expected 1.0, got {client.speed}")
+            result.add_fail("Reset speed", f"Expected 0.95, got {client.speed}")
         
         if not client.is_paused:
             result.add_pass("Initial not paused")

@@ -32,7 +32,7 @@ class TestProgressiveTTSClient:
     
     def test_client_creation(self, client):
         """Test client is created with correct defaults."""
-        assert client.speed == 1.0
+        assert client.speed == 0.95
         assert client.num_workers == 2
         assert client.buffer_size == 2
         assert not client.is_paused
@@ -40,7 +40,7 @@ class TestProgressiveTTSClient:
     
     def test_speed_property(self, client):
         """Test speed property getter and setter."""
-        assert client.speed == 1.0
+        assert client.speed == 0.95
         
         client.speed = 2.0
         assert client.speed == 2.0
@@ -72,7 +72,7 @@ class TestProgressiveTTSClient:
         """Test speed reset to default."""
         client.speed = 2.5
         client.reset_speed()
-        assert client.speed == 1.0
+        assert client.speed == 0.95
     
     def test_toggle_pause(self, client):
         """Test pause toggle."""
