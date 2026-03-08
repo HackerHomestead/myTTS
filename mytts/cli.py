@@ -44,6 +44,9 @@ def _keyboard_listener():
                 elif char == 'p' or char == 'P':
                     if _client:
                         _client.skip_backward()
+                elif char == ' ':
+                    if _client:
+                        _client.toggle_pause()
                 elif char == 'q' or char == 'Q':
                     _interrupted = True
                     if _client:
@@ -115,6 +118,7 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
       0     : Reset to default speed (1.0x)
       n / N : Skip to next sentence
       p / P : Go back to previous sentence
+      Space : Pause/Resume
       q / Q : Stop reading
       Ctrl+C: Stop reading
     """
@@ -198,7 +202,7 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             click.echo(click.style(f"     Speed: {client.speed:.2f}x", fg='cyan', dim=True))
             click.echo(click.style("═" * 60, fg='cyan'))
             click.echo("")
-            click.echo(click.style("  Controls: [+/=] faster [-/_] slower [0] reset [n] next [p] prev [q] quit", fg='white', dim=True))
+            click.echo(click.style("  Controls: [+/=] faster [-/_] slower [0] reset [n] next [p] prev [space] pause [q] quit", fg='white', dim=True))
             
             if start_word > 0:
                 click.echo("")

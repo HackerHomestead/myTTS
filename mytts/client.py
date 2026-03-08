@@ -53,6 +53,7 @@ class ProgressiveTTSClient:
         
         self._skip_forward = threading.Event()
         self._skip_backward = threading.Event()
+        self._paused = threading.Event()
         self._current_chunk_index = 0
         self._chunks_list: List[SentenceChunk] = []
         
@@ -92,6 +93,13 @@ class ProgressiveTTSClient:
     def skip_backward(self):
         self._skip_backward.set()
         sd.stop()
+    
+    def toggle_pause(self):
+        if self._paused.is_set():
+            self._paused.clear()
+        else:
+            self._paused.set()
+            sd.stop()
     
     def stop(self):
         self._stop_event.set()
@@ -192,6 +200,13 @@ class ProgressiveTTSClient:
             submitted_futures[i] = future
         
         while self._current_chunk_index < len(chunks) and not self._stop_event.is_set():
+            # Check for pause
+            while self._paused.is_set() and not self._stop_event.is_set():
+                time.sleep(0.1)
+            
+            if self._stop_event.is_set():
+                break
+            
             # Check for skip events
             if self._skip_forward.is_set():
                 self._skip_forward.clear()
