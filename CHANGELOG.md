@@ -2,6 +2,40 @@
 
 All notable changes to myTTS will be documented in this file.
 
+## [v1.4.0-mvp] - 2026-03-08
+
+### 💾 State Persistence
+
+#### Added
+- **State File**: `.mytts.json` saved alongside text files
+  - Bookmarks with chunk text for context
+  - Last reading position (word number)
+  - Speed preference
+  - Voice preference
+- **Auto-Save**: State saved automatically on changes (2s debounce)
+- **Auto-Resume**: Position restored when opening document
+- **Jump Dialog Enhancement**: Shows bookmark text (truncated to 50 chars)
+
+#### State File Format
+```json
+{
+  "bookmarks": [
+    {"index": 42, "text": "This is the bookmarked sentence...", "word": 500}
+  ],
+  "last_position": 42,
+  "last_word": 500,
+  "speed": 0.95,
+  "voice": "en_US-lessac-medium"
+}
+```
+
+#### Technical
+- Backward compatible with old bookmark format (list of indices)
+- State saved on: bookmark set, speed change, voice change, exit
+- State file added to `.gitignore`
+
+---
+
 ## [v1.3.0-mvp] - 2026-03-08
 
 ### 🎬 Word-Level Highlighting - Subtitle-Style Sync
