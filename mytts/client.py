@@ -65,7 +65,11 @@ class ProgressiveTTSClient:
             import requests
             response = requests.post(
                 f"{self.engine.server_url}/tts",
-                json={"text": chunk.text, "voice": self.engine.voice},
+                json={
+                    "text": chunk.text,
+                    "voice": self.engine.voice,
+                    "engine": self.engine.engine_name,
+                },
             )
             response.raise_for_status()
             wav_data = io.BytesIO(response.content)

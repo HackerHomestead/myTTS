@@ -28,7 +28,7 @@ def play_voice(voice: str, text: str, server_url: str):
     try:
         response = requests.post(
             f"{server_url}/tts",
-            json={"text": text, "voice": voice},
+            json={"text": text, "voice": voice, "engine": "piper"},
             timeout=30
         )
         response.raise_for_status()

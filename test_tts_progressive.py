@@ -182,6 +182,7 @@ def create_client(use_server=True, voice=None):
     backend = TTSBackend.SERVER if use_server else TTSBackend.LOCAL
     engine = TTSEngine(
         backend=backend,
+        engine="piper",  # Use Piper for voice variation
         server_url=SERVER_URL,
         voice=voice or "en_US-lessac-medium",
     )
