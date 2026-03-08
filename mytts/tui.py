@@ -110,31 +110,29 @@ class ChunkDisplay(Static):
         """Calculate how many lines can fit in the available space.
         
         Base terminal: 80x25 (25 lines total)
-        Overhead: header (2), status (2), controls (3), progress (2), footer (2), borders (4) = 15 lines
-        Available for chunks: 10 lines
-        With 2-line separator between chunks: ~3-4 chunks visible
+        Optimized layout:
+        - Textual Header: 1 line
+        - Header container: 1 line
+        - Content container: 1fr (flexible)
+        - Progress container: 1 line
+        - Status container: 1 line
+        - Controls container: 1 line
+        - Textual Footer: 1 line
+        - Borders/padding: ~2 lines
+        Total overhead: ~8 lines
+        Available for chunks: 17 lines
+        With 1-line separator between chunks: ~8-9 chunks visible
         """
         try:
             if hasattr(self, 'region'):
                 available_height = self.region.height
             else:
-                # Default to base terminal height minus overhead
-                available_height = 25
+                available_height = 17
             
-            # Reserve space for UI elements (header, status, controls, progress, footer, borders)
-            overhead = 15
-            usable_height = max(available_height - overhead, 3)
-            
-            # Each chunk takes 1 line + 2 lines separator = 3 lines per chunk
-            # But last chunk doesn't need separator
-            # So: (chunks * 3) - 2 <= usable_height
-            # chunks <= (usable_height + 2) / 3
-            self.visible_lines = max(3, int((usable_height + 2) / 3))
-            
-            # Cap at reasonable maximum
+            self.visible_lines = max(5, available_height)
             self.visible_lines = min(self.visible_lines, 20)
         except Exception:
-            self.visible_lines = 3
+            self.visible_lines = 5
     
     def _get_word_start_for_chunk(self, chunk_idx: int) -> int:
         """Get the starting word number for a chunk."""
@@ -149,7 +147,6 @@ class ChunkDisplay(Static):
             return Text("Ready to read...", style="dim italic")
         
         text = Text()
-        text.append("\n")
         
         visible_start = self.scroll_offset
         visible_end = min(visible_start + self.visible_lines, len(self.chunks))
@@ -161,29 +158,26 @@ class ChunkDisplay(Static):
             is_current = (i == self.current_idx)
             is_selected = (i == self.selected_idx)
             
-            # Line number/indicator column
             if is_current:
-                text.append("  ▶ ", style="yellow bold")
+                text.append("▶", style="yellow bold")
                 text.append(f"{word_start:5,}", style="yellow bold reverse")
-                text.append(" │ ", style="yellow bold")
+                text.append("│", style="yellow bold")
             elif is_selected:
-                text.append("  ◆ ", style="cyan bold")
+                text.append("◆", style="cyan bold")
                 text.append(f"{word_start:5,}", style="cyan bold reverse")
-                text.append(" │ ", style="cyan bold")
+                text.append("│", style="cyan bold")
             else:
-                text.append("     ", style="dim")
+                text.append(" ", style="dim")
                 text.append(f"{word_start:5,}", style="white bold")
-                text.append(" │ ", style="dim")
+                text.append("│", style="dim")
             
-            # Text block - wrap long lines
-            max_width = 60
+            max_width = 65
             words = chunk.split()
             line_words = []
             current_length = 0
             
             for word in words:
                 if current_length + len(word) + 1 > max_width and line_words:
-                    # Output current line
                     line_text = " ".join(line_words)
                     if is_current:
                         text.append(f"{line_text}\n", style="yellow")
@@ -192,15 +186,13 @@ class ChunkDisplay(Static):
                     else:
                         text.append(f"{line_text}\n", style="white dim")
                     
-                    # Add continuation indent
-                    text.append("               │ ", style="dim" if not is_current else "yellow")
+                    text.append("      │", style="dim" if not is_current else "yellow")
                     line_words = [word]
                     current_length = len(word)
                 else:
                     line_words.append(word)
                     current_length += len(word) + 1
             
-            # Output remaining words
             if line_words:
                 line_text = " ".join(line_words)
                 if is_current:
@@ -210,11 +202,9 @@ class ChunkDisplay(Static):
                 else:
                     text.append(f"{line_text}\n", style="white dim")
             
-            # Add 2 blank lines between chunks (except after last visible chunk)
             if i < visible_end - 1:
-                text.append("\n\n")
+                text.append("\n")
         
-        text.append("\n")
         return text
     
     def scroll_to_current(self):
@@ -236,6 +226,25 @@ class ChunkDisplay(Static):
         self.scroll_offset = max(0, min(center_offset, max_offset))
 
 
+class HeaderDisplay(Static):
+    """Widget to display header with file name and terminal size."""
+    
+    file_name = reactive("")
+    terminal_size: reactive[tuple[int, int]] = reactive((80, 25))
+    
+    def render(self):
+        text = Text()
+        text.append(f"📖 Reading: {self.file_name}", style="bold")
+        
+        padding = self.terminal_size[0] - len(f"📖 Reading: {self.file_name}") - 12
+        if padding > 0:
+            text.append(" " * padding)
+        
+        text.append(f"[{self.terminal_size[0]}x{self.terminal_size[1]}]", style="dim")
+        
+        return text
+
+
 class StatusDisplay(Static):
     """Widget to display current status (speed, position, etc.)."""
     
@@ -247,6 +256,7 @@ class StatusDisplay(Static):
     loading_message = reactive("")
     current_bookmark: reactive[int | None] = reactive(None)
     current_voice = reactive("en_US-lessac-medium")
+    terminal_size: reactive[tuple[int, int]] = reactive((0, 0))
     
     def render(self):
         text = Text()
@@ -254,7 +264,7 @@ class StatusDisplay(Static):
         if self.is_loading:
             text.append(f"  ⏳ {self.loading_message}  ", style="yellow bold blink")
         
-        speed_color = "yellow" if self.speed != 1.0 else "white"
+        speed_color = "yellow" if self.speed != 0.95 else "white"
         text.append(f"  Speed: {self.speed:.2f}x  ", style=f"{speed_color} bold")
         
         if self.is_paused:
@@ -265,17 +275,16 @@ class StatusDisplay(Static):
         text.append(f"Words: {self.words_spoken:,}/{self.total_words:,}  ", 
                    style="cyan")
         
-        # Extract voice name properly: en_US-lessac-medium -> Lessac
-        parts = self.current_voice.split('-')
-        if len(parts) >= 3:
-            voice_name = parts[2].title()
-        else:
-            voice_name = parts[-1].title()
+        voice_name = self.current_voice.split('-')[-1].replace('-medium', '').title()
         text.append(f"🎤 {voice_name}  ", style="magenta bold")
         
         if self.current_bookmark is not None:
             text.append(f"🔖 Bookmark at {self.current_bookmark}", 
                        style="magenta")
+        
+        # Terminal size info in top right
+        if self.terminal_size[0] > 0:
+            text.append(f"  {self.terminal_size[0]}x{self.terminal_size[1]}  ", style="dim")
         
         return text
 
@@ -285,29 +294,28 @@ class ControlsDisplay(Static):
     
     def render(self):
         text = Text()
-        text.append("\n  ")
+        text.append("  ")
         
         controls = [
             ("Space", "Pause"),
-            ("↑/↓", "Navigate"),
+            ("↑/↓", "Nav"),
             ("Enter", "Jump"),
             ("+/−", "Speed"),
             ("0", "Reset"),
             ("v", "Voice"),
             ("r", "Repeat"),
-            ("m", "Bookmark"),
-            ("[/]", "Jump bm"),
-            ("Home/End", "Begin/End"),
+            ("m", "Bmark"),
+            ("[/]", "JmpBm"),
+            ("Home/End", "Beg/End"),
             ("q", "Quit"),
         ]
         
         for i, (key, action) in enumerate(controls):
             if i > 0:
-                text.append("  ")
+                text.append(" ")
             text.append(f"[{key}]", style="cyan bold")
-            text.append(f" {action}", style="white")
+            text.append(f"{action}", style="white")
         
-        text.append("\n")
         return text
 
 
@@ -323,34 +331,34 @@ class TTSReaderApp(App):
     #main-container {
         height: 100%;
         width: 100%;
-        padding: 1 2;
+        padding: 0 1;
         overflow: hidden;
     }
     
     #header-container {
-        height: auto;
-        margin-bottom: 1;
+        height: 1;
+        margin-bottom: 0;
     }
     
     #content-container {
         height: 1fr;
         width: 100%;
-        margin: 1 0;
+        margin: 0;
         overflow: hidden;
     }
     
     #progress-container {
-        height: auto;
-        margin-top: 1;
+        height: 1;
+        margin-top: 0;
     }
     
     #status-container {
-        height: auto;
+        height: 1;
     }
     
     #controls-container {
-        height: auto;
-        margin-top: 1;
+        height: 1;
+        margin-top: 0;
     }
     
     .title {
@@ -361,21 +369,21 @@ class TTSReaderApp(App):
     ChunkDisplay {
         height: 100%;
         width: 100%;
-        padding: 1 2;
+        padding: 0 1;
         background: $panel;
         border: solid $primary;
         overflow-y: auto;
     }
     
     StatusDisplay {
-        height: auto;
-        padding: 0 2;
+        height: 1;
+        padding: 0 1;
         background: $panel;
     }
     
     ControlsDisplay {
-        height: auto;
-        padding: 0 2;
+        height: 1;
+        padding: 0 1;
         background: $panel;
     }
     
@@ -456,10 +464,7 @@ class TTSReaderApp(App):
         yield Header()
         with Container(id="main-container"):
             with Container(id="header-container"):
-                yield Static(
-                    f"📖 Reading: {self.file_path.name}",
-                    classes="title"
-                )
+                yield HeaderDisplay()
             
             with ScrollableContainer(id="content-container"):
                 yield ChunkDisplay()
@@ -507,10 +512,15 @@ class TTSReaderApp(App):
             chunk_display.current_idx = 0
             chunk_display.selected_idx = 0
             
+            header_display = self.query_one(HeaderDisplay)
+            header_display.file_name = self.file_path.name
+            header_display.terminal_size = (self.size.width, self.size.height)
+            
             status_display = self.query_one(StatusDisplay)
             status_display.total_words = self.total_words
             status_display.speed = self.initial_speed
             status_display.current_voice = current_voice
+            status_display.terminal_size = (self.size.width, self.size.height)
             
             if self.start_word > 0:
                 # Show seeking indicator
@@ -554,6 +564,12 @@ class TTSReaderApp(App):
             chunk_display = self.query_one(ChunkDisplay)
             chunk_display._update_visible_lines()
             chunk_display.refresh()
+            
+            header_display = self.query_one(HeaderDisplay)
+            header_display.terminal_size = (self.size.width, self.size.height)
+            
+            status_display = self.query_one(StatusDisplay)
+            status_display.terminal_size = (self.size.width, self.size.height)
         except Exception as e:
             logger.warning(f"Error handling resize: {e}")
     

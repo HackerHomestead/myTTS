@@ -2,6 +2,15 @@
 
 The Text User Interface (TUI) mode provides a modern, interactive interface for reading documents with myTTS.
 
+## Terminal Requirements
+
+The TUI is optimized for an **80x25 (COLxROW)** terminal with some flexibility:
+- Minimum: 80 columns × 24 rows
+- Recommended: 80 columns × 25 rows
+- Works well up to: 120 columns × 40 rows
+
+The current terminal size is displayed in the header (upper right) as `[COLxROW]`.
+
 ## Starting TUI Mode
 
 ```bash
@@ -97,13 +106,14 @@ The TUI is built using:
 
 ```
 TTSReaderApp
-├── Header (file info)
+├── Header (Textual header widget)
 ├── Main Container
-│   ├── SentenceDisplay (current sentence)
+│   ├── HeaderDisplay (file name + terminal size)
+│   ├── ChunkDisplay (current and surrounding sentences)
 │   ├── ProgressBar (visual progress)
 │   ├── StatusDisplay (speed, position, bookmarks)
 │   └── ControlsDisplay (keyboard shortcuts)
-└── Footer (bindings)
+└── Footer (Textual footer widget)
 ```
 
 ## Server Requirements
@@ -132,7 +142,8 @@ python -c "from mytts.tui import TTSReaderApp; print('OK')"
 
 - Ensure terminal supports 256 colors
 - Try a modern terminal (iTerm2, Windows Terminal, etc.)
-- Check terminal size (minimum 80x24)
+- Check terminal size (minimum 80x24, recommended 80x25)
+- Terminal size is shown in header as `[COLxROW]`
 
 ### Controls not responding
 

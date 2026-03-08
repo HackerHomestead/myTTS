@@ -88,38 +88,46 @@ def test_widgets():
     """Test that all widgets work correctly."""
     print("\nTesting widgets...")
     
-    from mytts.tui import SentenceDisplay, StatusDisplay, ControlsDisplay
+    from mytts.tui import ChunkDisplay, StatusDisplay, ControlsDisplay, HeaderDisplay
     
     try:
-        # Test SentenceDisplay
-        sd = SentenceDisplay()
-        sd.sentence = "Test sentence"
-        sd.sentence_number = 1
-        sd.total_sentences = 10
-        rendered = sd.render()
+        cd = ChunkDisplay()
+        cd.chunks = ["Test sentence one.", "Test sentence two."]
+        cd.current_idx = 0
+        cd.selected_idx = 0
+        rendered = cd.render()
         assert "Test sentence" in str(rendered)
-        print("  ✓ SentenceDisplay")
+        print("  ✓ ChunkDisplay")
         
-        # Test StatusDisplay
         st = StatusDisplay()
         st.speed = 1.5
         st.words_spoken = 100
         st.total_words = 1000
         st.is_paused = False
+        st.terminal_size = (80, 25)
         rendered = st.render()
         assert "1.50x" in str(rendered)
         print("  ✓ StatusDisplay")
         
-        # Test ControlsDisplay
         cd = ControlsDisplay()
         rendered = cd.render()
         assert "Space" in str(rendered)
         print("  ✓ ControlsDisplay")
         
+        hd = HeaderDisplay()
+        hd.file_name = "test.txt"
+        hd.terminal_size = (80, 25)
+        rendered = hd.render()
+        assert "test.txt" in str(rendered)
+        assert "80x25" in str(rendered)
+        print("  ✓ HeaderDisplay")
+        
         return True
         
     except Exception as e:
         print(f"  ✗ Error: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
@@ -140,19 +148,21 @@ def test_actions():
         
         actions = [
             'action_toggle_pause',
+            'action_select_prev',
+            'action_select_next',
+            'action_jump_to_selected',
             'action_next_sentence',
             'action_prev_sentence',
             'action_increase_speed',
             'action_decrease_speed',
             'action_reset_speed',
+            'action_cycle_voice',
             'action_repeat_sentence',
-            'action_goto_sentence',
             'action_set_bookmark',
             'action_prev_bookmark',
             'action_next_bookmark',
             'action_goto_beginning',
             'action_goto_end',
-            'action_show_info',
             'action_quit',
         ]
         

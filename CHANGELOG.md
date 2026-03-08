@@ -2,6 +2,27 @@
 
 All notable changes to myTTS will be documented in this file.
 
+## [v1.1.0-tui] - 2026-03-08
+
+### 🖥️ TUI Improvements
+
+#### Added
+- **Terminal Size Display**: Shows current terminal dimensions in header (upper right) as `[COLxROW]`
+- **HeaderDisplay Widget**: New widget showing file name and terminal size
+- **Optimized Layout**: TUI now optimized for 80x25 terminal with flexible sizing
+- **Compact Controls**: Reduced control bar footprint for better content visibility
+
+#### Changed
+- **ChunkDisplay**: Renamed from SentenceDisplay, now shows multiple chunks with current highlighted
+- **CSS Optimization**: Reduced padding and margins for better space utilization
+- **ControlsDisplay**: More compact control labels for 80-column terminals
+
+#### Fixed
+- **Test Compatibility**: Updated test_tui.py to use correct widget names
+- **Reactive Types**: Fixed terminal_size reactive property type annotations
+
+---
+
 ## [v1.0.0-mvp] - 2026-03-08
 
 ### 🚀 MVP Release - Production Ready
