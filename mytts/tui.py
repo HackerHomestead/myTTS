@@ -92,6 +92,7 @@ class StatusDisplay(Static):
     total_words = reactive(0)
     is_paused = reactive(False)
     current_bookmark: reactive[int | None] = reactive(None)
+    current_voice = reactive("en_US-lessac-medium")
     
     def render(self):
         text = Text()
@@ -106,6 +107,9 @@ class StatusDisplay(Static):
         
         text.append(f"Words: {self.words_spoken:,}/{self.total_words:,}  ", 
                    style="cyan")
+        
+        voice_name = self.current_voice.split('-')[-1].replace('-medium', '').title()
+        text.append(f"🎤 {voice_name}  ", style="magenta bold")
         
         if self.current_bookmark is not None:
             text.append(f"🔖 Bookmark at {self.current_bookmark}", 
@@ -127,6 +131,7 @@ class ControlsDisplay(Static):
             ("Enter", "Jump"),
             ("+/−", "Speed"),
             ("0", "Reset"),
+            ("v", "Voice"),
             ("r", "Repeat"),
             ("m", "Bookmark"),
             ("[/]", "Jump bm"),
@@ -221,6 +226,7 @@ class TTSReaderApp(App):
         Binding("plus,equals", "increase_speed", "Faster"),
         Binding("minus,underscore", "decrease_speed", "Slower"),
         Binding("0", "reset_speed", "Reset Speed"),
+        Binding("v", "cycle_voice", "Voice"),
         Binding("r", "repeat_sentence", "Repeat"),
         Binding("m", "set_bookmark", "Bookmark"),
         Binding("bracketleft", "prev_bookmark", "← Bookmark"),
@@ -244,6 +250,21 @@ class TTSReaderApp(App):
         self.voice = voice
         self.start_word = start_word
         self.initial_speed = initial_speed
+        
+        self.available_voices = [
+            "en_US-lessac-medium",
+            "en_US-amy-medium",
+            "en_US-ryan-medium",
+            "en_US-danny-low",
+            "en_US-joe-medium",
+            "en_US-kathleen-low",
+            "en_US-ljspeech-medium",
+            "en_US-ryan-low",
+        ]
+        self.current_voice_index = 0
+        
+        if voice and voice in self.available_voices:
+            self.current_voice_index = self.available_voices.index(voice)
         
         self.engine: Optional[TTSEngine] = None
         self.client: Optional[ProgressiveTTSClient] = None
@@ -285,11 +306,12 @@ class TTSReaderApp(App):
     def on_mount(self):
         try:
             backend = TTSBackend.SERVER
+            current_voice = self.available_voices[self.current_voice_index]
             self.engine = TTSEngine(
                 mode=TTSMode.READING,
                 backend=backend,
                 engine="piper",
-                voice=self.voice or "en_US-lessac-medium",
+                voice=current_voice,
                 server_url=self.server_url,
             )
             
@@ -315,6 +337,7 @@ class TTSReaderApp(App):
             status_display = self.query_one(StatusDisplay)
             status_display.total_words = self.total_words
             status_display.speed = self.initial_speed
+            status_display.current_voice = current_voice
             
             if self.start_word > 0:
                 self._seek_to_word(self.start_word)
@@ -434,6 +457,47 @@ class TTSReaderApp(App):
         if self.client:
             self.client.reset_speed()
             self.query_one(StatusDisplay).speed = self.client.speed
+    
+    def action_cycle_voice(self):
+        self.current_voice_index = (self.current_voice_index + 1) % len(self.available_voices)
+        new_voice = self.available_voices[self.current_voice_index]
+        
+        self.should_stop = True
+        if self.client:
+            self.client.stop()
+        
+        if self.read_thread and self.read_thread.is_alive():
+            self.read_thread.join(timeout=2.0)
+        
+        try:
+            backend = TTSBackend.SERVER
+            self.engine = TTSEngine(
+                mode=TTSMode.READING,
+                backend=backend,
+                engine="piper",
+                voice=new_voice,
+                server_url=self.server_url,
+            )
+            
+            self.client = ProgressiveTTSClient(
+                self.engine,
+                num_workers=4,
+                buffer_size=2,
+                on_play=self._on_sentence_play
+            )
+            
+            self.client.speed = self.initial_speed
+            
+            status_display = self.query_one(StatusDisplay)
+            status_display.current_voice = new_voice
+            status_display.speed = self.client.speed
+            
+            self.should_stop = False
+            self._start_reading()
+            
+        except Exception as e:
+            logger.error(f"Error cycling voice: {e}\n{traceback.format_exc()}")
+            self._show_error(f"Voice change failed: {e}")
     
     def action_repeat_sentence(self):
         if self.client and self.current_sentence_idx < len(self.sentences):
