@@ -96,8 +96,28 @@ class ChunkDisplay(Static):
     selected_idx: reactive[int] = reactive(0)
     scroll_offset: reactive[int] = reactive(0)
     total_sentences: reactive[int] = reactive(0)
+    visible_lines: reactive[int] = reactive(7)
     
-    VISIBLE_LINES = 7
+    def on_mount(self):
+        """Calculate visible lines based on available space."""
+        self._update_visible_lines()
+    
+    def on_resize(self, event):
+        """Handle terminal resize events."""
+        self._update_visible_lines()
+    
+    def _update_visible_lines(self):
+        """Calculate how many lines can fit in the available space."""
+        try:
+            if hasattr(self, 'region'):
+                available_height = self.region.height
+                # Reserve space for padding and borders
+                usable_height = max(available_height - 4, 3)
+                self.visible_lines = min(usable_height, 15)
+            else:
+                self.visible_lines = 7
+        except Exception:
+            self.visible_lines = 7
     
     def render(self) -> Text:
         if not self.chunks:
@@ -107,7 +127,7 @@ class ChunkDisplay(Static):
         text.append("\n")
         
         visible_start = self.scroll_offset
-        visible_end = min(visible_start + self.VISIBLE_LINES, len(self.chunks))
+        visible_end = min(visible_start + self.visible_lines, len(self.chunks))
         
         for i in range(visible_start, visible_end):
             chunk = self.chunks[i]
@@ -135,14 +155,14 @@ class ChunkDisplay(Static):
     def scroll_to_current(self):
         if self.current_idx < self.scroll_offset:
             self.scroll_offset = self.current_idx
-        elif self.current_idx >= self.scroll_offset + self.VISIBLE_LINES:
-            self.scroll_offset = self.current_idx - self.VISIBLE_LINES + 1
+        elif self.current_idx >= self.scroll_offset + self.visible_lines:
+            self.scroll_offset = self.current_idx - self.visible_lines + 1
     
     def scroll_to_selected(self):
         if self.selected_idx < self.scroll_offset:
             self.scroll_offset = self.selected_idx
-        elif self.selected_idx >= self.scroll_offset + self.VISIBLE_LINES:
-            self.scroll_offset = self.selected_idx - self.VISIBLE_LINES + 1
+        elif self.selected_idx >= self.scroll_offset + self.visible_lines:
+            self.scroll_offset = self.selected_idx - self.visible_lines + 1
 
 
 class StatusDisplay(Static):
@@ -216,11 +236,14 @@ class TTSReaderApp(App):
     CSS = """
     Screen {
         background: $surface;
+        overflow: hidden;
     }
     
     #main-container {
         height: 100%;
+        width: 100%;
         padding: 1 2;
+        overflow: hidden;
     }
     
     #header-container {
@@ -230,7 +253,9 @@ class TTSReaderApp(App):
     
     #content-container {
         height: 1fr;
+        width: 100%;
         margin: 1 0;
+        overflow: hidden;
     }
     
     #progress-container {
@@ -253,11 +278,12 @@ class TTSReaderApp(App):
     }
     
     ChunkDisplay {
-        height: auto;
-        min-height: 10;
+        height: 100%;
+        width: 100%;
         padding: 1 2;
         background: $panel;
         border: solid $primary;
+        overflow-y: auto;
     }
     
     StatusDisplay {
@@ -354,7 +380,7 @@ class TTSReaderApp(App):
                     classes="title"
                 )
             
-            with Container(id="content-container"):
+            with ScrollableContainer(id="content-container"):
                 yield ChunkDisplay()
             
             with Container(id="progress-container"):
@@ -410,6 +436,15 @@ class TTSReaderApp(App):
         except Exception as e:
             logger.error(f"Error during TUI initialization: {e}\n{traceback.format_exc()}")
             self._show_error(f"Initialization failed: {e}")
+    
+    def on_resize(self, event):
+        """Handle terminal resize events."""
+        try:
+            chunk_display = self.query_one(ChunkDisplay)
+            chunk_display._update_visible_lines()
+            chunk_display.refresh()
+        except Exception as e:
+            logger.warning(f"Error handling resize: {e}")
     
     def on_unmount(self):
         """Clean up when TUI closes."""
