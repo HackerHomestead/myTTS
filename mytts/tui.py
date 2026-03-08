@@ -419,9 +419,9 @@ class JumpDialog(ModalScreen):
     }
     
     #dialog-container {
-        width: 70;
+        width: 75;
         height: auto;
-        max-height: 30;
+        max-height: 35;
         background: $surface;
         border: thick $primary;
         padding: 1 2;
@@ -450,26 +450,24 @@ class JumpDialog(ModalScreen):
     #bookmarks-container {
         margin-top: 1;
         margin-bottom: 1;
+        height: auto;
+        max-height: 20;
+        overflow-y: auto;
+        background: $panel;
+        border: solid $primary-darken-2;
+        padding: 0 1;
     }
     
     #bookmarks-label {
         color: $text-secondary;
         margin-bottom: 0;
-    }
-    
-    #bookmarks-list {
-        height: auto;
-        max-height: 15;
-        overflow-y: auto;
-        background: $panel;
-        border: solid $primary-darken-2;
-        padding: 0;
+        text-style: bold;
     }
     
     .bookmark-btn {
         width: 100%;
         margin: 0;
-        height: 1;
+        padding: 0 1;
     }
     
     .bookmark-btn.selected {
@@ -526,15 +524,14 @@ class JumpDialog(ModalScreen):
             if self.bookmarks:
                 with Container(id="bookmarks-container"):
                     yield Label("Bookmarks:", id="bookmarks-label")
-                    with ScrollableContainer(id="bookmarks-list"):
-                        for i, bm in enumerate(self.bookmarks):
-                            # Truncate text if too long
-                            text = bm['text'][:50] + "..." if len(bm['text']) > 50 else bm['text']
-                            yield Button(
-                                f"#{i+1}: {text}",
-                                id=f"bookmark-{i}",
-                                classes="bookmark-btn",
-                            )
+                    for i, bm in enumerate(self.bookmarks):
+                        # Truncate text if too long
+                        text = bm['text'][:50] + "..." if len(bm['text']) > 50 else bm['text']
+                        yield Button(
+                            f"#{i+1}: {text}",
+                            id=f"bookmark-{i}",
+                            classes="bookmark-btn",
+                        )
             
             with Horizontal(id="buttons-container"):
                 yield Button("Cancel", id="cancel-btn", variant="default")
