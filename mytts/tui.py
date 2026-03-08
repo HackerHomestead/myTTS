@@ -419,8 +419,9 @@ class JumpDialog(ModalScreen):
     }
     
     #dialog-container {
-        width: 60;
+        width: 70;
         height: auto;
+        max-height: 30;
         background: $surface;
         border: thick $primary;
         padding: 1 2;
@@ -458,7 +459,7 @@ class JumpDialog(ModalScreen):
     
     #bookmarks-list {
         height: auto;
-        max-height: 8;
+        max-height: 15;
         overflow-y: auto;
         background: $panel;
         border: solid $primary-darken-2;
@@ -468,6 +469,7 @@ class JumpDialog(ModalScreen):
     .bookmark-btn {
         width: 100%;
         margin: 0;
+        height: 1;
     }
     
     .bookmark-btn.selected {
@@ -556,15 +558,30 @@ class JumpDialog(ModalScreen):
             event.stop()
     
     def _update_bookmark_selection(self):
-        """Update the visual selection of bookmarks."""
-        bookmark_btns = self.query(".bookmark-btn")
+        """Update the visual selection of bookmarks and scroll to selected."""
+        bookmark_btns = list(self.query(".bookmark-btn"))
         for i, btn in enumerate(bookmark_btns):
             if i == self.selected_bookmark_idx:
                 btn.add_class("selected")
                 word_num = self.bookmarks[i]['word']
                 self.query_one(Input).value = str(word_num)
+                
+                # Scroll to the selected button
+                self._scroll_to_bookmark(i)
             else:
                 btn.remove_class("selected")
+    
+    def _scroll_to_bookmark(self, idx: int):
+        """Scroll the bookmarks list to show the selected bookmark."""
+        try:
+            bookmark_btns = list(self.query(".bookmark-btn"))
+            
+            if idx >= 0 and idx < len(bookmark_btns):
+                # Scroll to show the selected button
+                btn = bookmark_btns[idx]
+                btn.scroll_visible(animate=False)
+        except Exception:
+            pass
     
     def on_input_submitted(self, event: Input.Submitted):
         """Handle input submission."""
