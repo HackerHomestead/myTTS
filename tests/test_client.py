@@ -60,13 +60,13 @@ class TestProgressiveTTSClient:
         """Test speed increase."""
         initial = client.speed
         client.increase_speed()
-        assert client.speed == initial + 0.1
+        assert client.speed == initial + 0.05
     
     def test_decrease_speed(self, client):
         """Test speed decrease."""
         initial = client.speed
         client.decrease_speed()
-        assert client.speed == initial - 0.1
+        assert client.speed == initial - 0.05
     
     def test_reset_speed(self, client):
         """Test speed reset to default."""

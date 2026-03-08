@@ -80,11 +80,11 @@ class ProgressiveTTSClient:
         with self._speed_lock:
             self._speed = max(0.25, min(4.0, value))
     
-    def increase_speed(self, delta: float = 0.1):
+    def increase_speed(self, delta: float = 0.05):
         with self._speed_lock:
             self._speed = min(4.0, self._speed + delta)
     
-    def decrease_speed(self, delta: float = 0.1):
+    def decrease_speed(self, delta: float = 0.05):
         with self._speed_lock:
             self._speed = max(0.25, self._speed - delta)
     
