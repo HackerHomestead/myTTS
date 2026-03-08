@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 import uvicorn
 from pydantic import BaseModel
+from typing import Optional
 import io
 import wave
 import numpy as np
@@ -14,17 +15,27 @@ class TTSRequest(BaseModel):
     text: str
     voice: str = "en_US-lessac-medium"
     engine: str = "coqui"
+    model: str = "tts_models/en/ljspeech/tacotron2-DDC"
 
 
 app = FastAPI(title="myTTS Server")
 engines = {}
 
 
-def get_engine(engine_name: str, voice: str):
-    key = f"{engine_name}:{voice}"
+def get_engine(engine_name: str, voice: str, model: Optional[str] = None):
+    import torch
+    key = f"{engine_name}:{voice}:{model}"
     if key not in engines:
         if engine_name == "coqui":
-            engines[key] = CoquiEngine(voice=voice)
+            model = model or "tts_models/en/ljspeech/tacotron2-DDC"
+            # Enable GPU mode if available
+            try:
+                gpu = torch.cuda.is_available()
+                if gpu:
+                    torch.zeros(1).cuda()  # Test GPU allocation
+            except Exception:
+                gpu = False
+            engines[key] = CoquiEngine(voice=voice, model=model, gpu=gpu)
         elif engine_name == "piper":
             engines[key] = PiperEngine(voice=voice)
         else:
@@ -35,7 +46,7 @@ def get_engine(engine_name: str, voice: str):
 @app.post("/tts")
 def generate_speech(req: TTSRequest):
     try:
-        engine = get_engine(req.engine, req.voice)
+        engine = get_engine(req.engine, req.voice, req.model)
         audio = engine.speak(req.text)
         
         if audio is None:

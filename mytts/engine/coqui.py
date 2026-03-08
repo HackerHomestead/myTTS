@@ -23,10 +23,19 @@ class BaseEngine(ABC):
 
 
 class CoquiEngine(BaseEngine):
-    def __init__(self, voice: Optional[str] = None, mode=None):
-        self.tts = TTS("tts_models/en/ljspeech/tacotron2-DDC")
+    def __init__(self, voice: Optional[str] = None, mode=None, model: str = None, gpu: bool = False):
+        import torch
         self.voice = voice or "en_US-lessac-medium"
         self.mode = mode
+        
+        model = model or "tts_models/en/ljspeech/tacotron2-DDC"
+        # Use GPU mode if enabled and available
+        if gpu and torch.cuda.is_available():
+            try:
+                torch.zeros(1).cuda()  # Test GPU allocation
+            except Exception:
+                gpu = False
+        self.tts = TTS(model, gpu=gpu)
 
     def speak(
         self,
