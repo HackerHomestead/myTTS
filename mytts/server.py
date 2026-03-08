@@ -15,7 +15,8 @@ class TTSRequest(BaseModel):
     text: str
     voice: str = "en_US-lessac-medium"
     engine: str = "coqui"
-    model: str = "tts_models/en/ljspeech/tacotron2-DDC"
+    model: str = "tts_models/en/ljspeech/vits"  # Changed to VITS for better stability
+    split_sentences: bool = True  # Enable text splitting for long texts
 
 
 app = FastAPI(title="myTTS Server")
@@ -27,7 +28,7 @@ def get_engine(engine_name: str, voice: str, model: Optional[str] = None):
     key = f"{engine_name}:{voice}:{model}"
     if key not in engines:
         if engine_name == "coqui":
-            model = model or "tts_models/en/ljspeech/tacotron2-DDC"
+            model = model or "tts_models/en/ljspeech/vits"  # Default to VITS
             # Enable GPU mode if available
             try:
                 gpu = torch.cuda.is_available()
@@ -47,7 +48,7 @@ def get_engine(engine_name: str, voice: str, model: Optional[str] = None):
 def generate_speech(req: TTSRequest):
     try:
         engine = get_engine(req.engine, req.voice, req.model)
-        audio = engine.speak(req.text)
+        audio = engine.speak(req.text, split_sentences=req.split_sentences)
         
         if audio is None:
             raise ValueError("Engine returned no audio")
@@ -55,12 +56,32 @@ def generate_speech(req: TTSRequest):
         if isinstance(audio, list):
             audio = np.array(audio)
         
+        # Apply additional audio processing to reduce drift
+        if isinstance(audio, np.ndarray):
+            # Remove silence at beginning and end
+            silence_threshold = 0.01
+            non_silent = np.where(np.abs(audio) > silence_threshold)[0]
+            if len(non_silent) > 0:
+                start_idx = non_silent[0]
+                end_idx = non_silent[-1] + 1
+                audio = audio[start_idx:end_idx]
+            
+            # Apply fade in/out to reduce artifacts
+            fade_samples = int(0.05 * 22050)  # 50ms fade
+            if len(audio) > fade_samples * 2:
+                fade_in = np.linspace(0, 1, fade_samples)
+                fade_out = np.linspace(1, 0, fade_samples)
+                audio[:fade_samples] *= fade_in
+                audio[-fade_samples:] *= fade_out
+        
         buffer = io.BytesIO()
         with wave.open(buffer, 'wb') as wf:
             wf.setnchannels(1)
             wf.setsampwidth(2)
             wf.setframerate(22050)
             if isinstance(audio, np.ndarray):
+                # Ensure audio is in proper range
+                audio = np.clip(audio, -1.0, 1.0)
                 audio = (audio * 32767).astype(np.int16)
             wf.writeframes(audio.tobytes())
         
