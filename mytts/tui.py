@@ -4,7 +4,9 @@ import threading
 import logging
 import traceback
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Callable
+from queue import Queue, Empty
+from time import sleep
 
 from textual.app import App, ComposeResult
 from textual.containers import Container, ScrollableContainer
@@ -25,6 +27,65 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+
+class ActionQueue:
+    """Queue for managing TUI actions with proper sequencing."""
+    
+    def __init__(self):
+        self._queue: Queue = Queue()
+        self._processing = False
+        self._lock = threading.Lock()
+        self._last_action_time = 0
+        self._min_action_interval = 0.1  # 100ms between actions
+    
+    def enqueue(self, action: Callable, name: str = "action"):
+        """Add an action to the queue."""
+        logger.info(f"Enqueuing action: {name}")
+        self._queue.put((action, name))
+        if not self._processing:
+            threading.Thread(target=self._process_queue, daemon=True).start()
+    
+    def _process_queue(self):
+        """Process queued actions sequentially."""
+        with self._lock:
+            if self._processing:
+                return
+            self._processing = True
+        
+        try:
+            while True:
+                try:
+                    action, name = self._queue.get(timeout=0.5)
+                    
+                    import time
+                    elapsed = time.time() - self._last_action_time
+                    if elapsed < self._min_action_interval:
+                        sleep(self._min_action_interval - elapsed)
+                    
+                    logger.info(f"Processing action: {name}")
+                    try:
+                        action()
+                    except Exception as e:
+                        logger.error(f"Error in action {name}: {e}\n{traceback.format_exc()}")
+                    
+                    self._last_action_time = time.time()
+                    self._queue.task_done()
+                    
+                except Empty:
+                    break
+        finally:
+            with self._lock:
+                self._processing = False
+    
+    def clear(self):
+        """Clear all pending actions."""
+        while not self._queue.empty():
+            try:
+                self._queue.get_nowait()
+                self._queue.task_done()
+            except Empty:
+                break
 
 
 class ChunkDisplay(Static):
@@ -251,6 +312,8 @@ class TTSReaderApp(App):
         self.start_word = start_word
         self.initial_speed = initial_speed
         
+        self.action_queue = ActionQueue()
+        
         self.available_voices = [
             "en_US-lessac-medium",
             "en_US-amy-medium",
@@ -280,6 +343,7 @@ class TTSReaderApp(App):
         self.should_stop = False
         self.read_thread: Optional[threading.Thread] = None
         self._reading_start_idx = 0
+        self._state_lock = threading.Lock()
     
     def compose(self) -> ComposeResult:
         yield Header()
@@ -348,12 +412,15 @@ class TTSReaderApp(App):
             self._show_error(f"Initialization failed: {e}")
     
     def on_unmount(self):
+        """Clean up when TUI closes."""
         self.should_stop = True
+        self.action_queue.clear()
         if self.client:
             self.client.stop()
             self.client.close()
     
     def _on_sentence_play(self, sentence: str, index: int):
+        """Callback when a sentence is played."""
         self.words_spoken += len(sentence.split())
         self.current_sentence_idx = self._reading_start_idx + index
         
@@ -410,100 +477,157 @@ class TTSReaderApp(App):
         logger.error(f"Displaying error to user: {message}")
         self.query_one(ChunkDisplay).chunks = [f"Error: {message}"]
     
+    def _safe_stop_playback(self):
+        """Safely stop playback with proper state management."""
+        with self._state_lock:
+            self.should_stop = True
+            if self.client:
+                try:
+                    self.client.stop()
+                except Exception as e:
+                    logger.warning(f"Error stopping client: {e}")
+            
+            if self.read_thread and self.read_thread.is_alive():
+                self.read_thread.join(timeout=1.0)
+            
+            if self.client:
+                try:
+                    self.client.reset()
+                except Exception as e:
+                    logger.warning(f"Error resetting client: {e}")
+    
+    def _safe_start_playback(self, idx: int):
+        """Safely start playback from a given index."""
+        with self._state_lock:
+            self.current_sentence_idx = idx
+            self.words_spoken = sum(len(s.split()) for s in self.sentences[:idx])
+            
+            chunk_display = self.query_one(ChunkDisplay)
+            chunk_display.current_idx = idx
+            chunk_display.selected_idx = idx
+            chunk_display.scroll_to_current()
+            
+            self.should_stop = False
+            self._start_reading()
+    
     def action_toggle_pause(self):
+        """Toggle pause state."""
         if self.client:
             self.client.toggle_pause()
             status = self.query_one(StatusDisplay)
             status.is_paused = self.client.is_paused
     
     def action_select_prev(self):
+        """Select previous chunk."""
         chunk_display = self.query_one(ChunkDisplay)
         if chunk_display.selected_idx > 0:
             chunk_display.selected_idx -= 1
             chunk_display.scroll_to_selected()
     
     def action_select_next(self):
+        """Select next chunk."""
         chunk_display = self.query_one(ChunkDisplay)
         if chunk_display.selected_idx < len(self.sentences) - 1:
             chunk_display.selected_idx += 1
             chunk_display.scroll_to_selected()
     
     def action_jump_to_selected(self):
+        """Jump to selected chunk using action queue."""
         chunk_display = self.query_one(ChunkDisplay)
-        self._jump_to_sentence(chunk_display.selected_idx)
+        idx = chunk_display.selected_idx
+        
+        def jump_action():
+            self._safe_stop_playback()
+            sleep(0.15)  # Wait for audio cleanup
+            self._safe_start_playback(idx)
+        
+        self.action_queue.enqueue(jump_action, f"jump_to_{idx}")
     
     def action_next_sentence(self):
+        """Skip to next sentence."""
         if self.client and self.current_sentence_idx < len(self.sentences) - 1:
             self.client.skip_forward()
             self.current_sentence_idx = min(self.current_sentence_idx + 1, len(self.sentences) - 1)
     
     def action_prev_sentence(self):
+        """Go to previous sentence."""
         if self.client and self.current_sentence_idx > 0:
             self.client.skip_backward()
             self.current_sentence_idx = max(self.current_sentence_idx - 1, 0)
             self.words_spoken = sum(len(s.split()) for s in self.sentences[:self.current_sentence_idx])
     
     def action_increase_speed(self):
+        """Increase playback speed."""
         if self.client:
             self.client.increase_speed()
             self.query_one(StatusDisplay).speed = self.client.speed
     
     def action_decrease_speed(self):
+        """Decrease playback speed."""
         if self.client:
             self.client.decrease_speed()
             self.query_one(StatusDisplay).speed = self.client.speed
     
     def action_reset_speed(self):
+        """Reset playback speed to default."""
         if self.client:
             self.client.reset_speed()
             self.query_one(StatusDisplay).speed = self.client.speed
     
     def action_cycle_voice(self):
+        """Cycle to next voice using action queue."""
         self.current_voice_index = (self.current_voice_index + 1) % len(self.available_voices)
         new_voice = self.available_voices[self.current_voice_index]
         
-        self.should_stop = True
-        if self.client:
-            self.client.stop()
+        def voice_change_action():
+            self._safe_stop_playback()
+            sleep(0.15)
+            
+            try:
+                backend = TTSBackend.SERVER
+                self.engine = TTSEngine(
+                    mode=TTSMode.READING,
+                    backend=backend,
+                    engine="piper",
+                    voice=new_voice,
+                    server_url=self.server_url,
+                )
+                
+                self.client = ProgressiveTTSClient(
+                    self.engine,
+                    num_workers=4,
+                    buffer_size=2,
+                    on_play=self._on_sentence_play
+                )
+                
+                self.client.speed = self.initial_speed
+                
+                status_display = self.query_one(StatusDisplay)
+                status_display.current_voice = new_voice
+                status_display.speed = self.client.speed
+                
+                self._safe_start_playback(self.current_sentence_idx)
+                
+            except Exception as e:
+                logger.error(f"Error cycling voice: {e}\n{traceback.format_exc()}")
+                self._show_error(f"Voice change failed: {e}")
         
-        if self.read_thread and self.read_thread.is_alive():
-            self.read_thread.join(timeout=2.0)
-        
-        try:
-            backend = TTSBackend.SERVER
-            self.engine = TTSEngine(
-                mode=TTSMode.READING,
-                backend=backend,
-                engine="piper",
-                voice=new_voice,
-                server_url=self.server_url,
-            )
-            
-            self.client = ProgressiveTTSClient(
-                self.engine,
-                num_workers=4,
-                buffer_size=2,
-                on_play=self._on_sentence_play
-            )
-            
-            self.client.speed = self.initial_speed
-            
-            status_display = self.query_one(StatusDisplay)
-            status_display.current_voice = new_voice
-            status_display.speed = self.client.speed
-            
-            self.should_stop = False
-            self._start_reading()
-            
-        except Exception as e:
-            logger.error(f"Error cycling voice: {e}\n{traceback.format_exc()}")
-            self._show_error(f"Voice change failed: {e}")
+        self.action_queue.enqueue(voice_change_action, f"change_voice_to_{new_voice}")
     
     def action_repeat_sentence(self):
+        """Repeat current sentence using action queue."""
         if self.client and self.current_sentence_idx < len(self.sentences):
-            self._jump_to_sentence(self.current_sentence_idx)
+            idx = self.current_sentence_idx
+            
+            def repeat_action():
+                self._safe_stop_playback()
+                sleep(0.15)
+                self._safe_start_playback(idx)
+            
+            self.action_queue.enqueue(repeat_action, "repeat_sentence")
     
     def action_set_bookmark(self):
+        """Set bookmark at current position."""
         if self.current_sentence_idx not in self.bookmarks:
             self.bookmarks.append(self.current_sentence_idx)
             self.bookmarks.sort()
@@ -511,50 +635,55 @@ class TTSReaderApp(App):
             self.query_one(StatusDisplay).current_bookmark = self.current_sentence_idx + 1
     
     def action_prev_bookmark(self):
+        """Jump to previous bookmark using action queue."""
         if self.bookmarks and self.current_bookmark_idx > 0:
             self.current_bookmark_idx -= 1
             target = self.bookmarks[self.current_bookmark_idx]
-            self._jump_to_sentence(target)
+            
+            def jump_action():
+                self._safe_stop_playback()
+                sleep(0.15)
+                self._safe_start_playback(target)
+            
+            self.action_queue.enqueue(jump_action, f"jump_to_bookmark_{target}")
     
     def action_next_bookmark(self):
+        """Jump to next bookmark using action queue."""
         if self.bookmarks and self.current_bookmark_idx < len(self.bookmarks) - 1:
             self.current_bookmark_idx += 1
             target = self.bookmarks[self.current_bookmark_idx]
-            self._jump_to_sentence(target)
-    
-    def _jump_to_sentence(self, idx: int):
-        try:
-            if self.client:
-                self.should_stop = True
-                self.client.stop()
-                
-                if self.read_thread and self.read_thread.is_alive():
-                    self.read_thread.join(timeout=2.0)
-                
-                self.client.reset()
-                
-                self.current_sentence_idx = idx
-                self.words_spoken = sum(len(s.split()) for s in self.sentences[:idx])
-                
-                chunk_display = self.query_one(ChunkDisplay)
-                chunk_display.current_idx = idx
-                chunk_display.selected_idx = idx
-                chunk_display.scroll_to_current()
-                
-                self.should_stop = False
-                self._start_reading()
-        except Exception as e:
-            logger.error(f"Error jumping to sentence {idx}: {e}\n{traceback.format_exc()}")
-            self._show_error(f"Jump failed: {e}")
+            
+            def jump_action():
+                self._safe_stop_playback()
+                sleep(0.15)
+                self._safe_start_playback(target)
+            
+            self.action_queue.enqueue(jump_action, f"jump_to_bookmark_{target}")
     
     def action_goto_beginning(self):
-        self._jump_to_sentence(0)
+        """Jump to beginning using action queue."""
+        def jump_action():
+            self._safe_stop_playback()
+            sleep(0.15)
+            self._safe_start_playback(0)
+        
+        self.action_queue.enqueue(jump_action, "goto_beginning")
     
     def action_goto_end(self):
-        self._jump_to_sentence(len(self.sentences) - 1)
+        """Jump to end using action queue."""
+        idx = len(self.sentences) - 1
+        
+        def jump_action():
+            self._safe_stop_playback()
+            sleep(0.15)
+            self._safe_start_playback(idx)
+        
+        self.action_queue.enqueue(jump_action, "goto_end")
     
     async def action_quit(self):
+        """Quit the TUI."""
         self.should_stop = True
+        self.action_queue.clear()
         if self.client:
             self.client.stop()
         self.exit()
