@@ -3,6 +3,7 @@
 import threading
 import logging
 import traceback
+import time
 from pathlib import Path
 from typing import Optional, List, Callable
 from queue import Queue, Empty
@@ -664,13 +665,17 @@ class WordTimingEstimator:
 
 
 class WordHighlightScheduler:
-    """Schedules word highlighting updates based on timing."""
+    """Schedules word highlighting updates with pause awareness."""
     
     def __init__(self, app: 'TTSReaderApp'):
         self.app = app
         self._timers: List[threading.Timer] = []
         self._lock = threading.Lock()
         self._current_sentence_idx = -1
+        self._is_paused = False
+        self._pause_time = 0.0
+        self._sentence_start_time = 0.0
+        self._pending_timers: List[tuple] = []  # (delay, sentence_idx, word_idx)
     
     def schedule_highlights(
         self, 
@@ -682,11 +687,16 @@ class WordHighlightScheduler:
         """Schedule word highlighting for a sentence."""
         self.cancel_highlights()
         self._current_sentence_idx = sentence_idx
+        self._is_paused = False
+        self._sentence_start_time = time.time()
         
         timings = estimator.estimate_word_timings(sentence, audio_duration)
         
         with self._lock:
             for word_idx, word_timing in enumerate(timings):
+                self._pending_timers.append(
+                    (word_timing['start'], sentence_idx, word_idx)
+                )
                 timer = threading.Timer(
                     word_timing['start'],
                     self._highlight_word,
@@ -696,13 +706,54 @@ class WordHighlightScheduler:
                 timer.start()
                 self._timers.append(timer)
     
+    def pause(self):
+        """Pause highlighting - cancel timers and track pause time."""
+        with self._lock:
+            if self._is_paused:
+                return
+            
+            self._is_paused = True
+            self._pause_time = time.time()
+            
+            # Cancel all timers
+            for timer in self._timers:
+                timer.cancel()
+            self._timers.clear()
+    
+    def resume(self):
+        """Resume highlighting - reschedule timers with adjusted delays."""
+        with self._lock:
+            if not self._is_paused:
+                return
+            
+            self._is_paused = False
+            elapsed = time.time() - self._pause_time
+            
+            # Reschedule pending timers with adjusted delays
+            for delay, sentence_idx, word_idx in self._pending_timers:
+                # Calculate remaining time
+                original_fire_time = self._sentence_start_time + delay
+                remaining = original_fire_time - time.time()
+                
+                if remaining > 0:
+                    timer = threading.Timer(
+                        remaining,
+                        self._highlight_word,
+                        args=[sentence_idx, word_idx]
+                    )
+                    timer.daemon = True
+                    timer.start()
+                    self._timers.append(timer)
+    
     def cancel_highlights(self):
         """Cancel all pending highlights."""
         with self._lock:
             for timer in self._timers:
                 timer.cancel()
             self._timers.clear()
+            self._pending_timers.clear()
             self._current_sentence_idx = -1
+            self._is_paused = False
     
     def _highlight_word(self, sentence_idx: int, word_idx: int):
         """Highlight a word (called from timer)."""
@@ -1067,6 +1118,43 @@ class TTSReaderApp(App):
         if self.client:
             self.client.stop()
             self.client.close()
+        
+        # Show saved state info
+        self._print_saved_state()
+    
+    def _print_saved_state(self):
+        """Print saved state information to terminal."""
+        import sys
+        
+        # Build message
+        lines = [
+            "",
+            "─" * 60,
+            "💾 State saved to:",
+            f"  {self.state_file.absolute()}",
+            "",
+            "Saved settings:",
+            f"  • Position: word {self.words_spoken:,} of {self.total_words:,}",
+            f"  • Speed: {self.client.speed:.2f}x" if self.client else f"  • Speed: {self.initial_speed:.2f}x",
+            f"  • Voice: {self.available_voices[self.current_voice_index]}",
+            f"  • Bookmarks: {len(self.bookmarks)}",
+        ]
+        
+        if self.bookmarks:
+            lines.append("")
+            lines.append("Bookmarks:")
+            for i, idx in enumerate(self.bookmarks[:5]):  # Show first 5
+                if idx < len(self.sentences):
+                    text = self.sentences[idx][:40] + "..." if len(self.sentences[idx]) > 40 else self.sentences[idx]
+                    lines.append(f"  {i+1}. Word {sum(len(s.split()) for s in self.sentences[:idx]) + 1:,}: {text}")
+            if len(self.bookmarks) > 5:
+                lines.append(f"  ... and {len(self.bookmarks) - 5} more")
+        
+        lines.append("─" * 60)
+        lines.append("")
+        
+        # Print to stderr so it shows after TUI exits
+        print("\n".join(lines), file=sys.stderr)
     
     def _on_sentence_play(self, sentence: str, index: int, duration: float):
         """Callback when a sentence is played."""
@@ -1223,6 +1311,13 @@ class TTSReaderApp(App):
             self.client.toggle_pause()
             status = self.query_one(StatusDisplay)
             status.is_paused = self.client.is_paused
+            
+            # Sync word highlighting with audio pause state
+            if self.word_scheduler:
+                if self.client.is_paused:
+                    self.word_scheduler.pause()
+                else:
+                    self.word_scheduler.resume()
     
     def action_select_prev(self):
         """Select previous chunk."""
