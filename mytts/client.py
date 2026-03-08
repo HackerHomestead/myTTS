@@ -51,6 +51,11 @@ class ProgressiveTTSClient:
         self._speed = 1.0
         self._speed_lock = threading.Lock()
         
+        self._skip_forward = threading.Event()
+        self._skip_backward = threading.Event()
+        self._current_chunk_index = 0
+        self._chunks_list: List[SentenceChunk] = []
+        
         self._stats = {
             "chunks_generated": 0,
             "chunks_played": 0,
@@ -79,6 +84,14 @@ class ProgressiveTTSClient:
     def reset_speed(self):
         with self._speed_lock:
             self._speed = 1.0
+    
+    def skip_forward(self):
+        self._skip_forward.set()
+        sd.stop()
+    
+    def skip_backward(self):
+        self._skip_backward.set()
+        sd.stop()
     
     def stop(self):
         self._stop_event.set()
@@ -160,6 +173,11 @@ class ProgressiveTTSClient:
         ]
         
         self._stop_event.clear()
+        self._skip_forward.clear()
+        self._skip_backward.clear()
+        self._chunks_list = chunks
+        self._current_chunk_index = 0
+        
         self._stats = {
             "chunks_generated": 0,
             "chunks_played": 0,
@@ -167,32 +185,56 @@ class ProgressiveTTSClient:
             "total_playback_time": 0.0,
         }
         
-        submitted_futures = []
-        pending_count = 0
+        # Pre-generate first few chunks
+        submitted_futures = {}
+        for i in range(min(self.buffer_size, len(chunks))):
+            future = self._executor.submit(self._generate_audio, chunks[i])
+            submitted_futures[i] = future
         
-        for chunk in chunks:
-            if self._stop_event.is_set():
-                break
+        while self._current_chunk_index < len(chunks) and not self._stop_event.is_set():
+            # Check for skip events
+            if self._skip_forward.is_set():
+                self._skip_forward.clear()
+                self._current_chunk_index = min(self._current_chunk_index + 1, len(chunks) - 1)
+                # Pre-generate upcoming chunks if needed
+                for i in range(self._current_chunk_index, min(self._current_chunk_index + self.buffer_size, len(chunks))):
+                    if i not in submitted_futures:
+                        future = self._executor.submit(self._generate_audio, chunks[i])
+                        submitted_futures[i] = future
+                continue
             
-            if pending_count < self.buffer_size:
-                future = self._executor.submit(self._generate_audio, chunk)
-                submitted_futures.append(future)
-                pending_count += 1
+            if self._skip_backward.is_set():
+                self._skip_backward.clear()
+                self._current_chunk_index = max(self._current_chunk_index - 1, 0)
+                # Pre-generate upcoming chunks if needed
+                for i in range(self._current_chunk_index, min(self._current_chunk_index + self.buffer_size, len(chunks))):
+                    if i not in submitted_futures:
+                        future = self._executor.submit(self._generate_audio, chunks[i])
+                        submitted_futures[i] = future
+                continue
+            
+            # Get current chunk
+            chunk_idx = self._current_chunk_index
+            chunk = chunks[chunk_idx]
+            
+            # Generate audio if not already done
+            if chunk_idx in submitted_futures:
+                chunk = submitted_futures[chunk_idx].result()
             else:
-                next_future = submitted_futures.pop(0)
-                next_chunk = next_future.result()
-                
-                if not self._stop_event.is_set():
-                    self._play_chunk(next_chunk)
-                
-                future = self._executor.submit(self._generate_audio, chunk)
-                submitted_futures.append(future)
-        
-        if not self._stop_event.is_set():
-            for future in submitted_futures:
-                chunk = future.result()
-                if not self._stop_event.is_set():
-                    self._play_chunk(chunk)
+                chunk = self._generate_audio(chunk)
+            
+            # Play chunk
+            if not self._stop_event.is_set():
+                self._play_chunk(chunk)
+            
+            # Move to next chunk
+            self._current_chunk_index += 1
+            
+            # Pre-generate next chunk if needed
+            next_idx = self._current_chunk_index + self.buffer_size - 1
+            if next_idx < len(chunks) and next_idx not in submitted_futures:
+                future = self._executor.submit(self._generate_audio, chunks[next_idx])
+                submitted_futures[next_idx] = future
         
         return self._stats
 
