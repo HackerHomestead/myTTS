@@ -30,10 +30,12 @@ class ProgressiveTTSClient:
         engine: TTSEngine,
         num_workers: int = 4,
         buffer_size: int = 2,
+        on_play: Optional[Callable[[str], None]] = None,
     ):
         self.engine = engine
         self.num_workers = num_workers
         self.buffer_size = buffer_size
+        self.on_play = on_play
         
         self._executor = ThreadPoolExecutor(max_workers=num_workers)
         self._pending_futures: queue.Queue[Future] = queue.Queue()
@@ -90,6 +92,9 @@ class ProgressiveTTSClient:
     def _play_chunk(self, chunk: SentenceChunk):
         if chunk.audio is None:
             return
+        
+        if self.on_play:
+            self.on_play(chunk.text)
             
         self._current_audio = chunk.audio
         self._current_sample_rate = chunk.sample_rate

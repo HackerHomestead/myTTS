@@ -56,7 +56,16 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
     
     if use_server:
         from mytts.client import ProgressiveTTSClient
-        client = ProgressiveTTSClient(engine_obj, num_workers=workers, buffer_size=buffer_size)
+        
+        def on_play(text):
+            click.echo(text)
+        
+        client = ProgressiveTTSClient(
+            engine_obj,
+            num_workers=workers,
+            buffer_size=buffer_size,
+            on_play=on_play
+        )
         try:
             text = Path(file_path).read_text()
             client.speak(text)
@@ -110,7 +119,16 @@ def chat(engine, voice, use_server, server_url, workers, buffer_size):
     
     if use_server:
         from mytts.client import ProgressiveTTSClient
-        client = ProgressiveTTSClient(engine_obj, num_workers=workers, buffer_size=buffer_size)
+        
+        def on_play(text):
+            click.echo(text)
+        
+        client = ProgressiveTTSClient(
+            engine_obj,
+            num_workers=workers,
+            buffer_size=buffer_size,
+            on_play=on_play
+        )
         try:
             click.echo("Chat mode - type text to speak (Ctrl+C to exit)")
             while True:
@@ -169,7 +187,16 @@ def speak(text, voice, use_server, server_url, workers, buffer_size):
     
     if use_server:
         from mytts.client import ProgressiveTTSClient
-        client = ProgressiveTTSClient(engine_obj, num_workers=workers, buffer_size=buffer_size)
+        
+        def on_play(chunk_text):
+            click.echo(chunk_text)
+        
+        client = ProgressiveTTSClient(
+            engine_obj,
+            num_workers=workers,
+            buffer_size=buffer_size,
+            on_play=on_play
+        )
         try:
             client.speak(text)
         finally:
