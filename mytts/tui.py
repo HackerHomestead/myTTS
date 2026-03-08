@@ -197,16 +197,22 @@ class ChunkDisplay(Static):
         return text
     
     def scroll_to_current(self):
-        if self.current_idx < self.scroll_offset:
-            self.scroll_offset = self.current_idx
-        elif self.current_idx >= self.scroll_offset + self.visible_lines:
-            self.scroll_offset = self.current_idx - self.visible_lines + 1
+        """Scroll to keep current chunk centered in the window."""
+        # Calculate center position
+        center_offset = self.current_idx - self.visible_lines // 2
+        
+        # Clamp to valid range
+        max_offset = max(0, len(self.chunks) - self.visible_lines)
+        self.scroll_offset = max(0, min(center_offset, max_offset))
     
     def scroll_to_selected(self):
-        if self.selected_idx < self.scroll_offset:
-            self.scroll_offset = self.selected_idx
-        elif self.selected_idx >= self.scroll_offset + self.visible_lines:
-            self.scroll_offset = self.selected_idx - self.visible_lines + 1
+        """Scroll to keep selected chunk centered in the window."""
+        # Calculate center position
+        center_offset = self.selected_idx - self.visible_lines // 2
+        
+        # Clamp to valid range
+        max_offset = max(0, len(self.chunks) - self.visible_lines)
+        self.scroll_offset = max(0, min(center_offset, max_offset))
 
 
 class StatusDisplay(Static):
