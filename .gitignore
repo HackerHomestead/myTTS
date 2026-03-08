@@ -6,6 +6,7 @@ dist/
 build/
 .venv/
 venv/
+build-venv/
 .env
 *.wav
 *.mp3
@@ -14,3 +15,8 @@ venv/
 server/
 *.log
 server.log
+*.spec.bak
+*.tar.gz
+*.dmg
+*.deb
+*.rpm
