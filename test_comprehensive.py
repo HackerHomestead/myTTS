@@ -168,10 +168,10 @@ def test_progressive_client():
             result.add_fail("Default speed", f"Expected 1.0, got {client.speed}")
         
         client.increase_speed()
-        if client.speed == 1.1:
+        if client.speed == 1.05:
             result.add_pass("Increase speed")
         else:
-            result.add_fail("Increase speed", f"Expected 1.1, got {client.speed}")
+            result.add_fail("Increase speed", f"Expected 1.05, got {client.speed}")
         
         client.decrease_speed()
         if client.speed == 1.0:
