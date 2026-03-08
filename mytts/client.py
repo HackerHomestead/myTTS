@@ -22,6 +22,7 @@ class SentenceChunk:
     index: int
     audio: Optional[np.ndarray] = None
     sample_rate: int = 22050
+    duration: float = 0.0
 
 
 class ProgressiveTTSClient:
@@ -30,7 +31,7 @@ class ProgressiveTTSClient:
         engine: TTSEngine,
         num_workers: int = 4,
         buffer_size: int = 2,
-        on_play: Optional[Callable[[str, int], None]] = None,
+        on_play: Optional[Callable[[str, int, float], None]] = None,
         audio_buffer_size: int = 4096,
         audio_latency: str = 'high',
     ):
@@ -207,9 +208,6 @@ class ProgressiveTTSClient:
         if chunk.audio is None:
             return
         
-        if self.on_play:
-            self.on_play(chunk.text, chunk.index)
-            
         self._current_audio = chunk.audio
         self._current_sample_rate = chunk.sample_rate
         
@@ -218,7 +216,14 @@ class ProgressiveTTSClient:
         
         adjusted_rate = int(chunk.sample_rate * speed)
         
+        # Calculate audio duration
+        chunk.duration = len(chunk.audio) / adjusted_rate
+        
         faded_audio = self._apply_fade(chunk.audio, adjusted_rate)
+        
+        # Report with callback (includes duration)
+        if self.on_play:
+            self.on_play(chunk.text, chunk.index, chunk.duration)
         
         with self._playback_lock:
             self._is_playing = True
