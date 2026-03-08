@@ -66,16 +66,6 @@ def format_time(seconds: int) -> str:
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 
-def countdown_timer(duration: int, stop_event: threading.Event):
-    remaining = duration
-    while remaining > 0 and not stop_event.is_set():
-        print(f"\r{format_time(remaining)}", end="", flush=True)
-        time.sleep(1)
-        remaining -= 1
-    if not stop_event.is_set():
-        print(f"\r{format_time(0)}", end="", flush=True)
-
-
 class OllamaChat:
     def __init__(
         self,
@@ -135,15 +125,6 @@ class OllamaChat:
         total_duration = 0
         
         for i, sentence in enumerate(sentences):
-            estimated_seconds = self.duration_estimator.estimate_duration(sentence)
-            
-            stop_event = threading.Event()
-            timer_thread = threading.Thread(
-                target=countdown_timer,
-                args=(estimated_seconds, stop_event)
-            )
-            timer_thread.start()
-            
             response = requests.post(
                 f"{self.tts_url}/tts",
                 json={"text": sentence, "voice": self.voice},
@@ -158,8 +139,6 @@ class OllamaChat:
                 
                 self.duration_estimator.update(sentence, actual_duration)
                 
-                stop_event.set()
-                timer_thread.join()
                 print(f"\r{format_time(int(actual_duration))} (chunk {i+1}/{len(sentences)})", end="", flush=True)
                 
                 audio = wf.readframes(num_frames)
