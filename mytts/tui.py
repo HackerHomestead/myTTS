@@ -12,7 +12,6 @@ from textual.widgets import Header, Footer, Static, ProgressBar
 from textual.reactive import reactive
 from textual.binding import Binding
 from rich.text import Text
-from rich.style import Style
 
 from mytts import TTSEngine, TTSMode, TTSBackend
 from mytts.client import ProgressiveTTSClient
@@ -27,12 +26,12 @@ class SentenceDisplay(Static):
     
     def render(self):
         if not self.sentence:
-            return Text("Ready to read...", style=Style(color="dim", italic=True))
+            return Text("Ready to read...", style="dim italic")
         
         text = Text()
         text.append(f"\n  Sentence {self.sentence_number:,} of {self.total_sentences:,}\n\n", 
-                   style=Style(color="cyan", bold=True))
-        text.append(f"  {self.sentence}", style=Style(color="white"))
+                   style="cyan bold")
+        text.append(f"  {self.sentence}", style="white")
         return text
 
 
@@ -43,29 +42,29 @@ class StatusDisplay(Static):
     words_spoken = reactive(0)
     total_words = reactive(0)
     is_paused = reactive(False)
-    current_bookmark = reactive(None)
+    current_bookmark: reactive[int | None] = reactive(None)
     
     def render(self):
         text = Text()
         
         # Speed indicator
         speed_color = "yellow" if self.speed != 1.0 else "white"
-        text.append(f"  Speed: {self.speed:.2f}x  ", style=Style(color=speed_color, bold=True))
+        text.append(f"  Speed: {self.speed:.2f}x  ", style=f"{speed_color} bold")
         
         # Pause indicator
         if self.is_paused:
-            text.append("⏸ PAUSED  ", style=Style(color="yellow", bold=True))
+            text.append("⏸ PAUSED  ", style="yellow bold")
         else:
-            text.append("▶ Playing  ", style=Style(color="green"))
+            text.append("▶ Playing  ", style="green")
         
         # Word count
         text.append(f"Words: {self.words_spoken:,}/{self.total_words:,}  ", 
-                   style=Style(color="cyan"))
+                   style="cyan")
         
         # Bookmark
         if self.current_bookmark is not None:
             text.append(f"🔖 Bookmark at {self.current_bookmark}", 
-                       style=Style(color="magenta"))
+                       style="magenta")
         
         return text
 
@@ -75,7 +74,7 @@ class ControlsDisplay(Static):
     
     def render(self):
         text = Text()
-        text.append("\n  ", style=Style())
+        text.append("\n  ")
         
         controls = [
             ("Space", "Pause"),
@@ -92,9 +91,9 @@ class ControlsDisplay(Static):
         
         for i, (key, action) in enumerate(controls):
             if i > 0:
-                text.append("  ", style=Style())
-            text.append(f"[{key}]", style=Style(color="cyan", bold=True))
-            text.append(f" {action}", style=Style(color="white"))
+                text.append("  ")
+            text.append(f"[{key}]", style="cyan bold")
+            text.append(f" {action}", style="white")
         
         text.append("\n")
         return text
@@ -326,8 +325,9 @@ class TTSReaderApp(App):
         
         def read_thread():
             try:
-                text = " ".join(self.sentences[self.current_sentence_idx:])
-                self.client.speak(text)
+                if self.client:
+                    text = " ".join(self.sentences[self.current_sentence_idx:])
+                    self.client.speak(text)
             except Exception as e:
                 self.call_from_thread(self._show_error, str(e))
             finally:
@@ -461,7 +461,7 @@ class TTSReaderApp(App):
             info += f", {len(self.bookmarks)} bookmarks"
         self.query_one(SentenceDisplay).sentence = info
     
-    def action_quit(self):
+    async def action_quit(self):
         """Quit the application."""
         self.should_stop = True
         if self.client:
