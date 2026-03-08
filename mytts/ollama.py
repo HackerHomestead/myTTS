@@ -5,6 +5,7 @@ import threading
 import time
 import io
 import wave
+import re
 import numpy as np
 import sounddevice as sd
 import requests
@@ -12,6 +13,8 @@ from typing import Optional, List
 
 DEFAULT_OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 DEFAULT_TTS_URL = os.environ.get("TTS_SERVER_URL", "http://localhost:8000")
+
+SENTENCE_ENDINGS = re.compile(r'[.!?]+[\s]+')
 
 
 class DynamicEstimator:
@@ -30,6 +33,31 @@ class DynamicEstimator:
         
         alpha = 0.3
         self.words_per_second = (alpha * actual_wps) + ((1 - alpha) * self.words_per_second)
+
+
+def split_into_sentences(text: str) -> List[str]:
+    sentences = SENTENCE_ENDINGS.split(text.strip())
+    result = []
+    for s in sentences:
+        s = " ".join(s.split())
+        if s:
+            if s[-1] not in '.!?':
+                s = s + "."
+            result.append(s)
+    return result
+
+
+def apply_fade(audio: np.ndarray, sample_rate: int, fade_ms: int = 10) -> np.ndarray:
+    fade_samples = int(sample_rate * fade_ms / 1000)
+    if len(audio) < fade_samples * 2:
+        return audio
+    
+    faded = audio.copy()
+    fade_in = np.linspace(0.0, 1.0, fade_samples)
+    fade_out = np.linspace(1.0, 0.0, fade_samples)
+    faded[:fade_samples] *= fade_in
+    faded[-fade_samples:] *= fade_out
+    return faded
 
 
 def format_time(seconds: int) -> str:
@@ -100,54 +128,53 @@ class OllamaChat:
         return full_response
 
     def speak(self, text: str):
-        estimated_seconds = self.duration_estimator.estimate_duration(text)
-        current_wps = self.duration_estimator.words_per_second
+        sentences = split_into_sentences(text)
+        if not sentences:
+            return 0
         
-        stop_event = threading.Event()
-        timer_thread = threading.Thread(
-            target=countdown_timer,
-            args=(estimated_seconds, stop_event)
-        )
-        timer_thread.start()
+        total_duration = 0
         
-        response = requests.post(
-            f"{self.tts_url}/tts",
-            json={"text": text, "voice": self.voice},
-        )
-        response.raise_for_status()
-        
-        wav_data = io.BytesIO(response.content)
-        with wave.open(wav_data, 'rb') as wf:
-            frame_rate = wf.getframerate()
-            num_frames = wf.getnframes()
-            actual_duration = num_frames / frame_rate
+        for i, sentence in enumerate(sentences):
+            estimated_seconds = self.duration_estimator.estimate_duration(sentence)
             
-            self.duration_estimator.update(text, actual_duration)
-            
-            stop_event.set()
-            timer_thread.join()
-            print(f"\r{format_time(int(actual_duration))} (actual)", end="", flush=True)
-            
-            audio = wf.readframes(num_frames)
-            audio = np.frombuffer(audio, dtype=np.int16)
-            audio = audio.astype(np.float32) / 32768.0
-            
-            remaining = int(actual_duration)
-            stop_event2 = threading.Event()
-            timer_thread2 = threading.Thread(
+            stop_event = threading.Event()
+            timer_thread = threading.Thread(
                 target=countdown_timer,
-                args=(remaining, stop_event2)
+                args=(estimated_seconds, stop_event)
             )
-            timer_thread2.start()
+            timer_thread.start()
             
-            sd.play(audio, samplerate=frame_rate)
-            sd.wait()
+            response = requests.post(
+                f"{self.tts_url}/tts",
+                json={"text": sentence, "voice": self.voice},
+            )
+            response.raise_for_status()
             
-            stop_event2.set()
-            timer_thread2.join()
+            wav_data = io.BytesIO(response.content)
+            with wave.open(wav_data, 'rb') as wf:
+                frame_rate = wf.getframerate()
+                num_frames = wf.getnframes()
+                actual_duration = num_frames / frame_rate
+                
+                self.duration_estimator.update(sentence, actual_duration)
+                
+                stop_event.set()
+                timer_thread.join()
+                print(f"\r{format_time(int(actual_duration))} (chunk {i+1}/{len(sentences)})", end="", flush=True)
+                
+                audio = wf.readframes(num_frames)
+                audio = np.frombuffer(audio, dtype=np.int16)
+                audio = audio.astype(np.float32) / 32768.0
+                
+                faded_audio = apply_fade(audio, frame_rate)
+                
+                sd.play(faded_audio, samplerate=frame_rate)
+                sd.wait()
+                
+                total_duration += actual_duration
         
         print()
-        return actual_duration
+        return total_duration
 
     def interactive(self):
         print(f"Chat with {self.model} (Ctrl+C to exit)")
