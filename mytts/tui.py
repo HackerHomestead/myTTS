@@ -119,6 +119,14 @@ class ChunkDisplay(Static):
         except Exception:
             self.visible_lines = 7
     
+    def _get_word_start_for_chunk(self, chunk_idx: int) -> int:
+        """Get the starting word number for a chunk."""
+        word_count = 0
+        for i in range(chunk_idx):
+            if i < len(self.chunks):
+                word_count += len(self.chunks[i].split())
+        return word_count + 1  # 1-indexed
+    
     def render(self) -> Text:
         if not self.chunks:
             return Text("Ready to read...", style="dim italic")
@@ -131,22 +139,32 @@ class ChunkDisplay(Static):
         
         for i in range(visible_start, visible_end):
             chunk = self.chunks[i]
-            chunk_num = i + 1
+            word_start = self._get_word_start_for_chunk(i)
+            word_end = word_start + len(chunk.split()) - 1
             
             is_current = (i == self.current_idx)
             is_selected = (i == self.selected_idx)
             
+            # Indicator and word count
             if is_current:
                 text.append("  ▶ ", style="yellow bold")
-                text.append(f"{chunk_num:3d}. ", style="yellow bold")
-                text.append(f"{chunk}\n", style="yellow")
+                text.append(f"{word_start:5,}", style="yellow bold reverse")
+                text.append("  ", style="yellow")
             elif is_selected:
                 text.append("  ◆ ", style="cyan bold")
-                text.append(f"{chunk_num:3d}. ", style="cyan bold")
-                text.append(f"{chunk}\n", style="white")
+                text.append(f"{word_start:5,}", style="cyan bold reverse")
+                text.append("  ", style="cyan")
             else:
                 text.append("     ", style="dim")
-                text.append(f"{chunk_num:3d}. ", style="dim")
+                text.append(f"{word_start:5,}", style="white bold")
+                text.append("  ", style="dim")
+            
+            # Chunk text
+            if is_current:
+                text.append(f"{chunk}\n", style="yellow")
+            elif is_selected:
+                text.append(f"{chunk}\n", style="white")
+            else:
                 text.append(f"{chunk}\n", style="white dim")
         
         text.append("\n")
