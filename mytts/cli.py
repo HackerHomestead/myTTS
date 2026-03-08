@@ -26,15 +26,15 @@ def _keyboard_listener():
         while not _interrupted and _client:
             try:
                 char = sys.stdin.read(1)
-                if char == '+':
+                if char == '+' or char == '=':
                     if _client:
                         _client.increase_speed()
                         _speed_changed = True
-                elif char == '-':
+                elif char == '-' or char == '_':
                     if _client:
                         _client.decrease_speed()
                         _speed_changed = True
-                elif char == '=' or char == '0':
+                elif char == '0':
                     if _client:
                         _client.reset_speed()
                         _speed_changed = True
@@ -104,9 +104,9 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
     """Read a text file aloud
     
     Controls:
-      +     : Increase speed
-      -     : Decrease speed
-      = / 0 : Reset to default speed (1.0x)
+      + / = : Increase speed
+      - / _ : Decrease speed
+      0     : Reset to default speed (1.0x)
       q / Q : Stop reading
       Ctrl+C: Stop reading
     """
@@ -187,7 +187,7 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             click.echo(click.style(f"     Speed: {client.speed:.2f}x", fg='cyan', dim=True))
             click.echo(click.style("═" * 60, fg='cyan'))
             click.echo("")
-            click.echo(click.style("  Controls: [+] faster [-] slower [=] reset [q] quit", fg='white', dim=True))
+            click.echo(click.style("  Controls: [+/=] faster [-/_] slower [0] reset [q] quit", fg='white', dim=True))
             
             if start_word > 0:
                 click.echo("")
