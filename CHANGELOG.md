@@ -2,6 +2,37 @@
 
 All notable changes to myTTS will be documented in this file.
 
+## [v1.3.0-mvp] - 2026-03-08
+
+### 🎬 Word-Level Highlighting - Subtitle-Style Sync
+
+#### Added
+- **Word-Level Highlighting**: Current word highlighted in reverse video during playback
+  - Subtitle-style sync: word changes color as it's spoken
+  - Black text on yellow background for current word
+  - Smooth transitions between words
+- **WordTimingEstimator**: Estimates word timing using character weights
+  - Vowels weighted 1.2x, consonants 0.8x
+  - Scales to match actual audio duration
+- **WordHighlightScheduler**: Timer-based word highlighting updates
+  - Schedules highlights for each word in sentence
+  - Cancels on playback stop or jump
+- **Audio Duration Tracking**: `SentenceChunk.duration` field
+  - `on_play` callback now includes duration parameter
+  - Enables accurate word timing estimation
+
+#### Changed
+- **on_play Callback**: Signature changed from `(text, index)` to `(text, index, duration)`
+- **ChunkDisplay**: Added `highlight_word()` and `clear_word_highlight()` methods
+- **_on_sentence_play**: Now schedules word highlights for each sentence
+
+#### Technical
+- **16 new tests** for word timing and highlighting
+- **48 total tests passing**
+- **Design document**: `docs/ttswordsync-feature.md` with full analysis
+
+---
+
 ## [v1.2.0-tui] - 2026-03-08
 
 ### 🎯 TUI Navigation Improvements

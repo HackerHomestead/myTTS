@@ -40,9 +40,24 @@ mytts read document.txt --server --tui -w 1250
 
 ## Features
 
+### Word-Level Highlighting
+
+The TUI features **subtitle-style word highlighting** that syncs with the audio:
+
+- **Current word** is displayed in reverse video (black text on yellow background)
+- Highlight moves from word to word as audio plays
+- Helps you follow along with the spoken text
+- Works with any reading speed
+
+**How it works:**
+1. Audio duration is calculated for each sentence
+2. Word timing is estimated using character weights (vowels take longer)
+3. Timers schedule highlight updates during playback
+4. Re-syncs at each sentence boundary for accuracy
+
 ### Persistent UI Elements
 - **Header**: Shows file name and reading status
-- **Content Area**: Displays current sentence being read
+- **Content Area**: Displays current sentence being read with word highlighting
 - **Progress Bar**: Visual progress indicator
 - **Status Bar**: Shows speed, word count, pause state, bookmarks
 - **Controls Footer**: Always-visible control reference

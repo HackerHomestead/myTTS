@@ -288,6 +288,44 @@ Coqui TTS uses pre-trained models rather than voice files:
 
 **Note:** Coqui models don't support multiple voices - they produce a single voice per model. Use Piper for voice variation.
 
+## TUI Mode
+
+Interactive terminal UI for reading documents with real-time word highlighting.
+
+```bash
+# Start TUI with a document
+mytts read document.txt --server --tui
+
+# Resume from word position
+mytts read document.txt --server --tui -w 1250
+```
+
+### Features
+
+- **Word-Level Highlighting**: Current word highlighted in reverse video (subtitle-style sync)
+- **Jump Dialog**: Press `j` to jump to any word or bookmark
+- **Bookmarks**: Press `m` to set, `[`/`]` to navigate
+- **Speed Control**: `+`/`-` to adjust, `0` to reset
+- **Voice Selection**: Press `v` to cycle voices
+- **Optimized for 96x30 terminal** (works from 80x24 to 150x40)
+
+### Keyboard Controls
+
+| Key | Action |
+|-----|--------|
+| `Space` | Pause/Resume |
+| `↑`/`↓` | Navigate chunks |
+| `Enter` | Jump to selected |
+| `j` | Jump dialog |
+| `+`/`-` | Speed control |
+| `v` | Cycle voice |
+| `r` | Repeat chunk |
+| `m` | Set bookmark |
+| `[`/`]` | Navigate bookmarks |
+| `q` | Quit |
+
+See [TUI Documentation](docs/TUI.md) for details.
+
 ## CLI Commands
 
 | Command | Description | Example |
