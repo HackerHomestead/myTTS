@@ -31,3 +31,6 @@ __pycache__/
 
 # Generated screenshots
 tui_screenshots/
+
+# TUI state files
+*.mytts.json
