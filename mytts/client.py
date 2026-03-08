@@ -76,6 +76,10 @@ class ProgressiveTTSClient:
         with self._speed_lock:
             self._speed = max(0.25, self._speed - delta)
     
+    def reset_speed(self):
+        with self._speed_lock:
+            self._speed = 1.0
+    
     def stop(self):
         self._stop_event.set()
         sd.stop()
