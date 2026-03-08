@@ -20,3 +20,11 @@ server.log
 *.dmg
 *.deb
 *.rpm
+
+# Test coverage
+.coverage
+htmlcov/
+coverage.xml
+*.pyc
+__pycache__/
+.pytest_cache/

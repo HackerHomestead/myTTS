@@ -1,0 +1,1389 @@
+HHS Public Access
+Author manuscript
+Author Manuscript
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+Published in final edited form as:
+Cogn Neuropsychol. 2017 ; 34(3-4): 65–82. doi:10.1080/02643294.2017.1369016.
+
+Developmental Dysgraphia: An Overview and Framework for
+Research
+Michael McCloskey and Brenda Rapp
+Johns Hopkins University
+
+Abstract
+Author Manuscript
+Author Manuscript
+
+Developmental deficits in the acquisition of writing skills (developmental dysgraphias) are
+common and have significant consequences for those who suffer from them, yet these deficits have
+received relatively little attention from researchers. In this article we offer a framework for
+studying developmental dysgraphias (including both spelling and handwriting deficits), arguing
+that research should be grounded in theories describing normal cognitive writing mechanisms and
+the acquisition of these mechanisms. We survey the current state of knowledge concerning
+developmental dysgraphia, discussing potential proximal and distal causes. One conclusion
+emerging from this discussion is that developmental writing deficits are diverse in their
+manifestations and causes. We suggest an agenda for research on developmental dysgraphia, and
+suggest that pursuing this agenda may contribute not only to a better understanding of
+developmental writing impairment, but also to a better understanding of normal writing
+mechanisms and their acquisition. Finally, we provide a brief introduction to the subsequent
+articles in this special issue on developmental dysgraphia.
+
+Keywords
+developmental dysgraphia; spelling, handwriting; reading; developmental dyslexia
+The ability to write is a fundamental component of literacy, and is crucial for success not
+only in school but also in most workplace environments. Unfortunately, a significant
+proportion of children suffer from developmental dysgraphia—that is, impairment in
+acquisition of writing skills. Döhla & Heim (2016) recently estimated that 7–15% of schoolage children exhibit some form of development writing deficit.
+
+Author Manuscript
+
+In addition to disrupting the acquisition of writing skills, developmental dysgraphia often
+has broader detrimental effects. For many dysgraphic children any writing assignment is an
+ordeal; the struggle to spell words correctly or produce legible handwriting is immensely
+frustrating, and also diverts attention from the more substantive aspects of the assignment
+(e.g., Berninger, 1999; Graham et al., 1997). A child struggling with spelling while writing a
+paragraph about frogs will probably learn less about paragraph composition, and about
+frogs, than a child with typical spelling skills; and a child who struggles to write digits
+
+Authors’ contact information: Michael McCloskey, Cognitive Science Department, Johns Hopkins University, Baltimore, MD 21218,
+michael.mccloskey@jhu.edu, Brenda Rapp, Cognitive Science Department, Johns Hopkins University, Baltimore, MD 21218,
+rapp@cogsci.jhu.edu.
+
+McCloskey and Rapp
+
+Page 2
+
+Author Manuscript
+
+legibly and align them neatly will probably work longer and harder at math homework,
+while learning less, than a child with typical handwriting skill. Nor are the detrimental
+effects of developmental dysgraphia limited to children. Adults with significant
+developmental writing deficits may face limitations in career choice or advancement, as well
+as experiencing difficulty with everyday tasks that draw upon writing skills.
+Despite the prevalence and significant impact of developmental dysgraphia, the topic has
+received relatively little attention from researchers. A major purpose of this special issue is
+to highlight the need for a strong, sustained program of research. An intensified research
+effort is crucial not only for advancing our knowledge of the underlying deficits in children
+and adults with developmental dysgraphia, but also for improving diagnosis and treatment.
+Furthermore, studies of developmental dysgraphia may enhance our understanding of
+normal cognitive writing skills and how these skills are acquired.
+
+Author Manuscript
+
+Writing & Dysgraphia: Defining the Scope
+Writing and dysgraphia are both broad concepts, and the corresponding terms have been
+used in various ways. Hence, it is important at the outset to define the scope of our
+discussion, and clarify our use of terminology. In discussing writing we focus on production
+of characters and individual words. Higher-level writing skills, such as those involved in
+composing sentences and combining them into coherent texts, are beyond the scope of our
+discussion.
+
+Author Manuscript
+
+In other respects, however, we define the writing domain broadly. We include within our
+purview not only writing in print or script with a writing implement, but also other forms of
+written language production, such as typing on a laptop or texting on a smartphone. We also
+include both the ability to spell, and the ability to plan and execute the motor processes
+required to generate an overt output. In the case of handwritten output we refer to the motor
+planning and production processes as handwriting processes, and include under this rubric
+both printing and cursive writing.
+Turning now to writing impairments, the term dysgraphia has two different senses in the
+literature. Some researchers use the term to refer to impaired spelling, whereas others apply
+the label to deficits affecting the motor planning or production processes required for
+handwriting. We include both senses within the scope of our discussion. Finally, by
+developmental dysgraphia we mean impairment in acquisition of writing (spelling,
+handwriting, or both), despite adequate opportunity to learn, and absence of obvious
+neuropathology or gross sensory-motor dysfunction.1
+
+Author Manuscript
+
+1Dysgraphia (in the sense of impaired spelling) is often included in definitions of developmental dyslexia (see, e.g., the International
+Dyslexia Association’s definition: “Dyslexia . . . . is characterized by difficulties with accurate and/or fluent word recognition and by
+poor spelling and decoding abilities,” “Definition of Dyslexia”, 2017). The extent to which developmental spelling deficits associate
+with and dissociate from developmental reading deficits is an important issue for research, and we include within the scope of our
+discussion developmental dysgraphias occurring either in the presence or absence of reading impairments.
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 3
+
+Author Manuscript
+
+A Theory-Based Approach
+We advocate a strongly theory-based, as opposed to descriptive, approach to the study of
+cognitive deficits, including developmental dysgraphia. We argue that deficits affecting a
+cognitive function can be understood only by reference to a theory that specifies the normal
+cognitive representations and processes underlying the function (e.g., Caramazza, 1984;
+Caramazza & McCloskey, 1988; Castles & Coltheart, 1993; Hillis & Caramazza, 1992;
+McCloskey & Caramazza, 1988; McCloskey, 2001; McCloskey, Aliminosa, & Macaruso,
+1991). Given such a theory, deficits can be characterized in terms of disruption to particular
+component(s) of the normal cognitive system.
+
+Author Manuscript
+
+Efforts to understand developmental deficits also require a theoretical framework specifying
+how the affected cognitive system is learned (Castles, Kohnen, Nickels, & Brock, 2014).
+Developmental deficits arise from disruption of normal learning processes. Consequently, a
+theory characterizing the learning processes is crucial for understanding the failures of
+learning that underlie developmental cognitive impairments. In the domain of writing,
+theories of learning are currently less well-developed than theories of the normal adult
+system. Hence, we first describe a theoretical framework specifying the structure and
+functioning of the normal adult writing system, and illustrate the role of this framework in
+the study of acquired dysgraphia (writing deficits resulting from brain damage in adulthood).
+We then consider the processes involved in learning to write, and the potential roles of these
+processes in the genesis of developmental dysgraphias.
+
+The Normal Adult Writing System
+Author Manuscript
+
+Figures 1 and 2 illustrate a theory of the cognitive mechanisms making up the normal adult
+writing system. Figure 1 focuses primarily on spelling mechanisms and Figure 2 on the
+mechanisms for the production of handwriting. The theory illustrated in the figures reflects a
+consensus (although not universal agreement) among scientists who study writing (e.g.,
+Tainturier & Rapp, 2001; Margolin, 1984; see Graham, 2014, for a different framework). We
+offer the theory as a set of working assumptions that, while subject to revision in light of
+new evidence, can serve as a foundation for the study of developmental writing deficits.
+Note also that the theory assumes an alphabetic writing system. Although some aspects are
+applicable to non-alphabetic systems, other aspects would require extensive modification to
+address non-alphabetic writing.
+Cognitive Spelling Mechanisms
+
+Author Manuscript
+
+Figure 1 illustrates cognitive spelling mechanisms in the context of a spelling-to-dictation
+task in which a word is dictated, and then is written or spelled aloud. The theory assumes
+that if the dictated stimulus is a familiar word (e.g., CAT), the sequence of phonemes
+computed by speech recognition processes (e.g., /k æ t/) activates a representation in
+phonological long-term memory (often referred to as the phonological lexicon), leading in
+turn to activation of a lexical-semantic representation. (Note that these auditory
+comprehension processes are not specific to spelling tasks.) The semantic representation in
+turn activates a stored spelling representation in orthographic long-term memory (also
+referred to as the orthographic lexicon). Some theorists have proposed that representations in
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 4
+
+Author Manuscript
+
+orthographic long-term memory can also be activated directly from the phonological longterm memory (e.g., Margolin, 1984), or by a combination of inputs from phonological longterm memory and lexical semantics (e.g., Hillis & Caramazza, 1991).
+The activated orthographic representation specifies the identity and ordering of letters
+making up the spelling of the word. The letter representations are assumed to be abstract
+(Rapp & Caramazza, 1997), in the sense that they specify only letter identity and not any
+aspects of letter form (e.g., the visual shape of a letter, or the strokes for writing it). The
+abstract orthographic representations provide the basis for producing various forms of
+output, including writing, oral spelling, and typing. Once activated, the sequence of abstract
+letter representations is held temporarily in an orthographic working memory (often referred
+to as the graphemic buffer) while the motor planning and production processes required for
+generating an overt response are carried out.
+
+Author Manuscript
+
+Spelling of unfamiliar words or pseudowords (e.g., GRAT) also implicates abstract
+orthographic representations. However, in this case no lexical-phonological, semantic, or
+lexical-orthographic representations are available in the lexical system. Instead a plausible
+spelling is assembled from the input sequence of phonemes (e.g., /g r æ t/), through a sublexical spelling process that applies sound-spelling correspondence knowledge. As Treiman
+(2017) argues, the sublexical process may apply not only simple phoneme-grapheme
+conversion rules (e.g., /g/ → G), but also more sophisticated context-sensitive rules (e.g., /s/
+→ C when followed by E, I, or Y). For this reason we refer to the sublexical process as
+sound-to-spelling conversion process rather than using the more common label of phonemegrapheme conversion.2
+
+Author Manuscript
+
+Outputs of the sublexical process have the same form as representations of familiar words
+retrieved from orthographic long-term memory: sequences of abstract letter representations.
+Like the retrieved representations, spellings generated by the sublexical process are held in
+orthographic working memory, and production of the overt response proceeds just as for
+familiar words.
+
+Author Manuscript
+
+The lexical route, which involves retrieval of a learned spelling for a word, is necessary
+because (at least for most languages) the correct spelling of a word is not fully predictable
+from its phonological form. Accordingly, correct spellings cannot reliably be generated
+through sound-spelling conversion. For example, there is no way to predict from the sounds
+of the words KEEP and LEAP that the vowel is realized by the letters EE in the former and
+EA in the latter. Rather the spellings must be memorized (i.e., stored in orthographic longterm memory). Interestingly, studies show that even for languages with highly predictable
+spellings (e.g., Spanish and Italian) word spellings are learned and stored in orthographic
+long-term memory (e.g., Cuetos & Labos, 2001; Miceli, Benvegnù, Capasso, & Caramazza,
+1997).
+
+2Sublexical spelling processes may also draw upon knowledge of morphology (e.g., Treiman, 2017). For example, in English the
+phoneme sequence /Ʌs/ is likely to be spelled OUS when it corresponds to a suffix (as in FAMOUS) but not otherwise (e.g., STATUS,
+FUNGUS).
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 5
+
+Author Manuscript
+
+The sublexical sound-to-spelling conversion process is needed to generate plausible
+spellings for words whose spellings have not been learned, including words that have been
+encountered only in spoken form, and entirely unfamiliar words. For these words, the lexical
+route cannot supply the correct spelling, forcing reliance on the sublexical route.
+
+Author Manuscript
+
+A point we have not yet addressed concerns the interaction between the lexical and
+sublexical routes. One possibility is that the lexical route is first activated, and the sublexical
+route comes into play only if no stored spelling representation is activated. Perhaps more
+likely is that the two routes operate in parallel, such that both routes produce an output for
+familiar words (e.g., Houghton & Zorzi, 2003; Jones, Folk, & Rapp, 2009; Rapp, Epstein &
+Tainturier, 2002; Tainturier et al., 2013). Under this account any difference between lexicaland sublexical-route outputs would be resolved in favor of the lexical route. For example, if
+for the word LEAP the lexical route generated the spelling LEAP and the sublexical route
+produced the output LEEP, the lexical spelling LEAP would be chosen for production.
+Although we have introduced the writing theory in the context of a writing-to-dictation task,
+the theory also applies to the more common situation of spontaneous writing. We assume
+that in spontaneous writing the writer begins with a message to be conveyed, leading
+eventually to activation of semantic representations for the to-be-produced words. Activation
+of spelling representations in orthographic long-term memory, and subsequent processes, are
+then carried out as for writing to dictation.
+
+Author Manuscript
+
+For words whose spellings have not been learned, the spontaneous writing process is slightly
+more complex. Consider, for example, a writer who has encountered the word PLATYPUS
+only in spoken form, but now wants to write it. After activating the semantic representation,
+the writer cannot retrieve the spelling from orthographic long-term memory, because the
+spelling has not been learned. Instead the writer must retrieve the word’s phonological
+representation from the phonological long-term memory, and then apply sublexical soundspelling conversion processes to generate a potential spelling (e.g., PLATAPUSS).
+Handwriting Processes
+
+Author Manuscript
+
+Once an orthographic representation has been retrieved from long-term memory or
+assembled through sound-spelling conversion, additional processing is required to produce
+an overt response (e.g., Ellis, 1982, 1988; Hollerbach, 1981; Margolin, 1984; van Galen,
+1991). First, the abstract letter representations must be converted to a form appropriate for
+the chosen output format or modality. For handwritten output, letter-form representations
+(e.g., a representation of lower-case print f) must be activated, whereas for oral spelling
+letter name representations (e.g., /εf/) are required. For other forms of output (e.g., typing)
+different representations (e.g., keystroke representations) would need to be computed. Here
+we focus on the processes required for handwritten output.
+As illustrated in Figure 2, some theorists (e.g., Ellis, 1982, 1988; Margolin, 1984) assume
+that in generating a handwritten response, abstract letter representations are first converted to
+allograph (letter shape) representations corresponding to the chosen form of written output
+(e.g., lower-case print). The allograph representations in turn activate effector-independent
+graphic motor plans, which are learned representations specifying the movements (i.e., the
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 6
+
+Author Manuscript
+
+sequence of writing strokes) required to write the letter in the chosen form. The graphic
+motor plans are effector-independent in the sense that they are not tied to particular effectors
+(e.g., the right hand), and do not specify movements with respect to specific muscles or
+joints. Hence, the graphic motor plan for upper-case print B could mediate writing of that
+letter with the right hand, left hand, left foot, or so forth.
+
+Author Manuscript
+
+Although the assumption of a progression from abstract letter identities to allographs to
+graphic motor plans is common, some theorists have proposed instead that abstract letter
+representations are mapped directly to graphic motor plans (e.g., Miozzo & De Bastiani,
+2002; Rapp & Caramazza, 1997; Menichelli, Rapp & Semenza, 2008; van Galen, 1991).3
+Regardless of how graphic motor plans are activated, the final steps in the writing process
+involve the conversion of the graphic motor plans to effector-specific motor programs, and
+the use of these plans by the motor system to execute the appropriate writing movements
+with the chosen effector. During the writing process visual feedback plays a significant role,
+not only in ensuring appropriate orientation and spacing of letters and words across the page,
+but also in monitoring and controlling the shapes of individual letters (e.g., Danna & Velay,
+2015; Smyth & Silvers, 1987).
+
+Theory of Normal Adult Mechanisms and the Study of Deficits
+
+Author Manuscript
+
+An explicit theory specifying the representations and processes underlying a cognitive
+function provides a foundation for interpreting deficits affecting that function. In particular,
+deficits are interpreted as resulting from dysfunction of one or more components of the
+normal cognitive system. Ideally, the interpretation specifies which component(s) of the
+normal system are malfunctioning, how and to what extent they are malfunctioning, and how
+the malfunction(s) give rise to the specific pattern of impaired performance observed in an
+individual with a deficit. We first illustrate this point through an example from the literature
+on acquired dysgraphia in adults, and then consider the role of the normal adult theory in the
+study of developmental dysgraphia.
+Theory-Based Interpretation of Deficits
+
+Author Manuscript
+
+Goodman and Caramazza (1986a, 1986b) reported the case of JG, a young woman with a
+spelling deficit resulting from a head injury. JG’s comprehension of dictated stimuli was
+intact, and she showed normal performance in spelling pseudowords (e.g., FEEN).4
+However, she was impaired in spelling words (e.g., CURTAIN), with errors taking the form
+of phonologically plausible misspellings (e.g., KERTIN). Her spelling performance also
+showed a regularity effect—better performance for words with spellings that are highly
+predictable from their sounds (e.g., CRIME) than for words with less predictable spellings
+(e.g., KNOCK). Finally, JG’s performance pattern was virtually identical in written and oral
+spelling tasks.
+
+3Note that the terms allograph and allographic are used somewhat inconsistently in the literature. Whereas some authors use these
+terms to refer to letter shape representations with no motoric content, others use the terms in referring to what we have called graphic
+motor plans.
+4A pseudoword spelling is scored correct if the spelling is plausible given the sound. Hence, for the dictated pseudoword /fi:n/, the
+spellings FEEN, FENE, and FEAN would all be counted as correct.
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 7
+
+Author Manuscript
+Author Manuscript
+
+Goodman and Caramazza argued that JG suffered from a selective deficit affecting
+orthographic long-term memory, such that she was frequently unable to activate a learned
+spelling representation when attempting to spell a word. When retrieval of the orthographic
+representation failed, they argued, JG relied upon her intact sound-to-spelling conversion
+process to generate a spelling. These assumptions permit a clear and explicit interpretation
+for the various features of JG’s spelling performance. Her spelling is impaired for words but
+not for pseudowords because orthographic long-term memory is required for accurate
+spelling of words but not pseudowords (which are spelled sublexically). Her errors for words
+take the form of phonologically-plausible misspellings because she often uses the sublexical
+sound-spelling conversion process to spell words, and this process generates spellings that,
+while plausible (e.g., KERTIN), are not always correct. The role of the sublexical route in
+JG’s spelling of words also explains the regularity effect: When she is forced to rely on
+sublexical spelling processes, she is more likely to produce the correct spelling for highly
+regular words than for less regular words, precisely because the more regular words have
+spellings that are more likely to be generated by application of sound-spelling
+correspondence rules. Finally, JG’s extremely similar performance in written and oral
+spelling tasks follows from basic assumptions about the functional architecture of the
+cognitive spelling mechanisms: written and oral spelling recruit the same lexical and
+sublexical spelling processes.
+
+Author Manuscript
+
+In addition to illustrating that a theory of normal cognitive representations and processes
+provides a basis for interpreting deficits, this example makes another, closely related, point:
+A theory of normal mechanisms is crucial for developing systematic diagnostic methods. In
+choosing which tasks to present (e.g., word and pseudoword spelling, written and oral
+spelling), which variables to manipulate (e.g., regularity), and which analyses to carry out
+(e.g., analyses of error types) Goodman and Caramazza (1986a, 1986b) were guided by the
+theory of normal cognitive spelling mechanisms. Taken together, the tasks, manipulations,
+and analyses they chose in studying JG systematically assessed each of the processing
+components specified in the theory. For example, the functioning of JG’s sublexical soundto-spelling process was assessed by examining her pseudoword spelling accuracy and her
+error types in spelling words. In the absence of a theory specifying the normal cognitive
+spelling mechanisms, Goodman and Caramazza would have had no solid basis for choosing
+diagnostic methods, or for interpreting results obtained with these methods.
+Deficits as Evidence about Normal Mechanisms
+
+Author Manuscript
+
+Thus far, we have emphasized that a theory of normal cognitive mechanisms plays an
+essential role in efforts to understand cognitive deficits. At the same time, however, deficits
+provide evidence bearing on the theory of normal cognitive mechanisms, supporting,
+disconfirming, or prompting further elaboration of assumptions about normal cognitive
+representations and processes. For instance, the results from JG supported fundamental
+assumptions about the cognitive architecture of the normal spelling system, such as the
+assumption of separate lexical and sublexical spelling routes (supported by the findings
+pointing to selective impairment of the former while the latter remained intact). In addition
+systematic analyses of JG’s phonologically plausible misspellings led Goodman and
+Caramazza to formulate claims about the functioning of the sublexical spelling process. For
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 8
+
+Author Manuscript
+
+example, Goodman and Caramazza presented evidence that in selecting letters to represent
+sounds the sublexical process is context-sensitive, taking into account both syllable position
+(e.g., mapping /k/ to CK in syllable-final but not syllable-initial position) and the soundletter mapping options chosen for adjacent positions in the word (e.g., mapping /s/ to C only
+when the letter selected for the immediately-following position was E, I, or Y, as in
+CENTER or JG’s misspelling of SENATE as CENIT).
+Developmental Dysgraphia and the Theory of Normal Adult Writing Mechanisms
+
+Author Manuscript
+
+The preceding discussion of cognitive theory and research on acquired dysgraphia has
+implications for the study of developmental dysgraphia. We assume that like acquired
+dysgraphias, developmental writing deficits can be interpreted by specifying which
+component(s) of the normal adult writing system (e.g., orthographic long-term memory,
+graphic motor plans) are deficient (which, in the case of developmental deficits, means that a
+component is less fully developed than expected).5 Further, we assume that the study of
+developmental dysgraphia can shed light on normal cognitive writing mechanisms and their
+development. These assumptions may be incorrect, and indeed have been questioned in the
+context of other developmental deficits (e.g., Bishop, 1997; Karmiloff-Smith, 1997; but see
+Castles et al., 2014, for counterarguments). Conceivably, atypical development could give
+rise to cognitive mechanisms that are both non-optimal and radically different in structure
+and functioning from the mechanisms acquired by typically-developing children. If this were
+the case, we could not interpret deficits in terms of disruption to normal writing
+mechanisms, and we could not readily make inferences about the normal mechanisms from
+developmental writing deficits.
+
+Author Manuscript
+Author Manuscript
+
+This possibility that individuals with developmental dysgraphia have grossly atypical
+cognitive writing mechanisms cannot be ruled out a priori. However, we suggest that neither
+should this possibility be assumed a priori. In our view it is more likely that in
+developmental dysgraphia some aspect(s) of an otherwise-typical system fail to develop
+fully, than that a completely different system is acquired. Regardless of relative likelihoods,
+however, we suggest that the appropriate research strategy is to adopt as a working
+hypothesis the normal-system-with-some-deficiency assumption, and ask whether the
+evidence comports with the assumption.6 If the assumption is incorrect—that is, if
+individuals with developmental dysgraphia develop writing systems qualitatively different
+from those of typically-developing writers—we should soon discover the error. Efforts to
+interpret developmental writing deficits by specifying disruption to the normal cognitive
+writing system should prove unsuccessful; and conclusions we draw about normal writing
+mechanisms through studies of developmental dysgraphia should fail to converge with
+conclusions from studies of normal writing and studies of acquired dysgraphia. On the other
+
+5The normal system that provides a basis for characterizing deficits in developmental dysgraphia is not the fully-developed adult
+system, but rather the partially-developed form of that system we would expect to find in a typically-developing child (e.g., the writing
+system of a typically-developing 8-year-old if we are considering a developmentally dysgraphic 8-year-old). Consequently,
+interpretation of developmental dysgraphias requires not only a theory of the adult system, but also assumptions about how this system
+typically develops over time. Although some researchers (e.g., Bishop, 1997) have argued that developing cognitive systems may be so
+different from adult systems that theories of adult systems are not useful in interpreting developmental disorders, Castles et al. (2014)
+make a strong case for the value of adult-system theories in the study of developmental deficits.
+6This assumption is analogous to the assumption in adult cognitive neuropsychology that brain damage does not lead to creation of a
+cognitive system qualitatively different from the normal system (the “transparency” assumption; see Caramazza, 1986).
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 9
+
+Author Manuscript
+
+hand, if research founded on the normal-system-with-some-deficiency assumption proves
+fruitful in explaining deficits and advancing our understanding of normal writing processes,
+then we can have more confidence in the assumption. As we discuss in a later section the
+available research on developmental dysgraphia, although still somewhat limited, provides
+grounds for optimism that developmental writing deficits will prove to be interpretable by
+reference to the normal adult system.
+
+The Developmental Dimension
+
+Author Manuscript
+
+The developmental aspect of developmental dysgraphia raises another set of issues we have
+not yet considered. In acquired deficits (at least those with onset in adulthood) a cognitive
+system has developed normally, and then suffers disruption as a consequence of brain
+damage. In developmental deficits, however, the deficiency within the cognitive system
+occurs due to some malfunction in processes that support acquisition of the system. In the
+case of writing ability, the relevant knowledge and cognitive processes must be learned, and
+impairment affecting the ability to learn the knowledge and processes leads to deficiencies in
+the writing system.
+
+Author Manuscript
+
+Consider, for example, a deficit affecting orthographic long-term memory, in which an
+individual often cannot access representations of whole-word spellings. If this were an
+acquired deficit, we would assume that brain damage disrupted previously-learned spelling
+representations, and/or the ability to retrieve these representations from orthographic longterm memory. However, if the deficit were developmental, we would likely assume that the
+individual was impaired in learning the spelling representations (or perhaps the procedures
+for retrieving the representations from memory). In this case—and indeed for any
+developmental deficit—interpreting the deficit involves not only specifying what
+component(s) of the writing system is/are deficient, but also characterizing the deficit/s that
+led to impaired acquisition of the representations or processes making up the component.
+
+Author Manuscript
+
+This point brings up an important distinction, articulated by Coltheart (2015), between
+proximal and distal causes (see also Castles et al., 2014). Proximal causes are the
+deficiencies within a cognitive system that directly result in impaired performance, whereas
+distal causes are the causal factors that produced the deficiencies. In a case of developmental
+dysgraphia the proximal cause is the deficiency within the cognitive writing system that
+produces impaired writing performance (e.g., underdeveloped orthographic long-term
+memory, deficient knowledge of sound-spelling correspondence rules). The distal cause, in
+contrast, is the deficit that caused the failure in acquisition of cognitive spelling or
+handwriting mechanisms. For example, a deficit in encoding or retaining information about
+ordering of elements (such as the letters in a word) could impair the learning of word
+spellings, resulting in deficient orthographic long-term memory representations. In this
+instance, the distal cause is the deficit in sequence representation, and the proximal cause is
+the deficient orthographic long-term memory system.
+Claims about proximal and distal causes address different questions, and should be carefully
+distinguished in theorizing about developmental dysgraphia. Claims about proximal causes
+speak to the question, What aspect(s) of the cognitive writing system are deficient?, whereas
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 10
+
+Author Manuscript
+
+for distal causes the question is, What caused the failure of development for the deficient
+writing-system components? Hence, proximal-cause interpretations (e.g., orthographic longterm memory deficit) are not alternatives to distal-cause accounts (e.g., impaired visual
+attention span). Rather, proximal- and distal-cause claims together provide a fuller
+interpretation for an impairment than either alone.
+Of course, an adequate distal-plus-proximal-cause account should make clear how the
+proposed distal cause led to the posited proximal deficit. For example, if the proximal cause
+is claimed to be a deficient orthographic long-term memory, the distal cause should
+plausibly lead specifically to difficulty in learning word spellings.
+
+Author Manuscript
+
+Two points about distal causes merit brief discussion. First, although distal causes are
+typically assumed to involve rather general cognitive processes (e.g., learning, visual
+attention, or other processes implicated in a broad range of cognitive functions), distal
+causes could conceivably also include highly specific processes. For example, in an
+individual with a deficient orthographic long-term memory, the distal cause could
+conceivably be a highly selective deficit in learning word spellings, occurring in the
+presence of otherwise normal learning abilities; or the individual might have a learning
+deficit that, while not entirely specific to spelling, nevertheless affects learning only in a
+limited range of circumstances (e.g., a deficit in learning information in which the ordering
+of elements is critical).
+
+Author Manuscript
+
+Second, the distal cause for a deficit is probably best thought of not as a single causal state
+or event, but rather as a complex causal nexus that may include causes at several levels of
+explanation (e.g., cognitive, neural, genetic). For example, a genetic defect might (via
+several intervening causes) lead to an impairment in sequence encoding, which in turn
+causes a proximal deficit in orthographic long-term memory (see Coltheart, 2015, for further
+discussion). However, we limit our discussion of distal causes to the cognitive factors that
+most directly give rise to the proximal writing-system deficit.
+Acquisition of Writing Ability
+
+Author Manuscript
+
+Our ability to understand the proximal and distal causes of developmental dysgraphias will
+depend importantly on our understanding of the processes involved in the normal acquisition
+of writing skills. Although some research has examined acquisition of spelling and
+handwriting (e.g., Apel, 2009; Berninger et al., 2006; Kersey & James, 2013; Kandel &
+Perret, 2015; Kandel & Valdois, 2006; Masterson & Crede, 1999; Treiman, 1993; Treiman
+& Kessler, 2014), we do not yet have a comprehensive theory of the processes implicated in
+development of writing skill, or the cognitive capacities required by these processes. Here
+we provide a very brief overview of this complex topic.
+The end state of learning to write is the adult writing system schematized in Figures 1 and 2.
+How, though, is this system acquired? The acquisition process draws upon a broad range of
+abilities that are available to children when they begin learning to write, including spoken
+language, vision, attention, memory, and motor skills. More specific cognitive capacities that
+may be important for acquisition of writing include, but are not limited to, phonological
+awareness and phonological memory (Campbell & Butterworth, 1985; Snowling,
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 11
+
+Author Manuscript
+
+Stackhouse & Rack, 1986), visual attention span (Valdois et al., 2003), visual memory
+(Goulandris & Snowling, 1991), and processes for representing the order of elements in a
+sequence (e.g., Romani, Ward, and Olson, 1999).
+
+Author Manuscript
+
+With regard to the trajectory of writing acquisition, the process of learning to spell has most
+often been described in terms of stage theories (e.g., Gentry, 1982; Ehri, 1986; Frith, 1980).
+The various proposals differ in their specific assumptions, but most posit some type of
+preliterate stage in which children realize that written marks (other than drawings) can be
+used to represent meanings, followed by a phonological stage during which letters are used
+to represent sounds, and then one or more orthographic stages in which letters, letter groups,
+orthographic regularities and eventually morphological information are incorporated into the
+spelling process. Importantly, however, Treiman and colleagues have shown that children
+begin to use various types of knowledge earlier than stage theories would predict. For
+example, children who would be classified as phonetic spellers nevertheless show evidence
+of familiarity with orthographic conventions concerning such matters as letter doubling
+(Treiman, 2003) and morphological boundaries (for more detailed discussion see Treiman &
+Bourassa, 2000; Pollo, Kessler & Treiman, 2009; Treiman, 1993; Treiman & Kessler, 2014).
+Treiman and colleagues conclude that spelling development is not characterized by strict
+stages in which children draw solely upon only a particular type of knowledge (e.g.,
+phonological as opposed to orthographic). Rather, they argue, multiple knowledge types are
+brought into play throughout the acquisition process, and stages can be more appropriately
+thought of as developmental time-periods marked by the predominant (but not exclusive) use
+of certain knowledge types (see also Temple, 1990; Varnhagen, McCallum, & Burstow,
+1997).
+
+Author Manuscript
+
+Turning now to development of handwriting, the required motor control is quite demanding,
+and children’s writing of letters is initially slow and variable. Only with extensive practice,
+around age 10–11, does letter production become automatized, fast, and less variable (e.g.,
+Halsband & Lange, 2006; van Galen, Portier, Smits-Engelsman, & Schomaker, 1993; see
+also Palmis, Dann, Velay, & Longcamp, 2017, in this special issue). Once handwriting is
+automatized, children can devote resources to other aspects of writing, such as sentence
+construction and text elaboration (Maggio et al., 2011; Pontart et al., 2013). Kandel and
+Perret (2015) argue that other consequences of growing automaticity include increasing
+interaction between central orthographic processing levels and more peripheral motor
+processes.
+
+Author Manuscript
+
+These proposals regarding normal spelling and handwriting acquisition represent valuable
+contributions to our understanding of writing development and developmental dysgraphia.
+Even taken together, however, they do not constitute a systematic theory of the knowledge
+and processes underlying the development of writing ability, and do not provide a firm
+foundation for systematically enumerating the possible distal causes for a developmental
+writing deficit. Therefore, a critical goal for research on developmental dysgraphia is the
+articulation of a more complete theory of writing acquisition.
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 12
+
+Author Manuscript
+
+Developmental Dysgraphia: Current State of Knowledge
+The preceding discussion of normal adult writing mechanisms and their development
+provides a basis for considering the current state of knowledge regarding developmental
+dysgraphia. Here we provide a brief review of research regarding the proximal and distal
+causes.
+Proximal Causes
+A growing literature describes individuals with developmental spelling deficits that closely
+resemble acquired forms of dysgraphia, and can be understood as failures in developing
+particular components of the normal adult spelling system: orthographic long-term memory,
+the sublexical sound-to-spelling conversion process, or orthographic working memory (see
+Castles & Coltheart, 1993, for similar claims regarding developmental dyslexia).
+
+Author Manuscript
+Author Manuscript
+
+Multiple reports have described individuals with developmental writing deficits attributable
+to a deficient orthographic long-term memory (as in the acquired case of JG studied by
+Goodman & Caramazza, 1986a, 1986b). Briefly, these individuals are impaired in spelling
+words (especially irregular words), and produce phonologically plausible errors, but have
+little or no difficulty spelling pseudowords. This pattern, sometimes referred to as
+developmental surface dysgraphia, has been reported in several languages (English:
+Brunsdon, Coltheart & Nickels, 2005; Coltheart et al., 1983; Goulandris & Snowling, 1991;
+Hanley & Gard, 1995; Hanley & Kay, 1992; Romani, Ward & Olson, 1999; Seymour &
+Evans, 1993; Seymour, 1986; Temple, 1985, 1986; Italian: Angelelli et al., 2004; Angelelli
+et al., 2010; Spanish: Afonso, Suarez-Coalla & Cuetos, 2015; German: Stadie & van de
+Vijver, 2003; Cholewa, Mantey, Heber & Hollweg, 2010; see also, in this special issue,
+Angelelli, Marinelli, Cellini, & Zoccolotti, 2017; Hanley & Sotiropolous, 2017; and Hepner,
+McCloskey & Rapp, 2017).
+
+Author Manuscript
+
+The complementary pattern—better spelling performance for words than pseudowords—has
+also been reported (Campbell & Butterworth, 1985; Cholewa et al., 2010; Funnell &
+Davison, 1989; Snowling, Stackhouse and Rack, 1986; Temple, 1986; Temple & Marshall,
+1983). This pattern, often labelled developmental phonological dysgraphia, can be
+understood as a selective deficit affecting the sound-to-spelling conversion process. In
+addition a few cases of developmental impairment in orthographic working memory have
+been reported (Roncoli & Masterson, 2016; Yachini & Friedmann, 2010). For example,
+Roncoli and Masterson (2016) described a ten-year old boy who showed a pattern of
+spelling performance resembling that observed in acquired cases of orthographic working
+memory impairment: poor spelling of both regular and irregular words; errors in the form of
+letter omissions, insertions, substitutions, and transpositions; and effects of word length but
+not word frequency on spelling accuracy (see also Barisic, Kohnen, & Nickels, 2017, in this
+special issue).
+Distal Causes
+Notwithstanding the limitations in our current knowledge concerning acquisition of writing
+ability, some progress has been made in exploring distal causes of developmental
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 13
+
+Author Manuscript
+Author Manuscript
+
+dysgraphia. The most commonly proposed distal cause is a deficit in phonological
+processing and/or phonological awareness, suggested by reports of phonological deficits in
+some individuals with developmental dysgraphia (e.g., Campbell & Butterworth, 1985;
+Snowling et al., 1986; but see Castles & Coltheart, 2004). According to this proposal,
+learning to spell (like learning to read) requires an explicit understanding that spoken words
+are composed from smaller phonological units (i.e., phonemes), as well as an ability to parse
+words into their constituent phonemes at a level of processing accessible to awareness.
+Individuals with deficiencies in these phonological skills might therefore have difficulty
+appreciating the relationships between the sounds and spellings of words, leading to
+difficulty in learning sound-spelling correspondences, and in memorizing whole-word
+spellings. Despite the apparent plausibility of this argument, we are not aware of any clear
+evidence for a causal link between phonological deficits and developmental dysgraphia (see,
+e.g., Castles & Coltheart, 2004). Also, numerous cases of developmental dysgraphia have
+been reported in which phonological processing skills were intact (Angelelli, et al., 2004;
+Masterson, Laxon, Lovejoy & Morris, 2007; Holmes & Quinn, 2009; Frith, 1978, 1980;
+Hanley, Hastie & Kay, 1992; Hepner et al., 2017; Roncoli & Masterson, 2016; Romani et al.,
+1999). These cases demonstrate at the least that phonological impairment is not the sole
+distal cause of developmental dysgraphia.
+
+Author Manuscript
+
+Goulandris and Snowling (1991) suggested that deficits in the visual domain could lead to
+developmental dysgraphia. These researchers presented evidence of a visual memory
+impairment in an individual with developmental dysgraphia, and reasoned that the visual
+deficit would make it difficult to retain the information needed for building orthographic
+long-term memory representations. Also, Romani et al. (1999) described an individual with
+a deficit in encoding and learning the ordering of elements in a sequence of symbols (e.g.,
+the ordering of letters in a written word), and argued that this sequence encoding deficit was
+the distal cause for the individual’s developmental dysgraphia. (Romani et al. also presented
+evidence that the individual was intact in phonological processing and visual memory.)
+With respect to developmental handwriting deficits, some form of motor-control deficit has
+most commonly been proposed as the distal cause (e.g., Smits-Engelsman & van Galen,
+1997; Smits-Engelsman, Niemeijer, & van Galen, 2001; van Galen et al., 1993). For
+example, van Galen et al. (1993) argued that poor writers are deficient at inhibiting noise in
+their neuromotor systems. Developmental handwriting deficits could also conceivably result
+from distal deficits that impair the learning of effector-independent or effector-specific
+motor programs for characters.
+
+Author Manuscript
+
+These various results suggest that multiple forms of underlying impairment may lead to
+developmental dysgraphia. As our understanding of normal writing acquisition advances, we
+will have a stronger foundation for systematically exploring possible distal causes, and
+relating these to particular types of proximal impairment within the writing system.
+
+An Agenda for Research on Developmental Dysgraphia
+The preceding discussion and overview of the literature provides a basis for defining an
+agenda for the study of developmental dysgraphia. The agenda has two closely-interrelated
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 14
+
+Author Manuscript
+
+goals: 1) advancing our understanding of the proximal and distal deficits underlying
+developmental writing impairments; and 2) advancing the development of theories
+concerning normal cognitive writing mechanisms and the development of these mechanisms.
+Many aspects of the agenda are already being pursued, and we hope that this special issue
+will contribute to moving the agenda forward.
+With respect to characterizing the underlying deficits in developmental dysgraphia, we
+suggest that a fruitful research agenda can be defined by the following fundamental
+questions:
+
+Author Manuscript
+
+•
+
+What aspects of the cognitive writing system show impairment in cases of
+developmental dysgraphia (proximal causes)?
+
+•
+
+What distal causes are implicated in the genesis of these deficits?
+
+•
+
+How are distal and proximal causes linked? That is, how does each proximal
+deficit in cognitive writing mechanisms arise from the associated distal cause(s)?
+
+These questions cannot, however, be addressed in isolation. As we have emphasized,
+answers must be built on a solid foundation of theory concerning normal cognitive writing
+mechanisms, and the development of these mechanisms. Hence, the second part of our
+proposed agenda concerns advancement of theory in these areas. The basic questions are as
+follows:
+•
+
+What cognitive representations and processes underlie normal spelling and
+writing?
+
+•
+
+How do these cognitive mechanisms develop as a child learns to write?
+
+Author Manuscript
+
+As we have discussed, considerable progress has been made regarding the first question: We
+have a reasonably well-specified theory of normal adult writing mechanisms. As with any
+cognitive theory, many aspects of the writing theory are in need of further development (and
+even the most basic assumptions of the theory could ultimately turn out to be wrong).7
+Nevertheless, the theory is sufficiently well-developed and well-supported that we can (at
+least to a first approximation) enumerate the possible proximal causes of developmental
+writing deficits, and investigate these systematically.
+In contrast, our knowledge concerning the acquisition of writing is not as far advanced, and
+consequently our foundation for elucidating distal causes of developmental dysgraphia is
+less complete. We hope that research on developmental dysgraphia will both contribute to,
+and benefit from, progress in our understanding of the normal development of writing
+ability.
+
+Author Manuscript
+
+7One important set of unresolved questions concerns relationships between writing and reading mechanisms (e.g., Coltheart &
+Funnell, 1987; Jones & Rawson, 2016; Tainturier & Rapp, 2001). For example, does a single orthographic long-term memory underlie
+both reading and spelling, or are there instead separate input (reading) and output (spelling) orthographic long-term memory systems,
+each specialized to perform different computations (mapping letter to word representations in reading, and word to letter
+representations in writing)? Research on developmental dysgraphia research may shed light on these issues (see, e.g., Hepner et al.,
+2017, and Hanley & Sotiropoulos, 2017, in this special issue).
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 15
+
+Author Manuscript
+
+Throughout this article we have focused on cognitive as opposed to neural representations
+and processes, because at present we have only limited knowledge about neural mechanisms
+in spelling and handwriting, and especially about neural dysfunctions in developmental
+dysgraphia. Accordingly, yet another important goal for future research is to advance our
+understanding of neural mechanisms and dysfunctions in writing and dysgraphia. (For
+discussions of neural substrates of writing see, e.g., Beeson et al., 2003; Palmis et al., 2017;
+Planton, Jucla, Roux, & Démonet, 2013; Purcell, Turkeltaub, Eden, & Rapp, 2011; Rapp &
+Dufor, 2011.)
+
+Author Manuscript
+Author Manuscript
+
+In pursuing the research agenda we have sketched, it is important to recognize that
+developmental dysgraphias are heterogeneous, with respect to both proximal and distal
+causes. The writing system is complex, encompassing a broad range of cognitive and neural
+representations and processes. Disruption to any of these could potentially result in a writing
+deficit, with the nature of the deficit depending on the nature and extent of the disruption.
+Consequently, we should not expect disruption to the writing system (the proximal cause) to
+be the same in everyone suffering from developmental dysgraphia. To the contrary, we
+should recognize that deficits grouped under the heading developmental dysgraphia are
+diverse. Research on acquired dysgraphia in adults makes clear that there are multiple
+distinct forms of writing-system impairment, including but not limited to selective deficits
+affecting orthographic long-term memory (e.g., Beauvois & Dérouesné, 1981; Goodman &
+Caramazza, 1986a, 1986b), sublexical sound-to-spelling conversion (e.g., Shallice, 1981),
+orthographic working memory (e.g., Caramazza & Miceli, 1990; Caramazza, Miceli, Villa,
+& Romani, 1987; McCloskey, Badecker, Goodman-Schulman, & Caramazza, 1994;
+Posteraro, Zinelli, & Mazzucchi, 1988), and graphic motor plans (e.g., Baxter & Warrington,
+1986; Miozzo & De Bastiani, 2002). Furthermore, these diverse cognitive dysfunctions are
+associated with diverse loci of neural dysfunction (e.g., Rapp et al., 2015). The evidence we
+have surveyed on developmental dysgraphia indicates that this category is comparably
+heterogeneous.
+Similarly, with respect to distal causes, diverse proximal deficits are likely to stem from
+diverse distal impairments (e.g., impairments in phonological processing, visual memory, or
+sequence encoding). In addition, similar proximal deficits could potentially arise from quite
+different distal causes. For example, a deficient orthographic long-term memory could
+potentially result from several different distal causes, all of which cause difficulty in learning
+of word spellings.
+
+Author Manuscript
+
+This point has two crucial consequences. First, we should not take the goal of research to be
+that of determining the (proximal or distal) cause of, or the underlying (proximal or distal)
+deficit in, developmental dysgraphia. Almost certainly there are multiple proximal and distal
+causes that can lead to developmental writing deficits, and our goal should be to characterize
+the full constellation of these proximal and distal causes. The second consequence concerns
+research strategy: We cannot conduct research by selecting a group of developmental
+dysgraphics according to some diagnostic criteria, and then studying them as a group (e.g.,
+averaging results across participants, looking for significant group effects). This research
+method assumes the group to be homogeneous in relevant respects, and in particular
+assumes that all have the same form of impairment. Rather, we must study participants
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 16
+
+Author Manuscript
+
+individually, allowing commonalities and differences across individuals to emerge from the
+conclusions of detailed single-case investigations, rather than being assumed a priori.8
+
+Overview of the Special Issue
+The articles in this special issue explore many of the research topics we have discussed, and
+contribute to advancing the agenda we have outlined. The first five articles focus primarily
+on spelling, whereas the final three address issues concerning handwriting.
+
+Author Manuscript
+
+Treiman (2017) reviews typical spelling development, with particular emphasis on
+sublexical spelling processes. Treiman argues that spelling patterns (regularities in soundspelling mappings) are complex and multi-faceted, and hence that acquisition of sublexical
+knowledge is not a simple matter of learning context-free phoneme-grapheme mappings.
+She describes an Integration of Multiple Patterns (IMP) framework, according to which
+children learn not only whole-word spellings, but also context-sensitive phonological,
+graphotactic, and morphological patterns that apply (although not without exceptions) to
+many words. For example, Treiman notes that /ε/ is typically (though not always) spelled
+EA when followed by D (e.g., HEAD), but as E when followed by other consonants (e.g.,
+GET). She proposes that statistical learning processes play an important role in learning of
+spelling patterns, and also suggests that learning a whole-word spelling is easier when
+multiple patterns converge on the correct spelling, than when patterns conflict. Treiman’s
+arguments and proposals have important implications for theory and research concerning
+normal spelling processes, the acquisition of spelling, and the nature of the deficiencies in
+developmental spelling deficits.
+
+Author Manuscript
+
+Barisic, Kohnen, & Nickels (2017) report a single-case study of a 10-year-old boy, LS.
+Examining LS’s performance across a variety of tasks chosen to probe the various
+components of the normal adult spelling system, Barisic and colleagues conclude that he
+suffers from a developmental deficiency at the level of the graphemic buffer (orthographic
+working memory). For example, like reported acquired cases of graphemic buffer
+impairment, LS predominantly makes letter errors in spelling (i.e., letter substitutions,
+transpositions, additions, and omissions). The Barisic et al. study adds to our understanding
+of the forms of developmental spelling impairment, as well as supporting the view that
+cognitive neuropsychological methods can fruitfully be applied to developmental deficits. In
+particular, the study highlights the value of theory-based assessment and interpretation of
+developmental dysgraphias.
+
+Author Manuscript
+
+Hepner, McCloskey, & Rapp (2017) also apply theoretically-grounded cognitive
+neuropsychological methods in their study of two children, PJT and AKR, who present with
+poor spelling in the context of otherwise strong cognitive abilities. Hepner et al. argue that
+both children are impaired in learning lexical orthographic representations for use in spelling
+(with PJT also showing deficiency in sublexical spelling processes), and examine potential
+distal causes for the spelling deficits. They also report a striking dissociation for PJT
+
+8This same point has been discussed extensively in the context of acquired deficits (see Caramazza & McCloskey, 1988; McCloskey
+& Caramazza, 1988).
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 17
+
+Author Manuscript
+
+between reading and spelling. Whereas PJT’s spelling is severely deficient, a thorough
+assessment of his reading revealed normal (and in fact exceptionally strong) performance,
+with no evidence of weakness in either lexical or sublexical reading processes. This result
+has implications for issues concerning normal reading and spelling processes (e.g., shared
+vs. separate orthographic lexicons for reading and spelling), and suggests that at least some
+aspects of lexical orthographic representation and processing develop with considerable
+independence in reading and spelling.
+
+Author Manuscript
+
+Sotiropolous and Hanley (2017) also address issues concerning shared vs. separate
+cognitive mechanisms for reading and spelling. These authors report intriguing results from
+six university students with developmental spelling and reading deficits. All six participants
+showed the same basic pattern of performance on reading and spelling assessment tasks
+(e.g., impaired reading and spelling of irregular words, but intact reading and spelling of
+pseudowords). This pattern is typically labeled surface dyslexia and dysgraphia, and is
+usually interpreted to reflect impaired lexical and intact sublexical reading and spelling
+processes. However, despite the similarity across participants in basic reading and spelling
+performance, testing with additional tasks (e.g., lexical decision, semantic decision, written
+picture naming) revealed clear differences among participants, indicating differences in the
+underlying impairments. In interpreting the observed performance patterns, Hanley and
+Sotiropolous argue that a single orthographic system mediates both reading and spelling. In
+addition to the specific empirical and theoretical contributions of the study, the Hanley and
+Sotiropolous findings highlight two points we have emphasized in the present article: First,
+developmental dysgraphias (and dyslexias) are diverse, with multiple causes and
+manifestations; and second, detailed, theory-guided testing of individuals is necessary to
+identify the nature of the impairments.
+
+Author Manuscript
+Author Manuscript
+
+Marinelli, Cellini, Zoccolotti, and Angelelli (2017) examine lexical and sub-lexical
+reading and spelling processes in Italian, a language with a largely transparent orthography.
+Angelelli and colleagues tested typically developing and dyslexic third- and fifth-grade
+children on spelling to dictation and orthographic judgment (i.e., lexical decision) tasks.
+Stimuli included not only words with regular spellings (which make up most of the Italian
+lexicon) but also words for which the spelling is not entirely predictable from the phonology
+(e.g., CUOCO, which is not fully predictable because /kw/ may be realized in Italian as
+either CU or, less commonly, as QU). In both spelling and orthographic judgment tasks, and
+for both typically-developing and dyslexic children, results indicated that children were
+relying in part on lexical orthographic knowledge in performing the tasks (e.g., frequency
+and regularity effects were observed). However, the lexical knowledge was weaker in the
+dyslexic children (as evidenced, for example, by larger regularity effects for dyslexic than
+typically developing children). Also, both dyslexic and typically-developing children were
+sensitive to the frequencies of grapheme-phoneme mappings in Italian. For example, in
+spelling low-frequency words children were more accurate for those with high-frequency
+mappings (e.g., /kw/ → CU) than for those with low-frequency mappings (e.g., /kw/ →
+QU). Angelelli et al. suggest that sublexical knowledge, including knowledge about
+frequencies of sound-spelling mappings, contributes to lexical learning and, in dyslexic
+children, can compensate in part for deficient lexical-orthographic knowledge.
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 18
+
+Author Manuscript
+Author Manuscript
+
+The final three articles in the special issue concern handwriting development and
+developmental handwriting deficits. Palmis, Danna, Velay, and Longcamp (2017) provide
+an overview of the cognitive and neural mechanisms in adult handwriting and typical
+handwriting development. Emphasizing the complex motor control processes required for
+handwriting, these authors characterize skilled handwriting in adults, and then describe how
+writing is acquired over a number of years in childhood. According to Palmis and
+colleagues, acquisition of handwriting involves a variety of developmental changes,
+including a transition from production of characters as a series of discrete strokes (often
+separated by pauses or pen lifts) to a smoother, less variable, and more automatic production
+under the control of learned whole-character motor representations. Palmis et al. also offer
+insights into the brain networks that contribute to handwriting performance, and the neural
+changes that occur in the course of handwriting development. This article provides a
+foundation for considering the nature of the proximal and distal deficits in children with
+developmental handwriting deficits.
+
+Author Manuscript
+
+Prunty and Barnett (2017) contrast children who have handwriting difficulties as a
+consequence of a general motor coordination deficit (developmental coordination deficit, or
+DCD) with children who struggle with handwriting in the absence of general motor
+impairment (referred to as dysgraphic children). DCD and dysgraphic groups were
+compared with typically developing control children on a variety of handwriting measures,
+including writing speed, pauses during writing, and quality of letter formation. Although the
+DCD and dysgraphic children performed more poorly than the typically developing children
+on most measures, few differences were found between the DCD and dysgraphic groups.
+However, considerable variation was observed within groups. These results highlight the
+importance—for diagnosis, remediation, and research—of considering children as
+individuals, and not just as members of a category such as DCD.
+
+Author Manuscript
+
+Finally, in a fitting conclusion to the special issue Kandel, Lassus-Sangosse, Grosjacques,
+and Perret (2017) bring together the study of spelling and the study of handwriting.
+Although spelling and handwriting are usually treated separately in theory and research,
+Kandel and colleagues have argued previously that cognitive spelling processes (e.g.,
+retrieval of lexical orthographic representations) are not completed prior to initiation of
+writing (e.g., Roux, McKeeff, Grosjacques, & Kandel, 2013). Rather, the spelling processes
+are ongoing during the production of written output, and may affect the motor processes in
+handwriting. Applying this perspective to the study of children diagnosed with
+developmental dysgraphia, Kandel and colleagues argue that in children who have difficulty
+spelling, the greater-than-normal cognitive load imposed by spelling processes may lead to
+handwriting deficiencies, including slow and dysfluent writing. In fact these authors suggest
+that the frequently-observed poor handwriting in children with spelling deficits may often
+stem from the effects of spelling processes on handwriting, and not from deficiencies in
+handwriting perse.
+We hope that this special issue will prove useful to researchers, educators, and clinicians
+interested in normal or impaired reading or writing. We especially hope that the special issue
+will stimulate further discussion and research on the important but understudied topic of
+developmental dysgraphia.
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 19
+
+Author Manuscript
+
+Acknowledgments
+Preparation of this article was supported by a Johns Hopkins Science of Learning Institute grant to Michael
+McCloskey and by National Institutes of Health Grant DC006740 to Brenda Rapp, and by a generous gift from a
+donor to the Johns Hopkins University.
+
+References
+
+Author Manuscript
+Author Manuscript
+Author Manuscript
+
+Afonso O, Suárez-Coalla P, & Cuetos F (2015). Spelling impairments in Spanish dyslexic adults.
+Frontiers in Psychology, 6, 466. [PubMed: 25941507]
+Angelelli P, Judica A, Spinelli D, Zoccolotti P, & Luzzatti C (2004). Characteristics of writing
+disorders in Italian dyslexic children. Cognitive and Behavioral Neurology, 17, 18–31. [PubMed:
+15209222]
+Angelelli P, Notarnicola A, Judica A, Zoccolotti P, & Luzzatti C (2010). Spelling impairments in
+Italian dyslexic children: Phenomenological changes in primary school. Cortex, 46, 1299–1311.
+[PubMed: 20688322]
+Apel K (2008). The acquisition of mental orthographic representations for reading and spelling
+development. Communication Disorders Quarterly, 31, 1, 42–52.
+Barisic K, Kohnen S, Nickels L (2017). Developmental graphemic buffer dysgraphia in English: A
+single case study. Cognitive Neuropsychology.
+Baxter DM, & Warrington EK (1986). Ideational agraphia: a single case study. Journal of Neurology,
+Neurosurgery, and Psychiatry, 49, 369–374.
+Berninger VW, Abbott RD, Jones J, Wolf BJ, Gould L, Anderson-Youngstrom M, ... & Apel K (2006).
+Early development of language by hand: Composing, reading, listening, and speaking connections;
+three letter-writing modes; and fast mapping in spelling. Developmental neuropsychology, 29, 61–
+92. [PubMed: 16390289]
+Beauvois MF & Dérouesné J (1981). Lexical or orthographic agraphia. Brain, 104, 21–49. [PubMed:
+7470843]
+Beeson P, Rapcsak S, Plante E, Chargualaf J, Chung A, Johnson S, & Trouard T (2003). The neural
+substrates of writing: A functional magnetic resonance imaging study. Aphasiology, 17, 647–665.
+Berninger VW (1999). Coordinating transcription and text generation in working memory during
+composing: Automatic and constructive processes. Learning Disability Quarterly, 22, 99–112.
+Bishop DV (1997). Cognitive neuropsychology and developmental disorders: Uncomfortable
+bedfellows. Quarterly Journal of Experimental Psychology A, 50, 899–923.
+Brunsdon R, Coltheart M, & Nickels L (2005). Treatment of irregular word spelling in developmental
+surface dysgraphia. Cognitive Neuropsychology, 22, 213–251. [PubMed: 21038247]
+Campbell R, & Butterworth B (1985). Phonological dyslexia and dysgraphia in a highly literate
+subject: A developmental case with associated deficits of phonemic processing and awareness. The
+Quarterly Journal of Experimental Psychology Section A, 37, 435–475.
+Caramazza A (1984). The logic of neuropsychological research and the problem of patient
+classification in aphasia. Brain and language, 21, 9–20. [PubMed: 6697172]
+Caramazza A (1986). On drawing inferences about the structure of normal cognitive systems from the
+analysis of patterns of impaired performance: The case for single-patient studies. Brain and
+Cognition, 5, 41–66. [PubMed: 3954906]
+Caramazza A & McCloskey M (1988). The case for single-patient studies. Cognitive
+Neuropsychology, 5, 517–528.
+Caramazza A, Miceli G, Villa G, & Romani C (1987). The role of the graphemic buffer in spelling:
+Evidence from a case of acquired dysgraphia. Cognition, 26, 59–85. [PubMed: 3608396]
+Caramazza A & Miceli G (1990). The structure of graphemic representations. Cognition, 37, 243–297.
+[PubMed: 2282774]
+Castles A, & Coltheart M (1993). Varieties of developmental dyslexia. Cognition, 47, 149–180.
+[PubMed: 8324999]
+Castles A, & Coltheart M (2004). Is there a causal link from phonological awareness to success in
+learning to read? Cognition, 91, 77–111. [PubMed: 14711492]
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 20
+
+Author Manuscript
+Author Manuscript
+Author Manuscript
+Author Manuscript
+
+Castles A, Kohnen S, Nickels L, & Brock J (2014). Developmental disorders: what can be learned
+from cognitive neuropsychology? Philosophical Transactions of the Royal Society of London B:
+Biological Sciences, 369, 20130407. [PubMed: 24324246]
+Cholewa J, Mantey S, Heber S, & Hollweg W (2010). Developmental surface and phonological
+dysgraphia in German 3rd graders. Reading and Writing, 23, 97–127.
+Coltheart M (2015). What kinds of things cause children’s reading difficulties? Australian Journal of
+Learning Difficulties, 20, 103–112.
+Coltheart M, & Funnell E (1987). Reading and writing: One lexicon or two? In Allport DA, Mackay
+DG, Prinz W, & Scheerer E (Eds.), Language and production: Relationships between listening,
+speaking, reading, and writing (pp. 313–339). London, UK: Academic Press.
+Coltheart M, Masterson J, Byng S, Prior M, & Riddoch J (1983). Surface dyslexia. Quarterly Journal
+of Experimental Psychology, 35, 469–495. [PubMed: 6571320]
+Cuetos F, & Labos E (2001). The autonomy of the orthographic pathway in a shallow language: Data
+from an aphasic patient. Aphasiology, 15, 333–342.
+Danna J, & Velay JL (2015). Basic and supplementary sensory feedback in handwriting. Frontiers in
+psychology, 6, 201500169.
+Definition of Dyslexia (2017). Retrieved from https://dyslexiaida.org/definition-of-dyslexia.
+Döhla D, & Heim S (2016). Developmental dyslexia and dysgraphia: What can we learn from the one
+about the other? Frontiers in psychology, 6, 2045. [PubMed: 26858664]
+Ehri LC (1986). Sources of difficulty in learning to spell and read words In Wolraich M & Routh D
+(Eds.), Advances in developmental and behavioral pediatrics (Vol. 7, pp. 121–195). Greenwich,
+CT: JAI Press.
+Ellis AW (1982). Spelling and writing (and reading and speaking) In Ellis AW (Ed.), Normality and
+pathology in cognitive functions (pp. 113–146). London: Academic Press.
+Ellis AW (1988). Normal writing processes and peripheral acquired dysgraphias. Language and
+cognitive processes, 3, 99–127.
+Frith U (1978). From print to meaning and from print to sound, or how to read without knowing how
+to spell. Visible Language, 12, 43–54.
+Frith U (1980). Unexpected spelling problems In Frith U (Ed.), Cognitive processes in spelling (pp.
+495–515). London: Academic Press.
+Funnell E, & Davison M (1989). Lexical capture: A developmental disorder of reading and spelling.
+The Quarterly Journal of Experimental Psychology, 41, 471–487. [PubMed: 2798921]
+Gentry JR (1982). An analysis of developmental spelling in” GNYS AT WRK”. The Reading Teacher,
+36, 192–200.
+Goodman RA & Caramazza A (1986a). Aspects of the spelling process: Evidence from a case of
+acquired dysgraphia. Language and Cognitive Processes, 1, 263–296.
+Goodman RA & Caramazza A (1986b). Phonologically plausible errors: Implications for a model of
+the phoneme-grapheme conversion mechanism in the spelling process In Augst G (Ed.), New
+trends in graphemics and orthography (pp. 300–325). Berlin: Walter de Gruyter.
+Goulandris NK, & Snowling M (1991). Visual memory deficits: A plausible cause of developmental
+dyslexia? Evidence from a single case study. Cognitive Neuropsychology, 8, 127–154.
+Graham NL (2014). Dysgraphia in primary progressive aphasia: Characterisation of impairments and
+therapy options. Aphasiology, 28, 1092–1111.
+Graham S, Berninger VW, Abbott RD, Abbott SP, & Whitaker D (1997). Role of mechanics in
+composing of elementary school students: A new methodological approach. Journal of educational
+psychology, 89, 170.
+Halsband U, & Lange RK (2006). Motor learning in man: a review of functional and clinical studies.
+Journal of Physiology-Paris, 99, 414–424.
+Hanley JR, Hastie K, & Kay J (1992). Developmental surface dyslexia and dysgraphia: An
+orthographic processing impairment. The Quarterly Journal of Experimental Psychology, 44, 285–
+319. [PubMed: 1565802]
+Hepner C, McCloskey M, & Rapp B (2017). Do reading and spelling share orthographic
+representations? Evidence from developmental dysgraphia. Cognitive Neuropsychology.
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 21
+
+Author Manuscript
+Author Manuscript
+Author Manuscript
+Author Manuscript
+
+Hillis AE, & Caramazza A (1991). Mechanisms for accessing lexical representations for output:
+Evidence from a category-specific semantic deficit. Brain and Language, 40, 106–144. [PubMed:
+2009445]
+Hillis AE, & Caramazza A (1992). The reading process and its disorders In Margolin DI (Ed.),
+Cognitive Neuropsychology in Clinical Practice (pp. 229–261). Oxford: Oxford University Press.
+Hollerbach JM (1981). An oscillation theory of handwriting. Biological Cybernetics, 39, 139–156.
+Holmes VM, & Quinn L (2009). Unexpectedly poor spelling and phonological-processing skill.
+Scientific Studies of Reading, 13, 295–317.
+Houghton G, & Zorzi M (2003). Normal and impaired spelling in a connectionist dual-route
+architecture. Cognitive Neuropsychology, 20, 115–162. [PubMed: 20957568]
+Jones AC, Folk JR, & Rapp B (2009). All letters are not equal: Subgraphemic texture in orthographic
+working memory. Journal of Experimental Psychology: Learning, Memory, and Cognition, 35,
+1389–1402.
+Jones AC, & Rawson KA (2016). Do reading and spelling share a lexicon? Cognitive psychology, 86,
+152–184. [PubMed: 26999066]
+Kandel S, Lassus-Sangosse D, Grosjacques G, & Perret C (2017). The impact of developmental
+dyslexia/dysgraphia on movement production during word writing. Cognitive Neuropsychology.
+Kandel S, & Perret C (2015). How does the interaction between spelling and motor processes build up
+during writing acquisition? Cognition, 136, 325–336. [PubMed: 25525970]
+Kandel S, & Valdois S (2006). Syllables as functional units in a copying task. Language and cognitive
+processes, 21, 432–452.
+Karmiloff-Smith A (1997). Crucial differences between developmental cognitive neuroscience and
+adult neuropsychology. Developmental Neuropsychology, 13, 513–524.
+Kersey AJ, & James KH (2013). Brain activation patterns resulting from learning letter forms through
+active self-production and passive observation in young children. Frontiers in psychology, 4, 567.
+[PubMed: 24069007]
+Maggio S, Lété B, Chenu F, Jisa H, & Fayol M (2012). Tracking the mind during writing: immediacy,
+delayed, and anticipatory effects on pauses and writing rate. Reading and Writing, 25, 2131–2151.
+Margolin DI (1984). The neuropsychology of writing and spelling: Semantic, phonological, motor, and
+perceptual processes. Quarterly Journal of Experimental Psychology, 36A, 459–489.
+Marinelli CV, Cellini P, Zoccolotti, & Angelelli P (2017) Whole word processing and sensitivity to
+written regularity in a consistent orthography: a reading and spelling longitudinal study on
+dyslexic and typically developing children. Cognitive Neuropsychology.
+Masterson JJ, & Crede LA (1999). Learning to Spell: Implications for Assessment and Intervention.
+Language, Speech, and Hearing Services in Schools, 30, 243–254.
+Masterson J, Laxon V, Lovejoy S, & Morris V (2007). Phonological skill, lexical decision and letter
+report performance in good and poor adult spellers. Journal of Research in Reading, 30, 429–442.
+McCloskey M, & Caramazza A (1988). Theory and methodology in cognitive neuropsychology: A
+response to our critics. Cognitive Neuropsychology, 5, 583–623.
+McCloskey M (2001). The future of cognitive neuropsychology In Rapp B (Ed.), What deficits reveal
+about the human mind/brain: A handbook of cognitive neuropsychology (pp. 593–610).
+Philadelphia: Psychology Press.
+McCloskey M, Aliminosa D, & Macaruso P (1991). Theory-based assessment of acquired dyscalculia.
+Brain and Cognition, 17, 285–308. [PubMed: 1799455]
+McCloskey M, Badecker W, Goodman-Schulman RA, & Aliminosa D (1994). The structure of
+graphemic representations in spelling: Evidence from a case of acquired dysgraphia. Cognitive
+Neuropsychology, 11, 341–392.
+McCloskey M, & Caramazza A (1988). Theory and methodology in cognitive neuropsychology: A
+response to our critics. Cognitive Neuropsychology, 5, 583–623.
+Menichelli A, Rapp B, & Semenza C (2008). Allographic agraphia: a case study. Cortex, 44(7), 861–
+868. [PubMed: 18489965]
+Miceli G, Benvegnù B, Capasso R, & Caramazza A (1997). The independence of phonological and
+orthographic lexical forms: Evidence from aphasia. Cognitive Neuropsychology, 14, 35–69.
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 22
+
+Author Manuscript
+Author Manuscript
+Author Manuscript
+Author Manuscript
+
+Miceli G, & Capasso R (2006). Spelling and dysgraphia. Cognitive Neuropsychology, 23, 110–134.
+[PubMed: 21049324]
+Miozzo M, & De Bastiani P (2002). The organization of letter-form representations in written spelling:
+Evidence from acquired dysgraphia. Brain and Language, 80, 366–392. [PubMed: 11896648]
+Palmis S, Danna J, Velay J-L, & Longcamp M (2017). Motor control of handwriting in the developing
+brain: A review. Cognitive Neuropsychology.
+Planton S, Jucla M, Roux FE, & Démonet JF (2013). The “handwriting brain”: a meta-analysis of
+neuroimaging studies of motor versus orthographic processes. Cortex, 49, 2772–2787. [PubMed:
+23831432]
+Pollo TC, Kessler B, & Treiman R (2009). Statistical patterns in children’s early writing. Journal of
+Experimental Child Psychology, 104, 410–426. [PubMed: 19691970]
+Pontart V, Bidet-Ildei C, Lambert E, Morisset P, Flouret L, & Alamargot D (2013). Influence of
+handwriting skills during spelling in primary and lower secondary grades. Frontiers in Psychology,
+4, 818. [PubMed: 24204357]
+Posteraro L, Zinelli P, & Mazzucchi A (1988). Selective impairment of the graphemic buffer in
+acquired dysgraphia: A case study. Brain and Language, 35, 274–286. [PubMed: 3208073]
+Prunty M, & Barnett AL (2017). Understanding handwriting difficulties: A comparison of children
+with and without motor impairment. Cognitive Neuropsychology.
+Purcell JJ, Turkeltaub PE, Eden GF, & Rapp B (2011). Examining the central and peripheral processes
+of written word production through meta-analysis. Frontiers in psychology, 2. doi: 10.3389/fpsyg.
+2011.00239
+Rapp B, & Caramazza A (1997). From graphemes to letter shapes: Levels of representation in written
+spelling. Journal of Experimental Psychology: Human Perception and Performance, 23, 1130–
+1152. [PubMed: 9269731]
+Rapp B, & Dufor O (2011). The neurotopography of written word production: an fMRI investigation
+of the distribution of sensitivity to length and frequency. Journal of cognitive neuroscience, 23,
+4067–4081. [PubMed: 21812571]
+Rapp B, Epstein C, & Tainturier MJ (2002). The integration of information across lexical and
+sublexical processes in spelling. Cognitive Neuropsychology, 19, 1–29. [PubMed: 20957529]
+Rapp B, Purcell J, Hillis AE, Capasso R, & Miceli G (2015). Neural bases of orthographic long-term
+memory and working memory in dysgraphia. Brain, 139, 588–604. [PubMed: 26685156]
+Romani C, Ward J, & Olson A (1999). Developmental surface dysgraphia: What is the underlying
+cognitive impairment? Quarterly Journal of Experimental Psychology A, 52, 97–128.
+Roncoli S, & Masterson J (2016). ‘Unexpected’ spelling difficulty in a 10-year-old child with good
+reading skills: An intervention case study. Writing Systems Research, 8, 143–166.
+Roux S, McKeeff TJ, Grosjacques G, Afonso O, & Kandel S (2013). The interaction between central
+and peripheral processes in handwriting production. Cognition, 127, 235–241. [PubMed:
+23454797]
+Shallice T (1981). Phonological agraphia and the lexical route in writing. Brain: a journal of
+neurology, 104, 413–429. [PubMed: 7272708]
+Smits-Engelsman BC, & Van Galen GP (1997). Dysgraphia in children: Lasting psychomotor
+deficiency or transient developmental delay? Journal of experimental child psychology, 67(2),
+164–184. [PubMed: 9388804]
+Smits-Engelsman BC, Niemeijer AS, & van Galen GP (2001). Fine motor deficiencies in children
+diagnosed as DCD based on poor grapho-motor ability. Human movement science, 20, 161–182.
+[PubMed: 11471395]
+Smyth MM, & Silvers G (1987). Functions of vision in the control of handwriting. Acta Psychologica,
+65, 47–64.
+Snowling M, Stackhouse J, & Rack J (1986). Phonological dyslexia and dysgraphia—a developmental
+analysis. Cognitive Neuropsychology, 3, 309–339.
+Stadie N, & van de Vijver R (2003). A linguistic and neuropsychological approach to remediation in a
+German case of developmental dysgraphia. Annals of Dyslexia, 53, 280–299.
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 23
+
+Author Manuscript
+Author Manuscript
+Author Manuscript
+
+Sotiropolous A, & Hanley JR (2017). The relationship between lexical decision and spelling in
+developmental surface dysgraphia: Evidence for a unitary orthographic system. Cognitive
+Neuropsychology
+Tainturier M-J, Bosse M-L, Roberts DJ, Valdois S, & Rapp B (2013). Lexical neighborhood effects in
+pseudoword spelling. Frontiers in psychology, 4, 862. [PubMed: 24348436]
+Tainturier M-J, & Rapp B (2001). The spelling process In Rapp B (Ed.), The handbook of cognitive
+neuropsychology: What deficits reveal about the human mind (pp. 263–289). Philadelphia, PA:
+Psychology Press.
+Temple CM (1985). Developmental surface dysgraphia: A case report. Applied Psycholinguistics, 6,
+391–405.
+Temple CM (1986). Developmental dysgraphias. The Quarterly Journal of Experimental Psychology,
+38, 77–110. [PubMed: 3961209]
+Temple CM (1990). Foop is still floop: A six year follow-up of phonological dyslexia and dysgraphia.
+Reading and Writing, 2(3), 209–221.
+Treiman R (1993). Beginning to spell. New York: Oxford University Press.
+Treiman R (2003). Phonology and spelling In Nunes T and Bryant P (Eds.), Handbook of children’s
+literacy (pp. 31–42). Dordrecht, Netherlands: Kluver.
+Treiman R, & Bourassa DC (2000). The development of spelling skill. Topics in Language Disorders,
+20, 1–18.
+Treiman R, & Kessler B (2014). How children learn to write words. New York: Oxford University
+Press.
+Treiman R (2017). Learning to spell: Phonology and beyond. Cognitive Neuropsychology.
+Valdois S, Bosse ML, Ans B, Carbonnel S, Zorman M, David D, & Pellat J (2003). Phonological and
+visual processing deficits can dissociate in developmental dyslexia: Evidence from two case
+studies. Reading and Writing, 16, 541–572.
+van Galen GP (1991). Handwriting: Issues for a psychomotor theory. Human Movement Science, 10,
+165–191.
+Van Galen GP, Portier SJ, Smits-Engelsman BC, & Schomaker LR (1993). Neuromotor noise and poor
+handwriting in children. Acta Psychologica, 82, 161–178. [PubMed: 8475764]
+Yachini M & Friedmann N (2010). Developmental graphemic buffer dysgraphia. Procedia Social and
+Behavioral Sciences, 6, 148–149.
+Varnhagen CK, McCallum M, & Burstow M (1997). Is children’s spelling naturally stage-like?
+Reading and Writing, 9, 451–481.
+
+Author Manuscript
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 24
+
+Author Manuscript
+Author Manuscript
+Author Manuscript
+Figure 1.
+
+Schematic depiction of the cognitive mechanisms making up the normal adult writing
+system.
+
+Author Manuscript
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+McCloskey and Rapp
+
+Page 25
+
+Author Manuscript
+Author Manuscript
+Author Manuscript
+Author Manuscript
+
+Figure 2.
+
+Schematic depiction of the cognitive handwriting mechanisms, which map abstract letter
+identities onto motor programs for production of written responses.
+
+Cogn Neuropsychol. Author manuscript; available in PMC 2018 November 16.
+
+
