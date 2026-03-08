@@ -86,16 +86,27 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
         words_spoken = 0
         sentences_played = 0
         
-        def on_play(text):
+        def on_play(sentence_text):
             nonlocal words_spoken, sentences_played
             if _interrupted:
                 return
             
-            sentence_words = len(text.split())
+            sentence_words = len(sentence_text.split())
             words_spoken += sentence_words
             sentences_played += 1
             
-            click.echo(f"[{words_spoken}/{total_words}] {text}")
+            # Progress bar
+            progress = int(40 * words_spoken / total_words) if total_words > 0 else 0
+            bar = "█" * progress + "░" * (40 - progress)
+            pct = int(100 * words_spoken / total_words) if total_words > 0 else 0
+            
+            # Clear, accessible output
+            click.echo("")
+            click.echo(click.style("─" * 60, dim=True))
+            click.echo("")
+            click.echo(f"  {click.style('▶', fg='green', bold=True)}  {sentence_text}")
+            click.echo("")
+            click.echo(f"     {click.style('└─', dim=True)} {click.style(str(words_spoken), fg='cyan', bold=True)} of {total_words} words  {click.style(bar, dim=True)} {pct}%")
         
         client = ProgressiveTTSClient(
             engine_obj,
@@ -107,8 +118,16 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
         _client = client
         
         try:
+            # Header
+            click.echo("")
+            click.echo(click.style("═" * 60, fg='cyan'))
+            click.echo(click.style(f"  📖  Reading: {Path(file_path).name}", fg='cyan', bold=True))
+            click.echo(click.style(f"     {total_words} words total", fg='cyan', dim=True))
+            click.echo(click.style("═" * 60, fg='cyan'))
+            
             if start_word > 0:
-                click.echo(f"Seeking to word {start_word}...")
+                click.echo("")
+                click.echo(f"  {click.style('⏭', fg='yellow')}  Seeking to word {start_word}...")
                 words_counted = 0
                 sentences = client.split_into_sentences(text)
                 
@@ -116,11 +135,13 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
                     sentence_words = len(sentence.split())
                     if words_counted + sentence_words > start_word:
                         remaining_text = " ".join(sentences[i:])
-                        click.echo(f"Resuming from word {words_counted}...")
+                        click.echo(f"  {click.style('▶', fg='green')}  Resuming from word {words_counted}")
+                        click.echo("")
                         client.speak(remaining_text)
                         break
                     words_counted += sentence_words
             else:
+                click.echo("")
                 client.speak(text)
         except KeyboardInterrupt:
             pass
@@ -129,12 +150,24 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             client.close()
             
             if _interrupted:
+                # Clear, accessible summary
                 click.echo("")
-                click.echo(click.style("Interrupted!", fg="yellow", bold=True))
-                click.echo(f"  Words spoken: {words_spoken}/{total_words}")
-                click.echo(f"  Sentences:    {sentences_played}")
+                click.echo(click.style("═" * 60, fg='yellow'))
+                click.echo(click.style("  ⏹  STOPPED", fg='yellow', bold=True))
+                click.echo(click.style("═" * 60, fg='yellow'))
                 click.echo("")
-                click.echo(click.style("To resume:", fg="cyan") + f" mytts read {file_path} --server -w {words_spoken}")
+                click.echo(f"  {click.style('📊', fg='cyan')}  Progress")
+                click.echo(click.style("  " + "─" * 40, dim=True))
+                click.echo(f"     Words:     {click.style(str(words_spoken), fg='cyan', bold=True)} of {total_words}")
+                click.echo(f"     Sentences: {sentences_played}")
+                click.echo("")
+                click.echo(f"  {click.style('▶️', fg='green')}  Resume Command")
+                click.echo(click.style("  " + "─" * 40, dim=True))
+                click.echo("")
+                resume_cmd = f"mytts read {file_path} --server -w {words_spoken}"
+                click.echo(f"     {click.style(resume_cmd, fg='green', bold=True)}")
+                click.echo("")
+                click.echo(click.style("═" * 60, fg='yellow'))
                 click.echo("")
     else:
         engine_obj.speak(file_path=file_path, output=output)
