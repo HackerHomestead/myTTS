@@ -107,17 +107,34 @@ class ChunkDisplay(Static):
         self._update_visible_lines()
     
     def _update_visible_lines(self):
-        """Calculate how many lines can fit in the available space."""
+        """Calculate how many lines can fit in the available space.
+        
+        Base terminal: 80x25 (25 lines total)
+        Overhead: header (2), status (2), controls (3), progress (2), footer (2), borders (4) = 15 lines
+        Available for chunks: 10 lines
+        With 2-line separator between chunks: ~3-4 chunks visible
+        """
         try:
             if hasattr(self, 'region'):
                 available_height = self.region.height
-                # Reserve space for padding and borders
-                usable_height = max(available_height - 4, 3)
-                self.visible_lines = min(usable_height, 15)
             else:
-                self.visible_lines = 7
+                # Default to base terminal height minus overhead
+                available_height = 25
+            
+            # Reserve space for UI elements (header, status, controls, progress, footer, borders)
+            overhead = 15
+            usable_height = max(available_height - overhead, 3)
+            
+            # Each chunk takes 1 line + 2 lines separator = 3 lines per chunk
+            # But last chunk doesn't need separator
+            # So: (chunks * 3) - 2 <= usable_height
+            # chunks <= (usable_height + 2) / 3
+            self.visible_lines = max(3, int((usable_height + 2) / 3))
+            
+            # Cap at reasonable maximum
+            self.visible_lines = min(self.visible_lines, 20)
         except Exception:
-            self.visible_lines = 7
+            self.visible_lines = 3
     
     def _get_word_start_for_chunk(self, chunk_idx: int) -> int:
         """Get the starting word number for a chunk."""
@@ -192,6 +209,10 @@ class ChunkDisplay(Static):
                     text.append(f"{line_text}\n", style="white")
                 else:
                     text.append(f"{line_text}\n", style="white dim")
+            
+            # Add 2 blank lines between chunks (except after last visible chunk)
+            if i < visible_end - 1:
+                text.append("\n\n")
         
         text.append("\n")
         return text
