@@ -167,7 +167,7 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
         words_spoken = 0
         sentences_played = 0
         
-        def on_play(sentence_text):
+        def on_play(sentence_text, chunk_index):
             nonlocal words_spoken, sentences_played
             if _interrupted:
                 return
@@ -320,7 +320,7 @@ def chat(engine, voice, use_server, server_url, workers, buffer_size):
     if use_server:
         from mytts.client import ProgressiveTTSClient
         
-        def on_play(text):
+        def on_play(text, index):
             click.echo(text)
         
         client = ProgressiveTTSClient(
@@ -388,7 +388,7 @@ def speak(text, voice, use_server, server_url, workers, buffer_size):
     if use_server:
         from mytts.client import ProgressiveTTSClient
         
-        def on_play(chunk_text):
+        def on_play(chunk_text, index):
             click.echo(chunk_text)
         
         client = ProgressiveTTSClient(
