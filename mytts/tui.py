@@ -395,8 +395,8 @@ class ControlsDisplay(Static):
             ("0", "Rst"),
             ("v", "Vo"),
             ("r", "Rep"),
-            ("m", "Bm"),
-            ("[]", "BmNav"),
+            ("m", "Mark"),
+            ("[]", "Bkmk"),
             ("H/E", "⇤⇥"),
             ("q", "✕"),
         ]
