@@ -201,9 +201,20 @@ def patch_client_for_mock():
         word_count = len(chunk.text.split())
         time.sleep(0.02 * word_count)
         
+        # Generate different audio based on voice
+        voice = self.engine.voice
+        voice_hash = hash(voice) % 1000
         samples_per_word = 4410 
         total_samples = word_count * samples_per_word
-        chunk.audio = np.zeros(total_samples, dtype=np.float32)
+        
+        # Create voice-specific audio pattern
+        np.random.seed(voice_hash)
+        chunk.audio = np.random.normal(0, 0.1, total_samples).astype(np.float32)
+        
+        # Add voice-specific frequency modulation
+        freq = 200 + (voice_hash % 500)
+        t = np.linspace(0, total_samples / 22050, total_samples)
+        chunk.audio += 0.2 * np.sin(2 * np.pi * freq * t)
         
         self._stats["chunks_generated"] += 1
         self._stats["total_generation_time"] += 0.02 * word_count
