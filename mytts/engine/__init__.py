@@ -1,5 +1,22 @@
 # Lazy imports to avoid loading server-only dependencies on client
-from mytts.engine.coqui import BaseEngine
+from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import Optional, Union
+
+
+class BaseEngine(ABC):
+    @abstractmethod
+    def speak(
+        self,
+        text: str,
+        output: Optional[Union[str, Path]] = None,
+        streaming: bool = False,
+    ):
+        pass
+
+    @abstractmethod
+    def stream(self, text: str):
+        pass
 
 
 def get_coqui():

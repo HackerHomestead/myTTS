@@ -31,7 +31,19 @@ def cli():
     default="http://localhost:8000",
     help="TTS server URL",
 )
-def read(file_path, output, engine, voice, use_server, server_url):
+@click.option(
+    "--workers",
+    type=int,
+    default=4,
+    help="Number of worker threads for progressive TTS",
+)
+@click.option(
+    "--buffer-size",
+    type=int,
+    default=2,
+    help="Number of sentences to pre-generate",
+)
+def read(file_path, output, engine, voice, use_server, server_url, workers, buffer_size):
     """Read a text file aloud"""
     backend = TTSBackend.SERVER if use_server else TTSBackend.LOCAL
     engine_obj = TTSEngine(
@@ -41,7 +53,17 @@ def read(file_path, output, engine, voice, use_server, server_url):
         voice=voice,
         server_url=server_url,
     )
-    engine_obj.speak(file_path=file_path, output=output)
+    
+    if use_server:
+        from mytts.client import ProgressiveTTSClient
+        client = ProgressiveTTSClient(engine_obj, num_workers=workers, buffer_size=buffer_size)
+        try:
+            text = Path(file_path).read_text()
+            client.speak(text)
+        finally:
+            client.close()
+    else:
+        engine_obj.speak(file_path=file_path, output=output)
 
 
 @cli.command()
@@ -63,7 +85,19 @@ def read(file_path, output, engine, voice, use_server, server_url):
     default="http://localhost:8000",
     help="TTS server URL",
 )
-def chat(engine, voice, use_server, server_url):
+@click.option(
+    "--workers",
+    type=int,
+    default=4,
+    help="Number of worker threads for progressive TTS",
+)
+@click.option(
+    "--buffer-size",
+    type=int,
+    default=2,
+    help="Number of sentences to pre-generate",
+)
+def chat(engine, voice, use_server, server_url, workers, buffer_size):
     """Interactive conversational TTS"""
     backend = TTSBackend.SERVER if use_server else TTSBackend.LOCAL
     engine_obj = TTSEngine(
@@ -73,13 +107,28 @@ def chat(engine, voice, use_server, server_url):
         voice=voice,
         server_url=server_url,
     )
-    click.echo("Chat mode - type text to speak (Ctrl+C to exit)")
-    while True:
+    
+    if use_server:
+        from mytts.client import ProgressiveTTSClient
+        client = ProgressiveTTSClient(engine_obj, num_workers=workers, buffer_size=buffer_size)
         try:
-            text = input("> ")
-            engine_obj.speak(text)
-        except KeyboardInterrupt:
-            break
+            click.echo("Chat mode - type text to speak (Ctrl+C to exit)")
+            while True:
+                try:
+                    text = input("> ")
+                    client.speak(text)
+                except KeyboardInterrupt:
+                    break
+        finally:
+            client.close()
+    else:
+        click.echo("Chat mode - type text to speak (Ctrl+C to exit)")
+        while True:
+            try:
+                text = input("> ")
+                engine_obj.speak(text)
+            except KeyboardInterrupt:
+                break
 
 
 @cli.command()
@@ -96,7 +145,19 @@ def chat(engine, voice, use_server, server_url):
     default="http://localhost:8000",
     help="TTS server URL",
 )
-def speak(text, voice, use_server, server_url):
+@click.option(
+    "--workers",
+    type=int,
+    default=4,
+    help="Number of worker threads for progressive TTS",
+)
+@click.option(
+    "--buffer-size",
+    type=int,
+    default=2,
+    help="Number of sentences to pre-generate",
+)
+def speak(text, voice, use_server, server_url, workers, buffer_size):
     """Speak text directly"""
     backend = TTSBackend.SERVER if use_server else TTSBackend.LOCAL
     engine_obj = TTSEngine(
@@ -105,7 +166,16 @@ def speak(text, voice, use_server, server_url):
         voice=voice,
         server_url=server_url,
     )
-    engine_obj.speak(text)
+    
+    if use_server:
+        from mytts.client import ProgressiveTTSClient
+        client = ProgressiveTTSClient(engine_obj, num_workers=workers, buffer_size=buffer_size)
+        try:
+            client.speak(text)
+        finally:
+            client.close()
+    else:
+        engine_obj.speak(text)
 
 
 @cli.command()
