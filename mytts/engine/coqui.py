@@ -23,10 +23,22 @@ class BaseEngine(ABC):
 
 
 class CoquiEngine(BaseEngine):
-    def __init__(self, voice: Optional[str] = None, mode=None):
-        self.tts = TTS("tts_models/en/ljspeech/tacotron2-DDC")
+    def __init__(self, voice: Optional[str] = None, mode=None, model: str = None, gpu: bool = False):
+        import torch
         self.voice = voice or "en_US-lessac-medium"
         self.mode = mode
+        
+        model = model or "tts_models/en/ljspeech/tacotron2-DDC"
+        # Force CPU-only mode
+        gpu = False
+        
+        # Disable NNPACK to avoid hardware compatibility issues
+        try:
+            torch.backends.nnpack.flags(enabled=False)
+        except Exception:
+            pass
+        
+        self.tts = TTS(model, gpu=gpu)
 
     def speak(
         self,

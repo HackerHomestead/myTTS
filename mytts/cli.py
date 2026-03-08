@@ -112,9 +112,18 @@ def speak(text, voice, use_server, server_url):
 @click.option("--host", default="0.0.0.0", help="Server host")
 @click.option("--port", default=8000, help="Server port")
 def serve(host, port):
-    """Start TTS server (run on GPU machine)"""
+    """Start TTS server (CPU-only mode)"""
+    import os
+    import torch
+    # Force CPU-only mode
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""
+    # Disable NNPACK to avoid hardware compatibility issues
+    try:
+        torch.backends.nnpack.flags(enabled=False)
+    except Exception:
+        pass
     from mytts.server import run_server
-    click.echo(f"Starting TTS server on {host}:{port}")
+    click.echo(f"Starting TTS server on {host}:{port} (CPU-only mode)")
     run_server(host=host, port=port)
 
 
