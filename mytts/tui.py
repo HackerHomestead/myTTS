@@ -397,7 +397,6 @@ class ControlsDisplay(Static):
             ("r", "Rep"),
             ("m", "Mark"),
             ("[]", "Bkmk"),
-            ("H/E", "⇤⇥"),
             ("q", "✕"),
         ]
         
