@@ -493,7 +493,15 @@ class JumpDialog(ModalScreen):
         Binding("enter", "jump", "Jump"),
     ]
     
-    def __init__(self, total_words: int, bookmarks: List[int], current_word: int):
+    def __init__(self, total_words: int, bookmarks: List[dict], current_word: int):
+        """
+        Initialize jump dialog.
+        
+        Args:
+            total_words: Total words in document
+            bookmarks: List of bookmark dicts with 'index', 'text', 'word' keys
+            current_word: Current word position
+        """
         super().__init__()
         self.total_words = total_words
         self.bookmarks = bookmarks
@@ -516,9 +524,11 @@ class JumpDialog(ModalScreen):
                 with Container(id="bookmarks-container"):
                     yield Label("Bookmarks:", id="bookmarks-label")
                     with ScrollableContainer(id="bookmarks-list"):
-                        for i, word_num in enumerate(self.bookmarks):
+                        for i, bm in enumerate(self.bookmarks):
+                            # Truncate text if too long
+                            text = bm['text'][:50] + "..." if len(bm['text']) > 50 else bm['text']
                             yield Button(
-                                f"Bookmark {i+1}: Word {word_num:,}",
+                                f"#{i+1}: {text}",
                                 id=f"bookmark-{i}",
                                 classes="bookmark-btn",
                             )
@@ -550,7 +560,7 @@ class JumpDialog(ModalScreen):
         for i, btn in enumerate(bookmark_btns):
             if i == self.selected_bookmark_idx:
                 btn.add_class("selected")
-                word_num = self.bookmarks[i]
+                word_num = self.bookmarks[i]['word']
                 self.query_one(Input).value = str(word_num)
             else:
                 btn.remove_class("selected")
@@ -848,6 +858,59 @@ class TTSReaderApp(App):
         # Word highlighting
         self.word_estimator = WordTimingEstimator()
         self.word_scheduler: Optional[WordHighlightScheduler] = None
+        
+        # State file for bookmarks and preferences
+        self.state_file = self.file_path.with_suffix('.mytts.json')
+        self._state_dirty = False
+        self._auto_save_timer: Optional[threading.Timer] = None
+    
+    def _load_state(self) -> dict:
+        """Load state from .mytts.json file."""
+        if self.state_file.exists():
+            try:
+                import json
+                with open(self.state_file, 'r') as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not load state file: {e}")
+        return {}
+    
+    def _save_state(self):
+        """Save current state to .mytts.json file."""
+        try:
+            import json
+            
+            # Build bookmark list with text
+            bookmarks_with_text = []
+            for idx in self.bookmarks:
+                if idx < len(self.sentences):
+                    bookmarks_with_text.append({
+                        'index': idx,
+                        'text': self.sentences[idx],
+                        'word': sum(len(s.split()) for s in self.sentences[:idx]) + 1
+                    })
+            
+            state = {
+                'bookmarks': bookmarks_with_text,
+                'last_position': self.current_sentence_idx,
+                'last_word': self.words_spoken,
+                'speed': self.client.speed if self.client else self.initial_speed,
+                'voice': self.available_voices[self.current_voice_index],
+            }
+            with open(self.state_file, 'w') as f:
+                json.dump(state, f, indent=2)
+            self._state_dirty = False
+        except Exception as e:
+            logger.warning(f"Could not save state file: {e}")
+    
+    def _schedule_auto_save(self):
+        """Schedule auto-save after state changes."""
+        self._state_dirty = True
+        if self._auto_save_timer:
+            self._auto_save_timer.cancel()
+        self._auto_save_timer = threading.Timer(2.0, self._save_state)
+        self._auto_save_timer.daemon = True
+        self._auto_save_timer.start()
     
     def compose(self) -> ComposeResult:
         yield Header()
@@ -870,6 +933,32 @@ class TTSReaderApp(App):
     
     def on_mount(self):
         try:
+            # Load saved state
+            state = self._load_state()
+            
+            # Apply saved voice if available
+            if 'voice' in state and state['voice'] in self.available_voices:
+                self.current_voice_index = self.available_voices.index(state['voice'])
+            
+            # Apply saved bookmarks
+            if 'bookmarks' in state:
+                # Handle both old format (list of indices) and new format (list of objects)
+                loaded_bookmarks = state['bookmarks']
+                if loaded_bookmarks and isinstance(loaded_bookmarks[0], dict):
+                    # New format: extract indices
+                    self.bookmarks = [bm['index'] for bm in loaded_bookmarks]
+                else:
+                    # Old format: list of indices
+                    self.bookmarks = loaded_bookmarks
+            
+            # Apply saved speed
+            if 'speed' in state:
+                self.initial_speed = state['speed']
+            
+            # Apply saved position (if not overridden by command line)
+            if self.start_word == 0 and 'last_word' in state:
+                self.start_word = state['last_word']
+            
             backend = TTSBackend.SERVER
             current_voice = self.available_voices[self.current_voice_index]
             self.engine = TTSEngine(
@@ -966,6 +1055,13 @@ class TTSReaderApp(App):
     
     def on_unmount(self):
         """Clean up when TUI closes."""
+        # Save state before closing
+        self._save_state()
+        
+        # Cancel auto-save timer
+        if self._auto_save_timer:
+            self._auto_save_timer.cancel()
+        
         self.should_stop = True
         self.action_queue.clear()
         if self.client:
@@ -1169,11 +1265,16 @@ class TTSReaderApp(App):
         # Calculate current word
         current_word = sum(len(s.split()) for s in self.sentences[:self.current_sentence_idx])
         
-        # Get bookmark word positions
-        bookmark_words = []
+        # Build bookmark data with text
+        bookmark_data = []
         for bm_idx in self.bookmarks:
-            word_num = sum(len(s.split()) for s in self.sentences[:bm_idx])
-            bookmark_words.append(word_num)
+            if bm_idx < len(self.sentences):
+                word_num = sum(len(s.split()) for s in self.sentences[:bm_idx]) + 1
+                bookmark_data.append({
+                    'index': bm_idx,
+                    'text': self.sentences[bm_idx],
+                    'word': word_num
+                })
         
         def on_dialog_result(word_num):
             # Resume audio
@@ -1187,7 +1288,7 @@ class TTSReaderApp(App):
         self.push_screen(
             JumpDialog(
                 total_words=self.total_words,
-                bookmarks=bookmark_words,
+                bookmarks=bookmark_data,
                 current_word=current_word,
             ),
             on_dialog_result
@@ -1226,18 +1327,21 @@ class TTSReaderApp(App):
         if self.client:
             self.client.increase_speed()
             self.query_one(StatusDisplay).speed = self.client.speed
+            self._schedule_auto_save()
     
     def action_decrease_speed(self):
         """Decrease playback speed."""
         if self.client:
             self.client.decrease_speed()
             self.query_one(StatusDisplay).speed = self.client.speed
+            self._schedule_auto_save()
     
     def action_reset_speed(self):
         """Reset playback speed to default."""
         if self.client:
             self.client.reset_speed()
             self.query_one(StatusDisplay).speed = self.client.speed
+            self._schedule_auto_save()
     
     def action_cycle_voice(self):
         """Cycle to next voice using action queue."""
@@ -1249,6 +1353,8 @@ class TTSReaderApp(App):
         status_display = self.query_one(StatusDisplay)
         status_display.is_loading = True
         status_display.loading_message = f"Changing voice to {voice_name}..."
+        
+        self._schedule_auto_save()
         
         def voice_change_action():
             self._safe_stop_playback()
@@ -1306,6 +1412,7 @@ class TTSReaderApp(App):
             self.bookmarks.sort()
             self.current_bookmark_idx = self.bookmarks.index(self.current_sentence_idx)
             self.query_one(StatusDisplay).current_bookmark = self.current_sentence_idx + 1
+            self._schedule_auto_save()
     
     def action_prev_bookmark(self):
         """Jump to previous bookmark using action queue."""
