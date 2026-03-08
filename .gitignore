@@ -28,3 +28,6 @@ coverage.xml
 *.pyc
 __pycache__/
 .pytest_cache/
+
+# Generated screenshots
+tui_screenshots/
