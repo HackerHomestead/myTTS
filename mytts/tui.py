@@ -140,32 +140,58 @@ class ChunkDisplay(Static):
         for i in range(visible_start, visible_end):
             chunk = self.chunks[i]
             word_start = self._get_word_start_for_chunk(i)
-            word_end = word_start + len(chunk.split()) - 1
             
             is_current = (i == self.current_idx)
             is_selected = (i == self.selected_idx)
             
-            # Indicator and word count
+            # Line number/indicator column
             if is_current:
                 text.append("  ▶ ", style="yellow bold")
                 text.append(f"{word_start:5,}", style="yellow bold reverse")
-                text.append("  ", style="yellow")
+                text.append(" │ ", style="yellow bold")
             elif is_selected:
                 text.append("  ◆ ", style="cyan bold")
                 text.append(f"{word_start:5,}", style="cyan bold reverse")
-                text.append("  ", style="cyan")
+                text.append(" │ ", style="cyan bold")
             else:
                 text.append("     ", style="dim")
                 text.append(f"{word_start:5,}", style="white bold")
-                text.append("  ", style="dim")
+                text.append(" │ ", style="dim")
             
-            # Chunk text
-            if is_current:
-                text.append(f"{chunk}\n", style="yellow")
-            elif is_selected:
-                text.append(f"{chunk}\n", style="white")
-            else:
-                text.append(f"{chunk}\n", style="white dim")
+            # Text block - wrap long lines
+            max_width = 60
+            words = chunk.split()
+            line_words = []
+            current_length = 0
+            
+            for word in words:
+                if current_length + len(word) + 1 > max_width and line_words:
+                    # Output current line
+                    line_text = " ".join(line_words)
+                    if is_current:
+                        text.append(f"{line_text}\n", style="yellow")
+                    elif is_selected:
+                        text.append(f"{line_text}\n", style="white")
+                    else:
+                        text.append(f"{line_text}\n", style="white dim")
+                    
+                    # Add continuation indent
+                    text.append("               │ ", style="dim" if not is_current else "yellow")
+                    line_words = [word]
+                    current_length = len(word)
+                else:
+                    line_words.append(word)
+                    current_length += len(word) + 1
+            
+            # Output remaining words
+            if line_words:
+                line_text = " ".join(line_words)
+                if is_current:
+                    text.append(f"{line_text}\n", style="yellow")
+                elif is_selected:
+                    text.append(f"{line_text}\n", style="white")
+                else:
+                    text.append(f"{line_text}\n", style="white dim")
         
         text.append("\n")
         return text
