@@ -53,6 +53,7 @@ class ProgressiveTTSClient:
         self._current_sample_rate = 22050
         self._is_playing = False
         self._playback_lock = threading.Lock()
+        self._stream_active = False
         
         self._speed = 1.0
         self._speed_lock = threading.Lock()
@@ -126,11 +127,12 @@ class ProgressiveTTSClient:
     def _stop_playback(self):
         """Safely stop audio playback."""
         with self._playback_lock:
-            if self._is_playing:
+            if self._is_playing or self._stream_active:
                 try:
+                    self._stream_active = False
                     sd.stop()
                     sd.wait()
-                except Exception:
+                except Exception as e:
                     pass
                 self._is_playing = False
     
@@ -143,6 +145,7 @@ class ProgressiveTTSClient:
         self._chunks_list = []
         with self._playback_lock:
             self._is_playing = False
+            self._stream_active = False
     
     def split_into_sentences(self, text: str) -> List[str]:
         sentences = SENTENCE_ENDINGS.split(text.strip())
@@ -216,6 +219,7 @@ class ProgressiveTTSClient:
         
         with self._playback_lock:
             self._is_playing = True
+            self._stream_active = True
         
         start = time.perf_counter()
         try:
@@ -231,6 +235,7 @@ class ProgressiveTTSClient:
         finally:
             with self._playback_lock:
                 self._is_playing = False
+                self._stream_active = False
         
         self._stats["total_playback_time"] += time.perf_counter() - start
         self._stats["chunks_played"] += 1
@@ -328,6 +333,8 @@ class ProgressiveTTSClient:
         return thread
 
     def close(self):
+        self._stop_event.set()
+        self._stop_playback()
         self._executor.shutdown(wait=True)
     
     def get_audio_config(self) -> dict:
