@@ -720,11 +720,41 @@ class TTSReaderApp(App):
         self.action_queue.enqueue(jump_action, "goto_end")
     
     async def action_quit(self):
-        """Quit the TUI."""
+        """Quit the TUI and print resume command."""
         self.should_stop = True
         self.action_queue.clear()
         if self.client:
             self.client.stop()
+        
+        # Calculate current word position
+        current_word = sum(len(s.split()) for s in self.sentences[:self.current_sentence_idx])
+        
+        # Get current voice
+        current_voice = self.available_voices[self.current_voice_index]
+        
+        # Get current speed
+        current_speed = self.client.speed if self.client else self.initial_speed
+        
+        # Print resume command
+        print("\n" + "="*60)
+        print("To resume from this position, run:")
+        print("="*60)
+        cmd_parts = [
+            "python -m mytts.cli read",
+            "--tui",
+            f"--server-url {self.server_url}",
+            f"--voice {current_voice}",
+            f"-w {current_word}",
+            f"-s {current_speed:.2f}",
+            f'"{self.file_path}"'
+        ]
+        print(" ".join(cmd_parts))
+        print("="*60)
+        print(f"Position: Sentence {self.current_sentence_idx + 1}/{len(self.sentences)}, Word {current_word:,}")
+        print(f"Voice: {current_voice}")
+        print(f"Speed: {current_speed:.2f}x")
+        print("="*60 + "\n")
+        
         self.exit()
 
 
