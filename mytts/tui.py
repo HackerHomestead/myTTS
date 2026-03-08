@@ -409,7 +409,9 @@ class TTSReaderApp(App):
                 self.engine,
                 num_workers=4,
                 buffer_size=2,
-                on_play=self._on_sentence_play
+                on_play=self._on_sentence_play,
+                audio_buffer_size=4096,
+                audio_latency='high',
             )
             
             self.client.speed = self.initial_speed
@@ -632,7 +634,9 @@ class TTSReaderApp(App):
                     self.engine,
                     num_workers=4,
                     buffer_size=2,
-                    on_play=self._on_sentence_play
+                    on_play=self._on_sentence_play,
+                    audio_buffer_size=4096,
+                    audio_latency='high',
                 )
                 
                 self.client.speed = self.initial_speed

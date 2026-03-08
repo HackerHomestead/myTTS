@@ -31,11 +31,15 @@ class ProgressiveTTSClient:
         num_workers: int = 4,
         buffer_size: int = 2,
         on_play: Optional[Callable[[str, int], None]] = None,
+        audio_buffer_size: int = 4096,
+        audio_latency: str = 'high',
     ):
         self.engine = engine
         self.num_workers = num_workers
         self.buffer_size = buffer_size
         self.on_play = on_play
+        self.audio_buffer_size = audio_buffer_size
+        self.audio_latency = audio_latency
         
         self._executor = ThreadPoolExecutor(max_workers=num_workers)
         self._pending_futures: queue.Queue[Future] = queue.Queue()
@@ -215,7 +219,12 @@ class ProgressiveTTSClient:
         
         start = time.perf_counter()
         try:
-            sd.play(faded_audio, samplerate=adjusted_rate)
+            sd.play(
+                faded_audio,
+                samplerate=adjusted_rate,
+                blocksize=self.audio_buffer_size,
+                latency=self.audio_latency,
+            )
             sd.wait()
         except Exception as e:
             pass
@@ -320,7 +329,29 @@ class ProgressiveTTSClient:
 
     def close(self):
         self._executor.shutdown(wait=True)
-
+    
+    def get_audio_config(self) -> dict:
+        """Get current audio configuration."""
+        return {
+            "buffer_size": self.audio_buffer_size,
+            "latency": self.audio_latency,
+            "default_output_device": sd.query_devices(kind='output'),
+        }
+    
+    @staticmethod
+    def get_recommended_buffer_size() -> int:
+        """Get recommended buffer size based on system."""
+        try:
+            device_info = sd.query_devices(kind='output')
+            default_samplerate = device_info.get('default_samplerate', 22050)
+            
+            if default_samplerate >= 44100:
+                return 4096
+            else:
+                return 2048
+        except Exception:
+            return 4096
+    
     def get_stats(self) -> dict:
         return self._stats.copy()
 
