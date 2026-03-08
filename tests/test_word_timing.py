@@ -192,6 +192,63 @@ class TestWordHighlightScheduler:
         
         # Should NOT have called call_from_thread
         app.call_from_thread.assert_not_called()
+    
+    def test_pause_cancels_timers(self):
+        """Test that pause cancels all timers."""
+        app = Mock()
+        scheduler = WordHighlightScheduler(app)
+        estimator = WordTimingEstimator()
+        
+        sentence = "One two three"
+        duration = 1.0
+        
+        scheduler.schedule_highlights(sentence, 0, duration, estimator)
+        assert len(scheduler._timers) == 3
+        
+        scheduler.pause()
+        
+        # Timers should be cleared
+        assert len(scheduler._timers) == 0
+        assert scheduler._is_paused is True
+    
+    def test_resume_reschedules_timers(self):
+        """Test that resume reschedules timers with adjusted delays."""
+        app = Mock()
+        scheduler = WordHighlightScheduler(app)
+        estimator = WordTimingEstimator()
+        
+        sentence = "One two three four five"
+        duration = 2.0  # Longer duration to give more time
+        
+        scheduler.schedule_highlights(sentence, 0, duration, estimator)
+        initial_timer_count = len(scheduler._timers)
+        assert initial_timer_count == 5
+        
+        scheduler.pause()
+        assert len(scheduler._timers) == 0
+        
+        scheduler.resume()
+        
+        # Timers should be rescheduled (some may have already fired)
+        assert len(scheduler._timers) >= 1
+        assert scheduler._is_paused is False
+    
+    def test_cancel_clears_pending_timers(self):
+        """Test that cancel_highlights clears pending timers."""
+        app = Mock()
+        scheduler = WordHighlightScheduler(app)
+        estimator = WordTimingEstimator()
+        
+        sentence = "One two three"
+        duration = 1.0
+        
+        scheduler.schedule_highlights(sentence, 0, duration, estimator)
+        assert len(scheduler._pending_timers) == 3
+        
+        scheduler.cancel_highlights()
+        
+        assert len(scheduler._pending_timers) == 0
+        assert scheduler._is_paused is False
 
 
 class TestWordTimingIntegration:

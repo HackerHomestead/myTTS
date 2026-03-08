@@ -2,9 +2,10 @@
 
 ## Bug #1: Highlighting Continues During Pause
 
-**Status:** Open
+**Status:** ✅ FIXED
 **Priority:** High
 **Reported:** 2026-03-08
+**Fixed:** 2026-03-08
 
 ### Description
 When audio is paused (Space key), the word highlighting continues to progress through the sentence. The timers continue firing even though audio playback is stopped.
@@ -17,15 +18,16 @@ When audio is paused (Space key), the word highlighting continues to progress th
 ### Root Cause
 `WordHighlightScheduler` uses `threading.Timer` objects that are not aware of pause state. Timers fire regardless of whether audio is playing.
 
-### Proposed Fix
-1. Track pause state in `WordHighlightScheduler`
-2. Pause/resume timers when audio pauses/resumes
-3. Option A: Cancel timers on pause, reschedule on resume
-4. Option B: Track elapsed time and adjust remaining timers
+### Fix Implemented
+Added pause/resume methods to `WordHighlightScheduler`:
+- `pause()`: Cancels all timers and tracks pause time
+- `resume()`: Reschedules timers with adjusted delays based on elapsed time
+- `action_toggle_pause()`: Now calls `word_scheduler.pause()` and `word_scheduler.resume()`
 
-### Files Affected
+### Files Changed
 - `mytts/tui.py` - `WordHighlightScheduler` class
 - `mytts/tui.py` - `action_toggle_pause()` method
+- `tests/test_word_timing.py` - Added 3 new tests for pause/resume
 
 ---
 
