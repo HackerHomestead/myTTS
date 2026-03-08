@@ -460,7 +460,32 @@ class TTSReaderApp(App):
             status_display.current_voice = current_voice
             
             if self.start_word > 0:
+                # Show seeking indicator
+                status_display.is_loading = True
+                status_display.loading_message = f"Seeking to word {self.start_word:,}..."
+                self.call_from_thread(lambda: status_display.refresh())
+                
+                # Perform seek
                 self._seek_to_word(self.start_word)
+                
+                # Update display to show current position
+                chunk_display.current_idx = self.current_sentence_idx
+                chunk_display.selected_idx = self.current_sentence_idx
+                chunk_display.scroll_to_current()
+                
+                # Update status
+                status_display.words_spoken = self.words_spoken
+                
+                # Hide loading after a short delay
+                def hide_loading():
+                    try:
+                        status_display = self.query_one(StatusDisplay)
+                        status_display.is_loading = False
+                        status_display.loading_message = ""
+                    except Exception:
+                        pass
+                
+                threading.Timer(1.0, hide_loading).start()
             
             self._start_reading()
         except Exception as e:
@@ -529,14 +554,23 @@ class TTSReaderApp(App):
         self.read_thread.start()
     
     def _seek_to_word(self, word_num: int):
+        """Seek to a specific word position."""
         words_counted = 0
+        target_idx = 0
+        
         for i, sentence in enumerate(self.sentences):
             sentence_words = len(sentence.split())
             if words_counted + sentence_words > word_num:
-                self.current_sentence_idx = i
+                target_idx = i
                 self.words_spoken = words_counted
                 break
             words_counted += sentence_words
+        else:
+            # If word_num is beyond the end, go to last sentence
+            target_idx = len(self.sentences) - 1
+            self.words_spoken = sum(len(s.split()) for s in self.sentences[:-1])
+        
+        self.current_sentence_idx = target_idx
     
     def _show_error(self, message: str):
         logger.error(f"Displaying error to user: {message}")
