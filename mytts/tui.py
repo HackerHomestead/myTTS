@@ -293,9 +293,10 @@ class TTSReaderApp(App):
             self.client.stop()
             self.client.close()
     
-    def _on_sentence_play(self, sentence: str):
+    def _on_sentence_play(self, sentence: str, index: int):
         """Callback when a sentence is played."""
         self.words_spoken += len(sentence.split())
+        self.current_sentence_idx = index
         
         # Update UI (thread-safe)
         self.call_from_thread(self._update_display, sentence)
@@ -309,7 +310,7 @@ class TTSReaderApp(App):
         status_display = self.query_one(StatusDisplay)
         status_display.words_spoken = self.words_spoken
         status_display.speed = self.client.speed if self.client else 1.0
-        status_display.is_paused = self.client._paused.is_set() if self.client else False
+        status_display.is_paused = self.client.is_paused if self.client else False
         
         # Update progress bar
         progress = self.query_one(ProgressBar)
@@ -358,7 +359,7 @@ class TTSReaderApp(App):
         if self.client:
             self.client.toggle_pause()
             status = self.query_one(StatusDisplay)
-            status.is_paused = self.client._paused.is_set()
+            status.is_paused = self.client.is_paused
     
     def action_next_sentence(self):
         """Skip to next sentence."""
@@ -393,10 +394,8 @@ class TTSReaderApp(App):
     
     def action_repeat_sentence(self):
         """Repeat current sentence."""
-        if self.client:
-            # Go back one, then skip forward to replay
-            self.client.skip_backward()
-            self.client.skip_forward()
+        if self.client and self.current_sentence_idx < len(self.sentences):
+            self._jump_to_sentence(self.current_sentence_idx)
     
     def action_goto_sentence(self):
         """Go to a specific sentence."""
@@ -430,16 +429,22 @@ class TTSReaderApp(App):
         """Jump to a specific sentence index."""
         if self.client:
             # Stop current playback
-            self.client.stop()
             self.should_stop = True
+            self.client.stop()
             
             # Wait for thread to finish
             if self.read_thread and self.read_thread.is_alive():
-                self.read_thread.join(timeout=1.0)
+                self.read_thread.join(timeout=2.0)
+            
+            # Reset client state
+            self.client.reset()
             
             # Update position
             self.current_sentence_idx = idx
             self.words_spoken = sum(len(s.split()) for s in self.sentences[:idx])
+            
+            # Update display
+            self._update_display(self.sentences[idx] if idx < len(self.sentences) else "")
             
             # Restart reading
             self.should_stop = False

@@ -30,7 +30,7 @@ class ProgressiveTTSClient:
         engine: TTSEngine,
         num_workers: int = 4,
         buffer_size: int = 2,
-        on_play: Optional[Callable[[str], None]] = None,
+        on_play: Optional[Callable[[str, int], None]] = None,
     ):
         self.engine = engine
         self.num_workers = num_workers
@@ -86,6 +86,18 @@ class ProgressiveTTSClient:
         with self._speed_lock:
             self._speed = 1.0
     
+    @property
+    def is_paused(self) -> bool:
+        return self._paused.is_set()
+    
+    @property
+    def current_position(self) -> int:
+        return self._current_chunk_index
+    
+    @property
+    def total_chunks(self) -> int:
+        return len(self._chunks_list)
+    
     def skip_forward(self):
         self._skip_forward.set()
         sd.stop()
@@ -104,7 +116,15 @@ class ProgressiveTTSClient:
     def stop(self):
         self._stop_event.set()
         sd.stop()
-
+    
+    def reset(self):
+        self._stop_event.clear()
+        self._skip_forward.clear()
+        self._skip_backward.clear()
+        self._paused.clear()
+        self._current_chunk_index = 0
+        self._chunks_list = []
+    
     def split_into_sentences(self, text: str) -> List[str]:
         sentences = SENTENCE_ENDINGS.split(text.strip())
         result = []
@@ -152,7 +172,7 @@ class ProgressiveTTSClient:
             return
         
         if self.on_play:
-            self.on_play(chunk.text)
+            self.on_play(chunk.text, chunk.index)
             
         self._current_audio = chunk.audio
         self._current_sample_rate = chunk.sample_rate
