@@ -1118,6 +1118,43 @@ class TTSReaderApp(App):
         if self.client:
             self.client.stop()
             self.client.close()
+        
+        # Show saved state info
+        self._print_saved_state()
+    
+    def _print_saved_state(self):
+        """Print saved state information to terminal."""
+        import sys
+        
+        # Build message
+        lines = [
+            "",
+            "─" * 60,
+            "💾 State saved to:",
+            f"  {self.state_file.absolute()}",
+            "",
+            "Saved settings:",
+            f"  • Position: word {self.words_spoken:,} of {self.total_words:,}",
+            f"  • Speed: {self.client.speed:.2f}x" if self.client else f"  • Speed: {self.initial_speed:.2f}x",
+            f"  • Voice: {self.available_voices[self.current_voice_index]}",
+            f"  • Bookmarks: {len(self.bookmarks)}",
+        ]
+        
+        if self.bookmarks:
+            lines.append("")
+            lines.append("Bookmarks:")
+            for i, idx in enumerate(self.bookmarks[:5]):  # Show first 5
+                if idx < len(self.sentences):
+                    text = self.sentences[idx][:40] + "..." if len(self.sentences[idx]) > 40 else self.sentences[idx]
+                    lines.append(f"  {i+1}. Word {sum(len(s.split()) for s in self.sentences[:idx]) + 1:,}: {text}")
+            if len(self.bookmarks) > 5:
+                lines.append(f"  ... and {len(self.bookmarks) - 5} more")
+        
+        lines.append("─" * 60)
+        lines.append("")
+        
+        # Print to stderr so it shows after TUI exits
+        print("\n".join(lines), file=sys.stderr)
     
     def _on_sentence_play(self, sentence: str, index: int, duration: float):
         """Callback when a sentence is played."""
