@@ -1,7 +1,18 @@
 import click
+import signal
 from pathlib import Path
 
 from mytts import TTSEngine, TTSMode, TTSBackend
+
+
+_interrupted = False
+_client = None
+
+def _signal_handler(signum, frame):
+    global _interrupted, _client
+    _interrupted = True
+    if _client:
+        _client.stop()
 
 
 @click.group()
@@ -43,8 +54,20 @@ def cli():
     default=2,
     help="Number of sentences to pre-generate",
 )
-def read(file_path, output, engine, voice, use_server, server_url, workers, buffer_size):
+@click.option(
+    "-w", "--start-word",
+    type=int,
+    default=0,
+    help="Start reading from word number (0-indexed)",
+)
+def read(file_path, output, engine, voice, use_server, server_url, workers, buffer_size, start_word):
     """Read a text file aloud"""
+    global _interrupted, _client
+    _interrupted = False
+    _client = None
+    
+    signal.signal(signal.SIGINT, _signal_handler)
+    
     backend = TTSBackend.SERVER if use_server else TTSBackend.LOCAL
     engine_obj = TTSEngine(
         mode=TTSMode.READING,
@@ -57,8 +80,22 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
     if use_server:
         from mytts.client import ProgressiveTTSClient
         
+        text = Path(file_path).read_text()
+        total_words = len(text.split())
+        
+        words_spoken = 0
+        sentences_played = 0
+        
         def on_play(text):
-            click.echo(text)
+            nonlocal words_spoken, sentences_played
+            if _interrupted:
+                return
+            
+            sentence_words = len(text.split())
+            words_spoken += sentence_words
+            sentences_played += 1
+            
+            click.echo(f"[{words_spoken}/{total_words}] {text}")
         
         client = ProgressiveTTSClient(
             engine_obj,
@@ -66,11 +103,39 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             buffer_size=buffer_size,
             on_play=on_play
         )
+        
+        _client = client
+        
         try:
-            text = Path(file_path).read_text()
-            client.speak(text)
+            if start_word > 0:
+                click.echo(f"Seeking to word {start_word}...")
+                words_counted = 0
+                sentences = client.split_into_sentences(text)
+                
+                for i, sentence in enumerate(sentences):
+                    sentence_words = len(sentence.split())
+                    if words_counted + sentence_words > start_word:
+                        remaining_text = " ".join(sentences[i:])
+                        click.echo(f"Resuming from word {words_counted}...")
+                        client.speak(remaining_text)
+                        break
+                    words_counted += sentence_words
+            else:
+                client.speak(text)
+        except KeyboardInterrupt:
+            pass
         finally:
+            _client = None
             client.close()
+            
+            if _interrupted:
+                click.echo("")
+                click.echo(click.style("Interrupted!", fg="yellow", bold=True))
+                click.echo(f"  Words spoken: {words_spoken}/{total_words}")
+                click.echo(f"  Sentences:    {sentences_played}")
+                click.echo("")
+                click.echo(click.style("To resume:", fg="cyan") + f" mytts read {file_path} --server -w {words_spoken}")
+                click.echo("")
     else:
         engine_obj.speak(file_path=file_path, output=output)
 

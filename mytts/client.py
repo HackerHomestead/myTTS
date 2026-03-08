@@ -54,6 +54,10 @@ class ProgressiveTTSClient:
             "total_generation_time": 0.0,
             "total_playback_time": 0.0,
         }
+    
+    def stop(self):
+        self._stop_event.set()
+        sd.stop()
 
     def split_into_sentences(self, text: str) -> List[str]:
         sentences = SENTENCE_ENDINGS.split(text.strip())
@@ -127,6 +131,9 @@ class ProgressiveTTSClient:
         pending_count = 0
         
         for chunk in chunks:
+            if self._stop_event.is_set():
+                break
+            
             if pending_count < self.buffer_size:
                 future = self._executor.submit(self._generate_audio, chunk)
                 submitted_futures.append(future)
@@ -134,14 +141,18 @@ class ProgressiveTTSClient:
             else:
                 next_future = submitted_futures.pop(0)
                 next_chunk = next_future.result()
-                self._play_chunk(next_chunk)
+                
+                if not self._stop_event.is_set():
+                    self._play_chunk(next_chunk)
                 
                 future = self._executor.submit(self._generate_audio, chunk)
                 submitted_futures.append(future)
         
-        for future in submitted_futures:
-            chunk = future.result()
-            self._play_chunk(chunk)
+        if not self._stop_event.is_set():
+            for future in submitted_futures:
+                chunk = future.result()
+                if not self._stop_event.is_set():
+                    self._play_chunk(chunk)
         
         return self._stats
 
