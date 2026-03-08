@@ -106,7 +106,7 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             click.echo("")
             click.echo(f"  {click.style('▶', fg='green', bold=True)}  {sentence_text}")
             click.echo("")
-            click.echo(f"     {click.style('└─', dim=True)} {click.style(str(words_spoken), fg='cyan', bold=True)} of {total_words} words  {click.style(bar, dim=True)} {pct}%")
+            click.echo(f"     {click.style('└─', dim=True)} {click.style(f'{words_spoken:,}', fg='cyan', bold=True)} of {total_words:,} words  {click.style(bar, dim=True)} {pct}%")
         
         client = ProgressiveTTSClient(
             engine_obj,
@@ -122,12 +122,12 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             click.echo("")
             click.echo(click.style("═" * 60, fg='cyan'))
             click.echo(click.style(f"  📖  Reading: {Path(file_path).name}", fg='cyan', bold=True))
-            click.echo(click.style(f"     {total_words} words total", fg='cyan', dim=True))
+            click.echo(click.style(f"     {total_words:,} words total", fg='cyan', dim=True))
             click.echo(click.style("═" * 60, fg='cyan'))
             
             if start_word > 0:
                 click.echo("")
-                click.echo(f"  {click.style('⏭', fg='yellow')}  Seeking to word {start_word}...")
+                click.echo(f"  {click.style('⏭', fg='yellow')}  Seeking to word {start_word:,}...")
                 words_counted = 0
                 sentences = client.split_into_sentences(text)
                 
@@ -135,7 +135,7 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
                     sentence_words = len(sentence.split())
                     if words_counted + sentence_words > start_word:
                         remaining_text = " ".join(sentences[i:])
-                        click.echo(f"  {click.style('▶', fg='green')}  Resuming from word {words_counted}")
+                        click.echo(f"  {click.style('▶', fg='green')}  Resuming from word {words_counted:,}")
                         click.echo("")
                         client.speak(remaining_text)
                         break
@@ -158,7 +158,7 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
                 click.echo("")
                 click.echo(f"  {click.style('📊', fg='cyan')}  Progress")
                 click.echo(click.style("  " + "─" * 40, dim=True))
-                click.echo(f"     Words:     {click.style(str(words_spoken), fg='cyan', bold=True)} of {total_words}")
+                click.echo(f"     Words:     {click.style(f'{words_spoken:,}', fg='cyan', bold=True)} of {total_words:,}")
                 click.echo(f"     Sentences: {sentences_played}")
                 click.echo("")
                 click.echo(f"  {click.style('▶️', fg='green')}  Resume Command")
