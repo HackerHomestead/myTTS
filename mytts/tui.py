@@ -445,7 +445,7 @@ class JumpDialog(ModalScreen):
     
     .bookmark-btn.selected {
         background: $primary;
-        color: $text-on-primary;
+        color: $surface;
     }
     
     #buttons-container {
