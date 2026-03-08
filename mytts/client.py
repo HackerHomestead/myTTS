@@ -74,11 +74,11 @@ class ProgressiveTTSClient:
         with self._speed_lock:
             self._speed = max(0.25, min(4.0, value))
     
-    def increase_speed(self, delta: float = 0.25):
+    def increase_speed(self, delta: float = 0.1):
         with self._speed_lock:
             self._speed = min(4.0, self._speed + delta)
     
-    def decrease_speed(self, delta: float = 0.25):
+    def decrease_speed(self, delta: float = 0.1):
         with self._speed_lock:
             self._speed = max(0.25, self._speed - delta)
     
@@ -167,6 +167,18 @@ class ProgressiveTTSClient:
         self._stats["total_generation_time"] += time.perf_counter() - start
         return chunk
 
+    def _apply_fade(self, audio: np.ndarray, sample_rate: int, fade_ms: int = 10) -> np.ndarray:
+        fade_samples = int(sample_rate * fade_ms / 1000)
+        if len(audio) < fade_samples * 2:
+            return audio
+        
+        faded = audio.copy()
+        fade_in = np.linspace(0.0, 1.0, fade_samples)
+        fade_out = np.linspace(1.0, 0.0, fade_samples)
+        faded[:fade_samples] *= fade_in
+        faded[-fade_samples:] *= fade_out
+        return faded
+    
     def _play_chunk(self, chunk: SentenceChunk):
         if chunk.audio is None:
             return
@@ -177,15 +189,15 @@ class ProgressiveTTSClient:
         self._current_audio = chunk.audio
         self._current_sample_rate = chunk.sample_rate
         
-        # Apply speed adjustment
         with self._speed_lock:
             speed = self._speed
         
-        # Adjust sample rate for speed (higher rate = faster playback)
         adjusted_rate = int(chunk.sample_rate * speed)
         
+        faded_audio = self._apply_fade(chunk.audio, adjusted_rate)
+        
         start = time.perf_counter()
-        sd.play(chunk.audio, samplerate=adjusted_rate)
+        sd.play(faded_audio, samplerate=adjusted_rate)
         sd.wait()
         self._stats["total_playback_time"] += time.perf_counter() - start
         self._stats["chunks_played"] += 1
