@@ -129,9 +129,8 @@ class ProgressiveTTSClient:
         sentences = SENTENCE_ENDINGS.split(text.strip())
         result = []
         for s in sentences:
-            s = s.strip()
+            s = " ".join(s.split())
             if s:
-                # Add period only if not already ending with punctuation
                 if not s[-1] in '.!?':
                     s = s + "."
                 result.append(s)
