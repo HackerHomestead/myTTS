@@ -21,6 +21,8 @@ class TTSRequest(BaseModel):
 
 app = FastAPI(title="myTTS Server")
 engines = {}
+import gc
+import torch
 
 
 def get_engine(engine_name: str, voice: str, model: Optional[str] = None):
@@ -47,6 +49,13 @@ def get_engine(engine_name: str, voice: str, model: Optional[str] = None):
 @app.post("/tts")
 def generate_speech(req: TTSRequest):
     try:
+        # Validate input
+        if not req.text or len(req.text.strip()) == 0:
+            raise ValueError("Text cannot be empty")
+        
+        if len(req.text) > 5000:  # Limit text length
+            raise ValueError("Text too long (max 5000 characters)")
+        
         engine = get_engine(req.engine, req.voice, req.model)
         audio = engine.speak(req.text, split_sentences=req.split_sentences)
         
@@ -86,6 +95,14 @@ def generate_speech(req: TTSRequest):
             wf.writeframes(audio.tobytes())
         
         buffer.seek(0)
+        
+        # Clean up GPU memory after processing
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        
+        # Force garbage collection periodically
+        gc.collect()
+        
         return StreamingResponse(
             buffer,
             media_type="audio/wav",
@@ -93,12 +110,47 @@ def generate_speech(req: TTSRequest):
         )
     except Exception as e:
         import traceback
+        # Clean up on error
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        gc.collect()
         raise HTTPException(status_code=500, detail=f"{str(e)}\n{traceback.format_exc()}")
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "engines": list(engines.keys())}
+    import torch
+    import psutil
+    import gc
+    
+    # Get memory info
+    memory = psutil.virtual_memory()
+    gpu_info = {}
+    
+    if torch.cuda.is_available():
+        gpu_info = {
+            "available": True,
+            "device_count": torch.cuda.device_count(),
+            "current_device": torch.cuda.current_device(),
+            "memory_allocated": torch.cuda.memory_allocated(),
+            "memory_reserved": torch.cuda.memory_reserved(),
+            "max_memory": torch.cuda.max_memory_allocated()
+        }
+    else:
+        gpu_info = {"available": False}
+    
+    return {
+        "status": "ok",
+        "engines": list(engines.keys()),
+        "memory": {
+            "total": memory.total,
+            "available": memory.available,
+            "percent": memory.percent,
+            "used": memory.used
+        },
+        "gpu": gpu_info,
+        "gc_stats": gc.get_stats()
+    }
 
 
 @app.get("/voices")
@@ -109,6 +161,30 @@ def list_voices():
             "en_US-lessac-medium",
         ]
     }
+
+@app.post("/cleanup")
+def cleanup_resources():
+    """Clean up GPU memory and reset engines"""
+    import torch
+    import gc
+    
+    # Clean up all engines
+    for engine_key, engine in engines.items():
+        if hasattr(engine, 'cleanup'):
+            engine.cleanup()
+    
+    # Clear engine cache
+    engines.clear()
+    
+    # Clean up GPU memory
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        torch.cuda.reset_peak_memory_stats()
+    
+    # Force garbage collection
+    gc.collect()
+    
+    return {"status": "cleaned", "engines_cleared": len(engines)}
 
 
 def run_server(host: str = "0.0.0.0", port: int = 8000):

@@ -27,14 +27,16 @@ class CoquiEngine(BaseEngine):
         import torch
         self.voice = voice or "en_US-lessac-medium"
         self.mode = mode
+        self.gpu = gpu
         
-        model = model or "tts_models/en/ljspeech/tacotron2-DDC"
+        model = model or "tts_models/en/ljspeech/vits"
         # Use GPU mode if enabled and available
         if gpu and torch.cuda.is_available():
             try:
                 torch.zeros(1).cuda()  # Test GPU allocation
             except Exception:
                 gpu = False
+                self.gpu = False
         self.tts = TTS(model, gpu=gpu)
 
     def speak(
@@ -118,3 +120,11 @@ class CoquiEngine(BaseEngine):
 
     def stream(self, text: str):
         return self.speak(text)
+    
+    def cleanup(self):
+        """Clean up GPU memory and resources"""
+        import torch
+        if self.gpu and torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        import gc
+        gc.collect()
