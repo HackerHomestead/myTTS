@@ -463,7 +463,7 @@ class TTSReaderApp(App):
                 # Show seeking indicator
                 status_display.is_loading = True
                 status_display.loading_message = f"Seeking to word {self.start_word:,}..."
-                self.call_from_thread(lambda: status_display.refresh())
+                status_display.refresh()
                 
                 # Perform seek
                 self._seek_to_word(self.start_word)
@@ -479,9 +479,12 @@ class TTSReaderApp(App):
                 # Hide loading after a short delay
                 def hide_loading():
                     try:
-                        status_display = self.query_one(StatusDisplay)
-                        status_display.is_loading = False
-                        status_display.loading_message = ""
+                        self.call_from_thread(lambda: setattr(
+                            self.query_one(StatusDisplay), 'is_loading', False
+                        ))
+                        self.call_from_thread(lambda: setattr(
+                            self.query_one(StatusDisplay), 'loading_message', ""
+                        ))
                     except Exception:
                         pass
                 
