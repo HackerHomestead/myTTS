@@ -777,10 +777,7 @@ class TTSReaderApp(App):
         # Get current speed
         current_speed = self.client.speed if self.client else self.initial_speed
         
-        # Print resume command
-        print("\n" + "="*60)
-        print("To resume from this position, run:")
-        print("="*60)
+        # Build resume command
         cmd_parts = [
             "python -m mytts.cli read",
             "--tui",
@@ -790,14 +787,23 @@ class TTSReaderApp(App):
             f"-s {current_speed:.2f}",
             f'"{self.file_path}"'
         ]
-        print(" ".join(cmd_parts))
-        print("="*60)
-        print(f"Position: Sentence {self.current_sentence_idx + 1}/{len(self.sentences)}, Word {current_word:,}")
-        print(f"Voice: {current_voice}")
-        print(f"Speed: {current_speed:.2f}x")
-        print("="*60 + "\n")
+        resume_cmd = " ".join(cmd_parts)
         
-        self.exit()
+        # Build summary
+        summary = (
+            f"\n{'='*60}\n"
+            f"To resume from this position, run:\n"
+            f"{'='*60}\n"
+            f"{resume_cmd}\n"
+            f"{'='*60}\n"
+            f"Position: Sentence {self.current_sentence_idx + 1}/{len(self.sentences)}, Word {current_word:,}\n"
+            f"Voice: {current_voice}\n"
+            f"Speed: {current_speed:.2f}x\n"
+            f"{'='*60}\n"
+        )
+        
+        # Exit with message
+        self.exit(message=summary)
 
 
 def run_tui_reader(
