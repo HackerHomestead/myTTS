@@ -86,7 +86,15 @@ class ProgressiveTTSClient:
 
     def split_into_sentences(self, text: str) -> List[str]:
         sentences = SENTENCE_ENDINGS.split(text.strip())
-        return [s.strip() + "." for s in sentences if s.strip()]
+        result = []
+        for s in sentences:
+            s = s.strip()
+            if s:
+                # Add period only if not already ending with punctuation
+                if not s[-1] in '.!?':
+                    s = s + "."
+                result.append(s)
+        return result
 
     def _generate_audio(self, chunk: SentenceChunk) -> SentenceChunk:
         start = time.perf_counter()

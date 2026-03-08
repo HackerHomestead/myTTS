@@ -130,7 +130,6 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
         from mytts.client import ProgressiveTTSClient
         
         text = Path(file_path).read_text()
-        total_words = len(text.split())
         
         words_spoken = 0
         sentences_played = 0
@@ -169,6 +168,10 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
             on_play=on_play
         )
         
+        # Get accurate word count from sentences
+        sentences = client.split_into_sentences(text)
+        total_words = sum(len(s.split()) for s in sentences)
+        
         # Set initial speed
         client.speed = max(0.25, min(4.0, speed))
         
@@ -193,7 +196,6 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
                 click.echo("")
                 click.echo(f"  {click.style('⏭', fg='yellow')}  Seeking to word {start_word:,}...")
                 words_counted = 0
-                sentences = client.split_into_sentences(text)
                 
                 for i, sentence in enumerate(sentences):
                     sentence_words = len(sentence.split())
