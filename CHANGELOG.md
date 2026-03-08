@@ -2,6 +2,31 @@
 
 All notable changes to myTTS will be documented in this file.
 
+## [v1.5.0-mvp] - 2026-03-08
+
+### 🔧 Event Hardening & UX Improvements
+
+#### Fixed
+- **Bug #1: Pause-Aware Highlighting**: Word highlighting now pauses/resumes with audio
+  - Timers cancel on pause
+  - Timers reschedule with adjusted delays on resume
+  - No more highlighting drift during pause
+
+#### Added
+- **Exit Summary**: Shows saved state info when exiting TUI
+  - Full path to `.mytts.json` file
+  - Position, speed, voice, bookmark count
+  - Preview of first 5 bookmarks
+
+#### Technical
+- Added `pause()` and `resume()` methods to `WordHighlightScheduler`
+- Track sentence start time for accurate timer rescheduling
+- Store pending timers for resumption after pause
+- 3 new tests for pause/resume functionality
+- Full event hardening analysis documented in `docs/TUI_EVENT_HARDENING.md`
+
+---
+
 ## [v1.4.0-mvp] - 2026-03-08
 
 ### 💾 State Persistence
