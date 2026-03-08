@@ -109,10 +109,15 @@ def cli():
     default=1.0,
     help="Initial speech speed (0.25-4.0, default: 1.0)",
 )
-def read(file_path, output, engine, voice, use_server, server_url, workers, buffer_size, start_word, speed):
+@click.option(
+    "--tui",
+    is_flag=True,
+    help="Use TUI (Text User Interface) mode",
+)
+def read(file_path, output, engine, voice, use_server, server_url, workers, buffer_size, start_word, speed, tui):
     """Read a text file aloud
     
-    Controls:
+    Controls (CLI mode):
       + / = : Increase speed
       - / _ : Decrease speed
       0     : Reset to default speed (1.0x)
@@ -121,7 +126,23 @@ def read(file_path, output, engine, voice, use_server, server_url, workers, buff
       Space : Pause/Resume
       q / Q : Stop reading
       Ctrl+C: Stop reading
+    
+    Controls (TUI mode):
+      See on-screen controls
     """
+    # Use TUI mode if requested
+    if tui and use_server:
+        from mytts.tui import run_tui_reader
+        run_tui_reader(
+            file_path=file_path,
+            server_url=server_url,
+            voice=voice,
+            start_word=start_word,
+            speed=speed,
+        )
+        return
+    
+    # CLI mode (original implementation)
     global _interrupted, _client, _speed_changed
     _interrupted = False
     _client = None

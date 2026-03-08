@@ -13,6 +13,8 @@ dependencies = [
     "click>=8.0.0",
     "requests>=2.31.0",
     "sounddevice>=0.4.0",
+    "textual>=0.47.0",
+    "rich>=13.0.0",
 ]
 
 [project.optional-dependencies]
