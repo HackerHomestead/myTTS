@@ -99,6 +99,20 @@ class ChunkDisplay(Static):
     chunk_scroll_offset: reactive[int] = reactive(0)
     total_sentences: reactive[int] = reactive(0)
     max_width: reactive[int] = reactive(80)
+    highlight_sentence_idx: reactive[int] = reactive(-1)
+    highlight_word_idx: reactive[int] = reactive(-1)
+    
+    def highlight_word(self, sentence_idx: int, word_idx: int):
+        """Update word highlighting."""
+        self.highlight_sentence_idx = sentence_idx
+        self.highlight_word_idx = word_idx
+        self.refresh()
+    
+    def clear_word_highlight(self):
+        """Clear word highlighting."""
+        self.highlight_sentence_idx = -1
+        self.highlight_word_idx = -1
+        self.refresh()
     
     def on_mount(self):
         """Calculate max width based on terminal size."""
@@ -188,6 +202,7 @@ class ChunkDisplay(Static):
             
             is_current = (i == self.current_idx)
             is_selected = (i == self.selected_idx)
+            is_word_highlight = (i == self.highlight_sentence_idx and self.highlight_word_idx >= 0)
             
             if is_current:
                 text.append("▶", style="yellow bold")
@@ -203,34 +218,46 @@ class ChunkDisplay(Static):
                 text.append("│", style="dim")
             
             words = chunk.split()
-            line_words = []
-            current_length = 0
             
-            for word in words:
-                if current_length + len(word) + 1 > self.max_width and line_words:
+            # Render words with optional word-level highlighting
+            if is_word_highlight:
+                for word_i, word in enumerate(words):
+                    if word_i == self.highlight_word_idx:
+                        text.append(word, style="black on yellow bold")
+                    else:
+                        text.append(word, style="yellow")
+                    
+                    if word_i < len(words) - 1:
+                        text.append(" ", style="yellow")
+            else:
+                line_words = []
+                current_length = 0
+                
+                for word in words:
+                    if current_length + len(word) + 1 > self.max_width and line_words:
+                        line_text = " ".join(line_words)
+                        if is_current:
+                            text.append(f"{line_text}\n", style="yellow")
+                        elif is_selected:
+                            text.append(f"{line_text}\n", style="white")
+                        else:
+                            text.append(f"{line_text}\n", style="white dim")
+                        
+                        text.append("      │", style="dim" if not is_current else "yellow")
+                        line_words = [word]
+                        current_length = len(word)
+                    else:
+                        line_words.append(word)
+                        current_length += len(word) + 1
+                
+                if line_words:
                     line_text = " ".join(line_words)
                     if is_current:
-                        text.append(f"{line_text}\n", style="yellow")
+                        text.append(f"{line_text}", style="yellow")
                     elif is_selected:
-                        text.append(f"{line_text}\n", style="white")
+                        text.append(f"{line_text}", style="white")
                     else:
-                        text.append(f"{line_text}\n", style="white dim")
-                    
-                    text.append("      │", style="dim" if not is_current else "yellow")
-                    line_words = [word]
-                    current_length = len(word)
-                else:
-                    line_words.append(word)
-                    current_length += len(word) + 1
-            
-            if line_words:
-                line_text = " ".join(line_words)
-                if is_current:
-                    text.append(f"{line_text}", style="yellow")
-                elif is_selected:
-                    text.append(f"{line_text}", style="white")
-                else:
-                    text.append(f"{line_text}", style="white dim")
+                        text.append(f"{line_text}", style="white dim")
             
             if idx < len(visible_chunks) - 1:
                 text.append("\n")
@@ -564,6 +591,121 @@ class JumpDialog(ModalScreen):
             self.query_one(Input).value = str(self.current_word)
 
 
+class WordTimingEstimator:
+    """Estimates word timing within a sentence for highlighting."""
+    
+    CHAR_WEIGHTS = {
+        'vowels': 1.2,
+        'consonants': 0.8,
+        'space': 0.3,
+        'punctuation': 0.5
+    }
+    
+    def estimate_word_timings(
+        self, 
+        sentence: str, 
+        audio_duration: float
+    ) -> List[dict]:
+        """
+        Estimate timing for each word in sentence.
+        
+        Args:
+            sentence: The sentence text
+            audio_duration: Actual audio duration in seconds
+            
+        Returns:
+            List of dicts: [{'word': str, 'start': float, 'end': float, 'duration': float}, ...]
+        """
+        words = sentence.split()
+        if not words:
+            return []
+        
+        word_weights = []
+        for word in words:
+            weight = 0.0
+            for char in word.lower():
+                if char in 'aeiou':
+                    weight += self.CHAR_WEIGHTS['vowels']
+                elif char.isalpha():
+                    weight += self.CHAR_WEIGHTS['consonants']
+                elif char in '.,!?;:':
+                    weight += self.CHAR_WEIGHTS['punctuation']
+            word_weights.append(max(weight, 0.5))
+        
+        total_weight = sum(word_weights) + (len(words) - 1) * self.CHAR_WEIGHTS['space']
+        scale = audio_duration / total_weight if total_weight > 0 else 1.0
+        
+        timings = []
+        current_time = 0.0
+        
+        for i, (word, weight) in enumerate(zip(words, word_weights)):
+            word_duration = weight * scale
+            gap_duration = self.CHAR_WEIGHTS['space'] * scale if i < len(words) - 1 else 0
+            
+            timings.append({
+                'word': word,
+                'start': current_time,
+                'end': current_time + word_duration,
+                'duration': word_duration
+            })
+            
+            current_time += word_duration + gap_duration
+        
+        return timings
+
+
+class WordHighlightScheduler:
+    """Schedules word highlighting updates based on timing."""
+    
+    def __init__(self, app: 'TTSReaderApp'):
+        self.app = app
+        self._timers: List[threading.Timer] = []
+        self._lock = threading.Lock()
+        self._current_sentence_idx = -1
+    
+    def schedule_highlights(
+        self, 
+        sentence: str, 
+        sentence_idx: int,
+        audio_duration: float,
+        estimator: WordTimingEstimator
+    ):
+        """Schedule word highlighting for a sentence."""
+        self.cancel_highlights()
+        self._current_sentence_idx = sentence_idx
+        
+        timings = estimator.estimate_word_timings(sentence, audio_duration)
+        
+        with self._lock:
+            for word_idx, word_timing in enumerate(timings):
+                timer = threading.Timer(
+                    word_timing['start'],
+                    self._highlight_word,
+                    args=[sentence_idx, word_idx]
+                )
+                timer.daemon = True
+                timer.start()
+                self._timers.append(timer)
+    
+    def cancel_highlights(self):
+        """Cancel all pending highlights."""
+        with self._lock:
+            for timer in self._timers:
+                timer.cancel()
+            self._timers.clear()
+            self._current_sentence_idx = -1
+    
+    def _highlight_word(self, sentence_idx: int, word_idx: int):
+        """Highlight a word (called from timer)."""
+        try:
+            if sentence_idx == self._current_sentence_idx:
+                self.app.call_from_thread(
+                    lambda: self.app._update_word_highlight(sentence_idx, word_idx)
+                )
+        except Exception:
+            pass
+
+
 class TTSReaderApp(App):
     """TUI application for reading text with TTS."""
     
@@ -703,6 +845,10 @@ class TTSReaderApp(App):
         self.read_thread: Optional[threading.Thread] = None
         self._reading_start_idx = 0
         self._state_lock = threading.Lock()
+        
+        # Word highlighting
+        self.word_estimator = WordTimingEstimator()
+        self.word_scheduler: Optional[WordHighlightScheduler] = None
     
     def compose(self) -> ComposeResult:
         yield Header()
@@ -743,6 +889,8 @@ class TTSReaderApp(App):
                 audio_buffer_size=4096,
                 audio_latency='high',
             )
+            
+            self.word_scheduler = WordHighlightScheduler(self)
             
             self.client.speed = self.initial_speed
             
@@ -825,12 +973,29 @@ class TTSReaderApp(App):
             self.client.stop()
             self.client.close()
     
-    def _on_sentence_play(self, sentence: str, index: int):
+    def _on_sentence_play(self, sentence: str, index: int, duration: float):
         """Callback when a sentence is played."""
         self.words_spoken += len(sentence.split())
         self.current_sentence_idx = self._reading_start_idx + index
         
+        # Schedule word highlighting (use absolute index)
+        if self.word_scheduler:
+            self.word_scheduler.schedule_highlights(
+                sentence,
+                self.current_sentence_idx,  # Absolute index
+                duration,
+                self.word_estimator
+            )
+        
         self.call_from_thread(self._update_display)
+    
+    def _update_word_highlight(self, sentence_idx: int, word_idx: int):
+        """Update word highlighting in display."""
+        try:
+            chunk_display = self.query_one(ChunkDisplay)
+            chunk_display.highlight_word(sentence_idx, word_idx)
+        except Exception:
+            pass
     
     def _update_display(self):
         chunk_display = self.query_one(ChunkDisplay)
@@ -894,6 +1059,17 @@ class TTSReaderApp(App):
     
     def _safe_stop_playback(self):
         """Safely stop playback with proper state management."""
+        # Cancel word highlighting
+        if self.word_scheduler:
+            self.word_scheduler.cancel_highlights()
+        
+        # Clear word highlight
+        try:
+            chunk_display = self.query_one(ChunkDisplay)
+            chunk_display.clear_word_highlight()
+        except Exception:
+            pass
+        
         with self._state_lock:
             self.should_stop = True
             if self.client:

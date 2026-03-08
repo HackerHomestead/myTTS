@@ -163,8 +163,8 @@ class TestProgressiveTTSClient:
         """Test _play_chunk calls on_play callback."""
         callback_calls = []
         
-        def on_play(text, index):
-            callback_calls.append((text, index))
+        def on_play(text, index, duration):
+            callback_calls.append((text, index, duration))
         
         client.on_play = on_play
         
@@ -178,7 +178,9 @@ class TestProgressiveTTSClient:
         client._play_chunk(chunk)
         
         assert len(callback_calls) == 1
-        assert callback_calls[0] == ("Test sentence.", 5)
+        assert callback_calls[0][0] == "Test sentence."
+        assert callback_calls[0][1] == 5
+        assert callback_calls[0][2] > 0  # Duration should be positive
         mock_play.assert_called_once()
         mock_wait.assert_called_once()
     
