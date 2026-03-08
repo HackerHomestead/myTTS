@@ -130,11 +130,14 @@ class ProgressiveTTSClient:
             if self._is_playing or self._stream_active:
                 try:
                     self._stream_active = False
+                    self._is_playing = False
+                    # Give PortAudio a moment to finish
+                    time.sleep(0.05)
                     sd.stop()
                     sd.wait()
                 except Exception as e:
+                    # Silently ignore PortAudio errors
                     pass
-                self._is_playing = False
     
     def reset(self):
         self._stop_event.clear()

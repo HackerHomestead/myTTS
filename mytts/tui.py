@@ -172,18 +172,23 @@ class StatusDisplay(Static):
     words_spoken = reactive(0)
     total_words = reactive(0)
     is_paused = reactive(False)
+    is_loading = reactive(False)
+    loading_message = reactive("")
     current_bookmark: reactive[int | None] = reactive(None)
     current_voice = reactive("en_US-lessac-medium")
     
     def render(self):
         text = Text()
         
+        if self.is_loading:
+            text.append(f"  ⏳ {self.loading_message}  ", style="yellow bold blink")
+        
         speed_color = "yellow" if self.speed != 1.0 else "white"
         text.append(f"  Speed: {self.speed:.2f}x  ", style=f"{speed_color} bold")
         
         if self.is_paused:
             text.append("⏸ PAUSED  ", style="yellow bold")
-        else:
+        elif not self.is_loading:
             text.append("▶ Playing  ", style="green")
         
         text.append(f"Words: {self.words_spoken:,}/{self.total_words:,}  ", 
@@ -536,6 +541,15 @@ class TTSReaderApp(App):
     def _safe_start_playback(self, idx: int):
         """Safely start playback from a given index."""
         with self._state_lock:
+            # Show loading indicator
+            try:
+                status_display = self.query_one(StatusDisplay)
+                status_display.is_loading = True
+                status_display.loading_message = "Generating audio..."
+                self.call_from_thread(lambda: status_display.refresh())
+            except Exception:
+                pass
+            
             self.current_sentence_idx = idx
             self.words_spoken = sum(len(s.split()) for s in self.sentences[:idx])
             
@@ -546,6 +560,18 @@ class TTSReaderApp(App):
             
             self.should_stop = False
             self._start_reading()
+            
+            # Hide loading indicator after a short delay
+            def hide_loading():
+                try:
+                    status_display = self.query_one(StatusDisplay)
+                    status_display.is_loading = False
+                    status_display.loading_message = ""
+                except Exception:
+                    pass
+            
+            # Schedule hiding loading after 2 seconds
+            threading.Timer(2.0, hide_loading).start()
     
     def action_toggle_pause(self):
         """Toggle pause state."""
@@ -572,6 +598,11 @@ class TTSReaderApp(App):
         """Jump to selected chunk using action queue."""
         chunk_display = self.query_one(ChunkDisplay)
         idx = chunk_display.selected_idx
+        
+        # Show loading immediately
+        status_display = self.query_one(StatusDisplay)
+        status_display.is_loading = True
+        status_display.loading_message = f"Loading chunk {idx + 1}..."
         
         def jump_action():
             self._safe_stop_playback()
@@ -615,6 +646,12 @@ class TTSReaderApp(App):
         """Cycle to next voice using action queue."""
         self.current_voice_index = (self.current_voice_index + 1) % len(self.available_voices)
         new_voice = self.available_voices[self.current_voice_index]
+        
+        # Show loading immediately
+        voice_name = new_voice.split('-')[-1].replace('-medium', '').title()
+        status_display = self.query_one(StatusDisplay)
+        status_display.is_loading = True
+        status_display.loading_message = f"Changing voice to {voice_name}..."
         
         def voice_change_action():
             self._safe_stop_playback()
