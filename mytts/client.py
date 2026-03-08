@@ -47,6 +47,8 @@ class ProgressiveTTSClient:
         
         self._current_audio: Optional[np.ndarray] = None
         self._current_sample_rate = 22050
+        self._is_playing = False
+        self._playback_lock = threading.Lock()
         
         self._speed = 1.0
         self._speed_lock = threading.Lock()
@@ -100,22 +102,33 @@ class ProgressiveTTSClient:
     
     def skip_forward(self):
         self._skip_forward.set()
-        sd.stop()
+        self._stop_playback()
     
     def skip_backward(self):
         self._skip_backward.set()
-        sd.stop()
+        self._stop_playback()
     
     def toggle_pause(self):
         if self._paused.is_set():
             self._paused.clear()
         else:
             self._paused.set()
-            sd.stop()
+            self._stop_playback()
     
     def stop(self):
         self._stop_event.set()
-        sd.stop()
+        self._stop_playback()
+    
+    def _stop_playback(self):
+        """Safely stop audio playback."""
+        with self._playback_lock:
+            if self._is_playing:
+                try:
+                    sd.stop()
+                    sd.wait()
+                except Exception:
+                    pass
+                self._is_playing = False
     
     def reset(self):
         self._stop_event.clear()
@@ -124,6 +137,8 @@ class ProgressiveTTSClient:
         self._paused.clear()
         self._current_chunk_index = 0
         self._chunks_list = []
+        with self._playback_lock:
+            self._is_playing = False
     
     def split_into_sentences(self, text: str) -> List[str]:
         sentences = SENTENCE_ENDINGS.split(text.strip())
@@ -195,9 +210,19 @@ class ProgressiveTTSClient:
         
         faded_audio = self._apply_fade(chunk.audio, adjusted_rate)
         
+        with self._playback_lock:
+            self._is_playing = True
+        
         start = time.perf_counter()
-        sd.play(faded_audio, samplerate=adjusted_rate)
-        sd.wait()
+        try:
+            sd.play(faded_audio, samplerate=adjusted_rate)
+            sd.wait()
+        except Exception as e:
+            pass
+        finally:
+            with self._playback_lock:
+                self._is_playing = False
+        
         self._stats["total_playback_time"] += time.perf_counter() - start
         self._stats["chunks_played"] += 1
 
