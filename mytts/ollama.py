@@ -16,6 +16,45 @@ DEFAULT_TTS_URL = os.environ.get("TTS_SERVER_URL", "http://localhost:8000")
 
 SENTENCE_ENDINGS = re.compile(r'[.!?]+[\s]+')
 
+CODE_BLOCK_PATTERN = re.compile(r'```[\s\S]*?```', re.MULTILINE)
+INLINE_CODE_PATTERN = re.compile(r'`([^`]+)`')
+HEADER_PATTERN = re.compile(r'^#{1,6}\s+', re.MULTILINE)
+BOLD_PATTERN = re.compile(r'\*\*([^*]+)\*\*')
+ITALIC_PATTERN = re.compile(r'\*([^*]+)\*')
+UNDERSCORE_BOLD_PATTERN = re.compile(r'__([^_]+)__')
+UNDERSCORE_ITALIC_PATTERN = re.compile(r'_([^_]+)_')
+STRIKETHROUGH_PATTERN = re.compile(r'~~([^~]+)~~')
+LINK_PATTERN = re.compile(r'\[([^\]]+)\]\([^)]+\)')
+IMAGE_PATTERN = re.compile(r'!\[([^\]]*)\]\([^)]+\)')
+HR_PATTERN = re.compile(r'^[-*_]{3,}\s*$', re.MULTILINE)
+BLOCKQUOTE_PATTERN = re.compile(r'^>\s+', re.MULTILINE)
+LIST_PATTERN = re.compile(r'^[-*+]\s+', re.MULTILINE)
+NUMERIC_LIST_PATTERN = re.compile(r'^\d+\.\s+', re.MULTILINE)
+
+
+def strip_markdown(text: str) -> str:
+    text = CODE_BLOCK_PATTERN.sub('', text)
+    text = IMAGE_PATTERN.sub('', text)
+    text = CODE_BLOCK_PATTERN.sub('', text)
+    text = INLINE_CODE_PATTERN.sub(r'\1', text)
+    text = HEADER_PATTERN.sub('', text)
+    text = BOLD_PATTERN.sub(r'\1', text)
+    text = ITALIC_PATTERN.sub(r'\1', text)
+    text = UNDERSCORE_BOLD_PATTERN.sub(r'\1', text)
+    text = UNDERSCORE_ITALIC_PATTERN.sub(r'\1', text)
+    text = STRIKETHROUGH_PATTERN.sub(r'\1', text)
+    text = LINK_PATTERN.sub(r'\1', text)
+    text = HR_PATTERN.sub('', text)
+    text = BLOCKQUOTE_PATTERN.sub('', text)
+    text = LIST_PATTERN.sub('', text)
+    text = NUMERIC_LIST_PATTERN.sub('', text)
+    text = re.sub(r'\*+', '', text)
+    text = re.sub(r'_+', '', text)
+    text = re.sub(r'`+', '', text)
+    text = re.sub(r'#+', '', text)
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+
 
 class DynamicEstimator:
     def __init__(self, initial_words_per_second: float = 2.5):
@@ -118,6 +157,7 @@ class OllamaChat:
         return full_response
 
     def speak(self, text: str):
+        text = strip_markdown(text)
         sentences = split_into_sentences(text)
         if not sentences:
             return 0
