@@ -978,11 +978,11 @@ class TTSReaderApp(App):
         self.words_spoken += len(sentence.split())
         self.current_sentence_idx = self._reading_start_idx + index
         
-        # Schedule word highlighting
+        # Schedule word highlighting (use absolute index)
         if self.word_scheduler:
             self.word_scheduler.schedule_highlights(
                 sentence,
-                index,
+                self.current_sentence_idx,  # Absolute index
                 duration,
                 self.word_estimator
             )
